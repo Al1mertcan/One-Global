@@ -40,7 +40,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { getStore } = require('@netlify/blobs');
+    const { getStore, connectLambda } = require('@netlify/blobs');
+    connectLambda(event);
     const tokenStore = getStore('one-auth-tokens');
     const accountsStore = getStore('one-accounts');
 

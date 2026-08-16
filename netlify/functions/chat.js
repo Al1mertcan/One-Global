@@ -63,7 +63,8 @@ exports.handler = async (event) => {
     return { statusCode: 204, headers: corsHeaders, body: '' };
   }
 
-  const { getStore } = require('@netlify/blobs');
+  const { getStore, connectLambda } = require('@netlify/blobs');
+  connectLambda(event);
   const historyStore = getStore('one-chat-history');
 
   if (event.httpMethod === 'GET') {

@@ -4,9 +4,10 @@
 // kaydeder. send-notifications.js (zamanlanmış fonksiyon) bu kayıtları
 // okuyup uygun saatlerde bildirim gönderir.
 
-const { getStore } = require('@netlify/blobs');
+const { getStore, connectLambda } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
+  connectLambda(event);
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',

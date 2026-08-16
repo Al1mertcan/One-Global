@@ -39,7 +39,8 @@ exports.handler = async (event) => {
   const lang = LANG_NAMES[params.lang] ? params.lang : 'en';
   const langName = LANG_NAMES[lang];
 
-  const { getStore } = require('@netlify/blobs');
+  const { getStore, connectLambda } = require('@netlify/blobs');
+  connectLambda(event);
   const store = getStore('one-good-news');
   const today = new Date().toISOString().slice(0, 10);
   const cacheKey = today + '_' + lang;

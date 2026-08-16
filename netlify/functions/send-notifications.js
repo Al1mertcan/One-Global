@@ -18,7 +18,7 @@
 // sen deploy edip telefonunda bildirimlere izin verdikten sonra görebiliriz.
 
 const webpush = require('web-push');
-const { getStore } = require('@netlify/blobs');
+const { getStore, connectLambda } = require('@netlify/blobs');
 
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
@@ -173,7 +173,8 @@ async function sendPush(subscription, payload) {
   }
 }
 
-exports.handler = async () => {
+exports.handler = async (event) => {
+  connectLambda(event || {});
   if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
     return { statusCode: 200, body: 'VAPID keys not configured — skipping (set VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY in Netlify env vars).' };
   }

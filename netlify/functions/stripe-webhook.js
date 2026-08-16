@@ -47,7 +47,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { getStore } = require('@netlify/blobs');
+    const { getStore, connectLambda } = require('@netlify/blobs');
+    connectLambda(event);
     const subsStore = getStore('one-subscriptions');
 
     async function upsert(subId, patch) {
