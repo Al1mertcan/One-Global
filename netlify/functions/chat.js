@@ -192,7 +192,11 @@ exports.handler = async (event) => {
       };
     }
 
-    const text = (data.content && data.content[0] && data.content[0].text) || '';
+    // content[0] güvenilir değil — model bazen ilk blok olarak metin
+    // dışında bir şey (ör. "thinking" bloğu) döndürebilir. good-news.js'te
+    // olduğu gibi, ilk gerçek metin bloğunu ara.
+    const textBlock = Array.isArray(data.content) ? data.content.find((b) => b && b.type === 'text') : null;
+    const text = (textBlock && textBlock.text) || '';
 
     // Kalıcı geçmişi güncelle (id gönderildiyse). Bu adım başarısız olsa
     // bile kullanıcı cevabı yine de almalı — o yüzden hatayı yutuyoruz,
