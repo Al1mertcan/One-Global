@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gizlilik Politikası — ONE Global</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+  </script>
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+  <style>
+  :root {
+    --color-background: #07111F; --color-foreground: #EFF7FF; --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C; --color-secondary: #162A46; --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA; --color-muted: #10213A; --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30; --color-card-foreground: #EFF7FF; --color-border: #28415F; --color-input: #102540;
+    --color-success: #3DDBA5; --font-heading: 'Space Grotesk', sans-serif; --font-body: 'Manrope', sans-serif; --radius: 16px;
+  }
+  body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-16">
+    <div class="pointer-events-none absolute -top-32 -right-28 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
+
+    <header class="relative px-5 pt-12">
+      <div class="flex items-center gap-3">
+        <a href="ayarlar.html" aria-label="Geri dön" class="flex h-11 w-11 items-center justify-center rounded-theme border border-border bg-card/80 text-foreground shadow-lg backdrop-blur-xl">
+          <iconify-icon icon="lucide:arrow-left" class="text-xl"></iconify-icon>
+        </a>
+        <h1 class="font-heading text-lg font-semibold">Gizlilik Politikası</h1>
+      </div>
+    </header>
+
+    <main class="relative px-5 pt-6 space-y-5 text-sm leading-6 text-card-foreground">
+      <section class="rounded-[20px] border border-accent/25 bg-accent/5 p-4 text-xs leading-5 text-muted-foreground">
+        <strong class="text-accent">Not:</strong> Bu metin, ONE Global uygulamasının kurucusu tarafından (yapay zeka desteğiyle) hazırlanmıştır ve bir avukat tarafından incelenmemiştir. Gerçek kullanıcı verisi toplamaya ve/veya gerçek ödeme almaya başlamadan önce bir hukuk danışmanına gösterilmesi önerilir. Son güncelleme: Ağustos 2026.
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Hangi veriler toplanıyor?</h2>
+        <p class="mt-2">ONE Global, hesap oluşturmanı istemez — isim, e-posta veya şifre sormaz. Bunun yerine tarayıcında rastgele üretilen, kimliğini içermeyen benzersiz bir teknik kimlik (ör. <code class="rounded bg-input px-1">a1b2c3d4-...</code>) kullanılır. Bu kimliğe bağlı olarak şunlar saklanabilir:</p>
+        <ul class="mt-2 list-disc space-y-1.5 pl-5">
+          <li>Rutin ayarların (uyanma/eve geliş/yatma saatleri, spor ve okuma hedeflerin)</li>
+          <li>Eklediğin kısa hatırlatma metinleri</li>
+          <li>Bildirimler açıksa: tarayıcının/işletim sisteminin verdiği push bildirim adresi (subscription endpoint) ve saat dilimin</li>
+          <li>ONE Global ile yaptığın sohbetlerin metni (Bellek sekmesinde göstermek ve konuşmanın bağlamını hatırlamak için, en fazla son ~20 karşılıklı mesaj)</li>
+          <li>Seçtiğin dil ve para birimi tercihleri</li>
+          <li>Cihazının IP adresi, sadece üye sayacının kötüye kullanılmasını önlemek için kısa süreliğine (bkz. aşağıdaki "Güvenlik" bölümü)</li>
+        </ul>
+        <p class="mt-2">Ödeme bilgisi (kart numarası vb.) toplanmıyor — çünkü ONE Global şu an gerçek bir ödeme almıyor (bkz. Kullanım Şartları).</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Veriler nerede saklanıyor?</h2>
+        <p class="mt-2">Tüm veriler, ONE Global'ın barındığı Netlify altyapısındaki Netlify Blobs adlı depolama hizmetinde tutulur. Ayrıca rutin ayarların, hatırlatmaların, dil tercihin gibi bazı bilgiler kolay erişim için tarayıcının kendi hafızasında (localStorage) da tutulur — bu, sadece senin cihazında kalır.</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Üçüncü taraflarla paylaşım</h2>
+        <p class="mt-2">Sohbet mesajların ve (varsa) "iyi haberler" için yapılan aramalar, cevap üretmesi için Anthropic'in Claude yapay zeka servisine iletilir. Bunun dışında verilerin hiçbir üçüncü tarafla (reklam şirketleri, veri simsarları vb.) paylaşılmıyor veya satılmıyor.</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Üye sayacı ve gizlilik</h2>
+        <p class="mt-2">Ana ekrandaki üye sayacı, kaç farklı kişinin "Ücretsiz Başla"ya bastığının toplam sayısını gösterir — kimin katıldığına dair kimlik bilgisi herkese açık olarak gösterilmez, sadece toplam rakam görünür.</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Güvenlik</h2>
+        <p class="mt-2">Üye sayacının sahte kayıtlarla şişirilmesini önlemek için, kısa bir süreliğine IP adresin kötüye kullanım kontrolünden geçirilir; ayrıca kaydedilir. Bunun dışında hiçbir yerde IP adresin kalıcı olarak saklanmıyor.</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Haklarının — verilerine erişim ve silme</h2>
+        <p class="mt-2">Ayarlar ekranındaki "Verilerin" bölümünden istediğin zaman: (1) ONE Global'ın senin hakkında sakladığı verilerin bir kopyasını indirebilir, (2) tüm verilerini kalıcı olarak silebilirsin. Silme işlemi geri alınamaz.</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Çocukların gizliliği</h2>
+        <p class="mt-2">ONE Global, 13 yaşın altındaki çocuklar için tasarlanmamıştır ve onlardan bilerek veri toplamaz. Şu an yaş doğrulaması yapan bir teknik mekanizma yoktur — bu, ileride eklenmesi gereken bir eksik olarak not edilmiştir.</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">Bu politikadaki değişiklikler</h2>
+        <p class="mt-2">Bu politika güncellenirse, güncel hali her zaman bu sayfada yer alacak.</p>
+      </section>
+
+      <section>
+        <h2 class="font-heading text-base font-semibold text-foreground">İletişim</h2>
+        <p class="mt-2">Gizlilikle ilgili sorular için: <a href="mailto:one.global.universal.1@gmail.com" class="rounded bg-input px-1.5 py-0.5 text-primary">one.global.universal.1@gmail.com</a></p>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function() {
+      var els = document.querySelectorAll('iconify-icon');
+      for (var i = 0; i < els.length; i++) (function(el) {
+        var tries = 0;
+        (function check() {
+          var s = el.status;
+          if (s === 'failed') el.setAttribute('icon', 'lucide:circle');
+          else if (s !== 'rendered' && tries++ < 40) setTimeout(check, 250);
+        })();
+      })(els[i]);
+    })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js').catch(function () {});
+      });
+    }
+  </script>
+</body>
+</html>

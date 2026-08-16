@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Bildirim gönderici — her 15 dakikada bir çalışır (bkz. send-notifications.js).
+[functions."send-notifications"]
+  schedule = "*/15 * * * *"

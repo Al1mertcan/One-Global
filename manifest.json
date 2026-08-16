@@ -1,0 +1,17 @@
+{
+  "name": "ONE Global — Kişisel Asistan",
+  "short_name": "ONE Global",
+  "description": "ONE Global — Türkiye'de ayda sadece 10 TL, dünyanın geri kalanında ise yerel para biriminin sadece 1 birimi ile herkesin hayatını kolaylaştıran kişisel yapay zeka asistanı.",
+  "start_url": "./hosgeldin.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07111F",
+  "theme_color": "#07111F",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

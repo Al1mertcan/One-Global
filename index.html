@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <!-- JS kapalıysa (nadiren) doğrudan asistan.html'e düş — onboarding
+       ekranını atlamak, hiç açılmamaktan iyidir. JS açıksa aşağıdaki script
+       daha önce onboarding'i tamamlamış mı diye bakıp doğru yere yönlendirir. -->
+  <noscript><meta http-equiv="refresh" content="0; url=asistan.html"></noscript>
+  <link rel="manifest" href="manifest.json">
+  <title>ONE Global</title>
+</head>
+<body style="background:#07111F">
+  <script>
+    try {
+      var target = (localStorage.getItem('one-onboarded') === '1') ? 'asistan.html' : 'hosgeldin.html';
+      window.location.replace(target);
+    } catch (e) {
+      window.location.replace('asistan.html');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bellek — ONE Global</title>
+
+  <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          chart1: 'rgb(57 215 255 / <alpha-value>)',
+          chart2: 'rgb(167 139 250 / <alpha-value>)',
+          chart3: 'rgb(61 219 165 / <alpha-value>)',
+          chart4: 'rgb(112 167 255 / <alpha-value>)',
+          chart5: 'rgb(242 182 109 / <alpha-value>)',
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+</script>
+
+  <!-- Iconify Web Component -->
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+  <!-- Design Tokens + Custom Classes -->
+  <style>
+  :root {
+    --color-background: #07111F;
+    --color-foreground: #EFF7FF;
+    --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C;
+    --color-secondary: #162A46;
+    --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA;
+    --color-accent-foreground: #130D28;
+    --color-muted: #10213A;
+    --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30;
+    --color-card-foreground: #EFF7FF;
+    --color-border: #28415F;
+    --color-input: #102540;
+    --color-destructive: #FF657A;
+    --color-destructive-foreground: #26040A;
+    --color-success: #3DDBA5;
+    --color-success-foreground: #031B14;
+    --color-chart1: #39D7FF;
+    --color-chart2: #A78BFA;
+    --color-chart3: #3DDBA5;
+    --color-chart4: #70A7FF;
+    --color-chart5: #F2B66D;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ONE Global">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="h-screen w-screen overflow-hidden">
+    <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-36">
+      <div class="pointer-events-none absolute -top-28 -right-24 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
+      <div class="pointer-events-none absolute top-32 -left-32 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
+
+      <header class="relative px-5 pt-12">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="mb-2 flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-accent shadow-[0_0_12px_rgba(167,139,250,0.9)]"></span>
+              <span class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Kişisel bağlam</span>
+            </div>
+            <h1 class="font-heading text-3xl font-semibold tracking-tight">Bellek</h1>
+            <p class="mt-1 text-sm text-muted-foreground">ONE Global'ın seninle konuştuğu gerçek sohbet geçmişi</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="relative px-5 pt-5">
+        <section class="rounded-[24px] border border-primary/30 bg-card p-4 shadow-[0_0_28px_rgba(57,215,255,0.09)]">
+          <div class="flex items-start gap-3">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-theme bg-primary/12 text-primary ring-1 ring-primary/25">
+              <iconify-icon icon="lucide:shield-check" class="text-xl"></iconify-icon>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h2 class="font-heading text-base font-semibold">Burada ne var?</h2>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">Bu ekran Asistan sekmesindeki gerçek sohbetlerinin geçmişi — uydurma bir "öğrenilen bilgi" listesi değil. Sadece bu cihazdaki kimliğine bağlı; istediğin zaman aşağıdan tamamen silebilirsin.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-5">
+          <div class="mb-3 flex items-center justify-between">
+            <div>
+              <h2 class="font-heading text-lg font-semibold">Sohbet geçmişin</h2>
+              <p id="memory-count" class="mt-1 text-xs text-muted-foreground">Yükleniyor…</p>
+            </div>
+            <button id="btn-clear-memory" class="flex items-center gap-1.5 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive">
+              <iconify-icon icon="lucide:trash-2" class="text-sm"></iconify-icon>
+              Geçmişi sil
+            </button>
+          </div>
+
+          <div id="memory-empty" class="hidden rounded-theme border border-border bg-card p-6 text-center">
+            <iconify-icon icon="lucide:message-circle-dashed" class="text-3xl text-muted-foreground"></iconify-icon>
+            <p class="mt-3 text-sm text-muted-foreground">Henüz bir sohbetin yok. Asistan sekmesinden ONE Global'a bir şey sor, geçmişin burada görünecek.</p>
+          </div>
+
+          <div id="memory-log" class="max-h-[55vh] space-y-2.5 overflow-y-auto rounded-theme border border-border bg-card/60 p-3"></div>
+        </section>
+
+        <section class="mt-6 rounded-[22px] border border-accent/25 bg-accent/8 p-4">
+          <div class="flex items-start gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent">
+              <iconify-icon icon="lucide:sparkles" class="text-xl"></iconify-icon>
+            </div>
+            <div>
+              <h2 class="font-heading text-sm font-semibold">ONE Global bunu nasıl kullanır?</h2>
+              <p class="mt-2 text-xs leading-5 text-muted-foreground">ONE Global, sohbete devam ederken son konuşmalarını hatırlamak için bu geçmişi kullanır (yaklaşık son 20 karşılıklı mesaj). Cihaz/tarayıcı verilerini silersen veya "Geçmişi sil"e basarsan bu bağlam da tamamen kaybolur — kalıcı bir profil veya sana dair "gerçek dışı çıkarım" oluşturmaz, sadece konuşmanın kendisini saklar.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav data-fv-tabbar class="fixed bottom-5 left-4 right-4 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-2 shadow-2xl backdrop-blur-2xl">
+        <a data-fv-tab="Asistan" href="asistan.html" class="flex h-12 min-w-[72px] flex-col items-center justify-center gap-1 px-3 text-muted-foreground">
+          <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-semibold">Asistan</span>
+        </a>
+        <a data-fv-tab="Otomasyonlar" href="otomasyonlar.html" class="flex h-12 min-w-[72px] flex-col items-center justify-center gap-1 px-2 text-muted-foreground">
+          <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-semibold">Otomasyonlar</span>
+        </a>
+        <a data-fv-tab="Bellek" data-fv-tab-active="true" href="bellek.html" class="flex h-12 min-w-[58px] flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-2 text-primary ring-1 ring-primary/35">
+          <iconify-icon icon="lucide:brain-circuit" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-bold">Bellek</span>
+        </a>
+        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-[58px] flex-col items-center justify-center gap-1 px-2 text-muted-foreground">
+          <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-semibold">Cihazlar</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+  <script>
+    // Icon self-healing: a missing icon name renders as INVISIBLE empty space
+    // (iconify-icon fails silently). Its `status` property ('rendered' |
+    // 'loading' | 'failed') lets us swap failures to a neutral glyph.
+    (function() {
+      var els = document.querySelectorAll('iconify-icon');
+      for (var i = 0; i < els.length; i++) (function(el) {
+        var tries = 0;
+        (function check() {
+          var s = el.status;
+          if (s === 'failed') el.setAttribute('icon', 'lucide:circle');
+          else if (s !== 'rendered' && tries++ < 40) setTimeout(check, 250);
+        })();
+      })(els[i]);
+    })();
+  </script>
+
+  <script>
+    (function () {
+      'use strict';
+      var SUB_ID_KEY = 'one-sub-id';
+      function getSubId() {
+        var id = localStorage.getItem(SUB_ID_KEY);
+        if (!id) {
+          id = (crypto.randomUUID ? crypto.randomUUID() : 'one-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+          localStorage.setItem(SUB_ID_KEY, id);
+        }
+        return id;
+      }
+
+      var logEl = document.getElementById('memory-log');
+      var emptyEl = document.getElementById('memory-empty');
+      var countEl = document.getElementById('memory-count');
+      var clearBtn = document.getElementById('btn-clear-memory');
+
+      function addBubble(role, text) {
+        var wrap = document.createElement('div');
+        wrap.className = role === 'user'
+          ? 'ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary/15 px-3 py-2 text-xs leading-5 text-foreground'
+          : 'mr-auto max-w-[85%] rounded-2xl rounded-bl-sm bg-secondary px-3 py-2 text-xs leading-5 text-secondary-foreground';
+        wrap.style.whiteSpace = 'pre-wrap';
+        wrap.textContent = text;
+        logEl.appendChild(wrap);
+      }
+
+      function loadMemory() {
+        fetch('/api/chat?id=' + encodeURIComponent(getSubId()))
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            var messages = (data && Array.isArray(data.messages)) ? data.messages : [];
+            if (messages.length === 0) {
+              emptyEl.classList.remove('hidden');
+              logEl.classList.add('hidden');
+              countEl.textContent = '0 mesaj';
+              return;
+            }
+            emptyEl.classList.add('hidden');
+            logEl.classList.remove('hidden');
+            logEl.innerHTML = '';
+            messages.forEach(function (m) { addBubble(m.role === 'user' ? 'user' : 'assistant', m.content); });
+            logEl.scrollTop = logEl.scrollHeight;
+            countEl.textContent = messages.length + ' mesaj';
+          })
+          .catch(function () {
+            countEl.textContent = 'Geçmiş yüklenemedi.';
+          });
+      }
+      loadMemory();
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function () {
+          if (!window.confirm('Tüm sohbet geçmişini silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
+          clearBtn.disabled = true;
+          fetch('/api/chat?id=' + encodeURIComponent(getSubId()), { method: 'DELETE' })
+            .then(function () { loadMemory(); })
+            .catch(function () {})
+            .finally(function () { clearBtn.disabled = false; });
+        });
+      }
+
+    // ---- ONE Global cross-screen navigation helpers ----
+    function wireNavByText(text, url, tag) {
+      // Match only elements of the exact tag (button/article), on their OWN
+      // text. (Previous version also matched generic ancestor <div>s, which
+      // could bind the click handler to a huge wrapping container and hijack
+      // clicks anywhere on the page — fixed here.)
+      var candidates = document.querySelectorAll(tag);
+      for (var i = 0; i < candidates.length; i++) {
+        var el = candidates[i];
+        if ((el.textContent || '').indexOf(text) === -1) continue;
+        if (el.dataset.oneWired) continue;
+        el.dataset.oneWired = '1';
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', function (e) {
+          window.location.href = url;
+        });
+        break;
+      }
+    }
+    function wireNavByAriaLabel(label, url) {
+      var el = document.querySelector('[aria-label="' + label + '"]');
+      if (!el) return;
+      el.addEventListener('click', function () {
+        window.location.href = url;
+      });
+    }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        
+      });
+    })();
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js').catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

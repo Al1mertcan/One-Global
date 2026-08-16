@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistan — ONE Global</title>
+
+  <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          chart1: 'rgb(57 215 255 / <alpha-value>)',
+          chart2: 'rgb(167 139 250 / <alpha-value>)',
+          chart3: 'rgb(61 219 165 / <alpha-value>)',
+          chart4: 'rgb(112 167 255 / <alpha-value>)',
+          chart5: 'rgb(242 182 109 / <alpha-value>)',
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+</script>
+
+  <!-- Iconify Web Component -->
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+  <!-- Design Tokens + Custom Classes -->
+  <style>
+  :root {
+    --color-background: #07111F;
+    --color-foreground: #EFF7FF;
+    --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C;
+    --color-secondary: #162A46;
+    --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA;
+    --color-accent-foreground: #130D28;
+    --color-muted: #10213A;
+    --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30;
+    --color-card-foreground: #EFF7FF;
+    --color-border: #28415F;
+    --color-input: #102540;
+    --color-destructive: #FF657A;
+    --color-destructive-foreground: #26040A;
+    --color-success: #3DDBA5;
+    --color-success-foreground: #031B14;
+    --color-chart1: #39D7FF;
+    --color-chart2: #A78BFA;
+    --color-chart3: #3DDBA5;
+    --color-chart4: #70A7FF;
+    --color-chart5: #F2B66D;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ONE Global">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="h-screen w-screen overflow-hidden">
+    <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-36">
+      <div class="pointer-events-none absolute -top-32 -right-28 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
+      <div class="pointer-events-none absolute top-[430px] -left-36 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
+
+      
+    <div id="install-banner" class="fade-in relative mx-5 mt-4 hidden items-center gap-3 rounded-theme border border-primary/30 bg-card p-3 shadow-lg" style="animation: fadeIn .25s ease-out;">
+      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
+        <iconify-icon icon="lucide:download" class="text-lg"></iconify-icon>
+      </div>
+      <p id="install-banner-text" class="min-w-0 flex-1 text-xs leading-5 text-muted-foreground">ONE Global'ı ana ekranına ekleyip uygulama gibi kullanabilirsin.</p>
+      <button id="btn-install" class="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground active:opacity-90">Kur</button>
+      <button id="btn-install-dismiss" aria-label="Kapat" class="shrink-0 text-muted-foreground">
+        <iconify-icon icon="lucide:x" class="text-base"></iconify-icon>
+      </button>
+    </div>
+
+    <header class="relative px-5 pt-12">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-[15px] border border-primary/25 bg-primary/10 text-primary shadow-[0_0_20px_rgba(57,215,255,0.12)]">
+              <iconify-icon icon="lucide:sparkles" class="text-xl"></iconify-icon>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground" data-i18n="kicker">Komuta zekân</p>
+              <h1 class="mt-1 font-heading text-xl font-semibold tracking-tight" data-i18n="greeting">Günaydın</h1>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-[15px] border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
+            <a href="ayarlar.html" aria-label="Bildirimleri aç" class="relative flex h-11 w-11 items-center justify-center rounded-[15px] border border-border bg-card text-card-foreground">
+              <iconify-icon icon="lucide:bell" class="text-xl"></iconify-icon>
+              <span class="absolute right-2.5 top-2 h-2 w-2 rounded-full bg-primary shadow-[0_0_9px_rgba(57,215,255,0.9)]"></span>
+            </a>
+          </div>
+        </div>
+        <div class="mt-5 flex items-center justify-between rounded-theme border border-success/20 bg-success/5 px-3.5 py-2.5">
+          <div class="flex items-center gap-2.5">
+            <span class="h-2 w-2 rounded-full bg-success shadow-[0_0_10px_rgba(61,219,165,0.85)]"></span>
+            <span class="text-xs font-semibold text-success" data-i18n="statusReady">Tüm sistemler hazır</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <iconify-icon icon="lucide:shield-check" class="text-sm text-success"></iconify-icon>
+            <span data-i18n="encrypted">Uçtan uca şifreli</span>
+          </div>
+        </div>
+        <a href="abonelik.html" class="mt-3 flex items-center justify-between rounded-theme border border-primary/25 bg-primary/5 px-3.5 py-2.5">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:sparkles" class="text-base text-primary"></iconify-icon>
+            <span class="text-xs font-semibold text-primary" data-i18n="planPill">ONE Global Plan · Türkiye'de ayda 10 TL</span>
+          </div>
+          <iconify-icon icon="lucide:chevron-right" class="text-base text-primary"></iconify-icon>
+        </a>
+      </header>
+
+      <main class="relative px-5 pt-5">
+        <section class="rounded-[24px] border border-primary/25 bg-primary/5 p-4">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:heart-handshake" class="text-lg text-primary"></iconify-icon>
+            <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="memberCountTitle">ONE Global ailesi</h2>
+          </div>
+          <p id="member-count-number" class="mt-2 font-heading text-3xl font-bold tracking-tight text-foreground" data-i18n="memberCountLoading">Yükleniyor…</p>
+          <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-card">
+            <div id="member-count-bar" class="h-full rounded-full bg-primary transition-[width] duration-700" style="width:0%"></div>
+          </div>
+          <p id="member-count-goal-text" class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="memberCountGoalText">1 milyona ulaştığımızda, her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılmaya başlayacak.</p>
+          <p id="member-count-active-text" class="mt-2 hidden text-[11px] font-semibold leading-5 text-success" data-i18n="memberCountActiveText">Şu an her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılıyor. Sıradaki hedefimiz: 1 milyar üye.</p>
+        </section>
+
+        <section class="mt-5 rounded-[24px] border border-accent/25 bg-accent/5 p-4">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:sparkle" class="text-lg text-accent"></iconify-icon>
+            <h2 class="font-heading text-sm font-semibold text-accent" data-i18n="goodNewsTitle">Bugünün iyi haberleri</h2>
+          </div>
+          <p class="mt-1 text-[11px] text-muted-foreground" data-i18n="goodNewsSubtitle">Dünyadan gerçek, güzel gelişmeler — yüzün gülsün diye.</p>
+          <div id="good-news-list" class="mt-3 space-y-3">
+            <p id="good-news-loading" class="text-xs text-muted-foreground" data-i18n="goodNewsLoading">Yükleniyor…</p>
+          </div>
+          <p id="good-news-error" class="mt-1 hidden text-xs text-muted-foreground" data-i18n="goodNewsError">Şu an iyi haberler yüklenemedi — az sonra tekrar dene.</p>
+        </section>
+
+        <section class="relative mt-5 flex flex-col items-center rounded-[28px] border border-border bg-card/80 px-4 pb-5 pt-3 shadow-[0_20px_55px_rgba(0,0,0,0.24)]">
+          <div class="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-[56%] rounded-full border border-primary/10"></div>
+          <div class="pointer-events-none absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-[56%] rounded-full border border-accent/15"></div>
+          <div class="pointer-events-none absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-[56%] rounded-full border border-primary/20"></div>
+          <div class="relative flex h-44 w-52 items-center justify-center">
+            <div class="absolute h-28 w-28 rounded-full bg-primary/10 blur-2xl"></div>
+            <img data-image-id="e6311eab-82f8-4c71-940d-d887a5ab157d" data-image-intent="a compact digital intelligence core made of liquid cyan, violet, and cobalt light filaments, elegant translucent spherical energy object, refined futuristic studio render, no text or logo" data-image-type="illustration" data-image-aspect="1:1" data-image-background="transparent" alt="ONE Global zeka çekirdeği" class="relative h-40 w-40 object-contain drop-shadow-[0_0_24px_rgba(57,215,255,0.35)]" src="https://fwtngjyirchhhysukjxi.supabase.co/storage/v1/object/public/project-images/04663a2a-9985-48d6-9d24-63be36d4a700/e6311eab-82f8-4c71-940d-d887a5ab157d.png">
+          </div>
+          <div class="relative -mt-1 flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-success shadow-[0_0_10px_rgba(61,219,165,0.9)]"></span>
+            <span class="font-heading text-lg font-semibold" data-i18n="orbReady">Hazır</span>
+          </div>
+          <p class="mt-1.5 text-center text-xs text-muted-foreground" data-i18n="orbSub">Seni dinliyor · bağlamın güncel</p>
+        </section>
+
+        <section class="mt-6">
+          <div class="mb-3 flex items-center justify-between">
+            <div>
+              <h2 class="font-heading text-lg font-semibold" data-i18n="quickStartTitle">Hızlı başlangıç</h2>
+              <p class="mt-1 text-xs text-muted-foreground" data-i18n="quickStartSub">Şu an gerçekten yapabildiklerin</p>
+            </div>
+          </div>
+          <div class="flex gap-3 overflow-x-auto pb-1">
+            <article id="quick-start-command" class="min-w-[218px] cursor-pointer rounded-[20px] border border-border bg-card p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <iconify-icon icon="lucide:message-circle" class="text-lg"></iconify-icon>
+                </div>
+              </div>
+              <h3 class="mt-3 text-sm font-semibold" data-i18n="quickStartChatTitle">ONE Global'a bir şey sor</h3>
+              <p class="mt-1.5 text-xs leading-5 text-muted-foreground" data-i18n="quickStartChatDesc">Aşağıdaki kutuya yaz, gerçek bir yapay zeka sohbeti başlasın.</p>
+              <span class="mt-3 inline-flex items-center text-xs font-bold text-primary" data-i18n="quickStartGo">Başlat <iconify-icon icon="lucide:arrow-right" class="ml-1 align-middle text-sm"></iconify-icon></span>
+            </article>
+            <article id="quick-start-routine" class="min-w-[218px] cursor-pointer rounded-[20px] border border-border bg-card p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/12 text-accent">
+                  <iconify-icon icon="lucide:bell-ring" class="text-lg"></iconify-icon>
+                </div>
+              </div>
+              <h3 class="mt-3 text-sm font-semibold" data-i18n="quickStartRoutineTitle">Günlük rutinini ayarla</h3>
+              <p class="mt-1.5 text-xs leading-5 text-muted-foreground" data-i18n="quickStartRoutineDesc">Uyanma, ev, uyku saatlerine göre gerçek bildirimler al.</p>
+              <span class="mt-3 inline-flex items-center text-xs font-bold text-primary" data-i18n="quickStartGo">Başlat <iconify-icon icon="lucide:arrow-right" class="ml-1 align-middle text-sm"></iconify-icon></span>
+            </article>
+          </div>
+        </section>
+
+        <section class="mt-6">
+          <div class="mb-3 flex items-center justify-between">
+            <div>
+              <h2 class="font-heading text-lg font-semibold" data-i18n="commandTitle">Komut ver</h2>
+              <p class="mt-1 text-xs text-muted-foreground" data-i18n="commandSub">ONE Global ne yapacağını anlar ve sınırlarını sana gösterir.</p>
+            </div>
+            <iconify-icon icon="lucide:lock-keyhole" class="text-base text-success"></iconify-icon>
+          </div>
+
+          <div id="one-chat-log" class="mb-3 hidden max-h-80 space-y-2.5 overflow-y-auto rounded-[22px] border border-border bg-card/60 p-3"></div>
+          <p id="one-chat-error" class="mb-2 hidden rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-[11px] text-destructive"></p>
+
+          <form id="one-chat-form" class="rounded-[22px] border border-primary/30 bg-card p-3 shadow-[0_0_24px_rgba(57,215,255,0.06)]">
+            <label for="komut" class="sr-only">ONE Global'a komut ver</label>
+            <input id="komut" type="text" autocomplete="off" data-i18n-placeholder="commandPlaceholder" class="w-full bg-transparent px-1 py-2 text-sm text-card-foreground outline-none placeholder:text-muted-foreground" placeholder="Örneğin: Yarınki toplantıya hazırlan..." />
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <div class="flex items-center gap-1">
+                <button type="button" aria-label="Dosya ekle" class="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:bg-secondary">
+                  <iconify-icon icon="lucide:paperclip" class="text-lg"></iconify-icon>
+                </button>
+                <button type="button" aria-label="Sesli görev başlat" class="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:bg-secondary">
+                  <iconify-icon icon="lucide:mic" class="text-lg"></iconify-icon>
+                </button>
+                <span class="ml-1 text-[10px] text-muted-foreground">Hassas eylemler senden onay ister</span>
+              </div>
+              <button id="one-chat-submit" type="submit" aria-label="Komutu gönder" class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_0_18px_rgba(57,215,255,0.3)]">
+                <iconify-icon icon="lucide:arrow-up" class="text-lg"></iconify-icon>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="mt-6">
+          <div class="mb-3 flex items-center justify-between">
+            <div>
+              <h2 class="font-heading text-lg font-semibold" data-i18n="devicesPreviewTitle">Cihaz kontrolü</h2>
+              <p class="mt-1 text-xs text-muted-foreground" data-i18n="devicesPreviewSub">Henüz yok — dürüstçe açıklıyoruz</p>
+            </div>
+          </div>
+          <a href="cihazlar.html" class="flex items-center gap-3 rounded-[22px] border border-border bg-card p-4">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-theme bg-secondary text-muted-foreground">
+              <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-semibold" data-i18n="devicesPreviewCardTitle">ONE Global henüz cihazlarını kontrol edemiyor</p>
+              <p class="mt-1 text-[11px] text-muted-foreground" data-i18n="devicesPreviewCardDesc">Detaylar ve yol haritası için dokun</p>
+            </div>
+            <iconify-icon icon="lucide:chevron-right" class="text-lg text-muted-foreground"></iconify-icon>
+          </a>
+        </section>
+      </main>
+
+      <nav data-fv-tabbar class="fixed bottom-5 left-4 right-4 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-2 shadow-2xl backdrop-blur-2xl">
+        <a data-fv-tab="Asistan" data-fv-tab-active="true" href="asistan.html" class="flex h-12 min-w-[72px] flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-3 text-primary ring-1 ring-primary/35">
+          <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-bold" data-i18n="tabAssistant">Asistan</span>
+        </a>
+        <a data-fv-tab="Otomasyonlar" href="otomasyonlar.html" class="flex h-12 min-w-[72px] flex-col items-center justify-center gap-1 rounded-[17px] px-3 text-muted-foreground">
+          <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-semibold" data-i18n="tabAutomations">Otomasyonlar</span>
+        </a>
+        <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-[58px] flex-col items-center justify-center gap-1 px-2 text-muted-foreground">
+          <iconify-icon icon="lucide:brain-circuit" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-semibold" data-i18n="tabMemory">Bellek</span>
+        </a>
+        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-[58px] flex-col items-center justify-center gap-1 px-2 text-muted-foreground">
+          <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
+          <span class="text-[10px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+  <script>
+    // Icon self-healing: a missing icon name renders as INVISIBLE empty space
+    // (iconify-icon fails silently). Its `status` property ('rendered' |
+    // 'loading' | 'failed') lets us swap failures to a neutral glyph.
+    (function() {
+      var els = document.querySelectorAll('iconify-icon');
+      for (var i = 0; i < els.length; i++) (function(el) {
+        var tries = 0;
+        (function check() {
+          var s = el.status;
+          if (s === 'failed') el.setAttribute('icon', 'lucide:circle');
+          else if (s !== 'rendered' && tries++ < 40) setTimeout(check, 250);
+        })();
+      })(els[i]);
+    })();
+  </script>
+
+  <script>
+    (function () {
+      'use strict';
+      
+    // ---- ONE Global cross-screen navigation helpers ----
+    function wireNavByText(text, url, tag) {
+      // Match only elements of the exact tag (button/article), on their OWN
+      // text. (Previous version also matched generic ancestor <div>s, which
+      // could bind the click handler to a huge wrapping container and hijack
+      // clicks anywhere on the page — fixed here.)
+      var candidates = document.querySelectorAll(tag);
+      for (var i = 0; i < candidates.length; i++) {
+        var el = candidates[i];
+        if ((el.textContent || '').indexOf(text) === -1) continue;
+        if (el.dataset.oneWired) continue;
+        el.dataset.oneWired = '1';
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', function (e) {
+          window.location.href = url;
+        });
+        break;
+      }
+    }
+    function wireNavByAriaLabel(label, url) {
+      var el = document.querySelector('[aria-label="' + label + '"]');
+      if (!el) return;
+      el.addEventListener('click', function () {
+        window.location.href = url;
+      });
+    }
+
+      document.addEventListener('DOMContentLoaded', function () {
+
+      // Hızlı başlangıç kartları -> gerçek eylemler
+      var qsCommand = document.getElementById('quick-start-command');
+      if (qsCommand) qsCommand.addEventListener('click', function () {
+        var input = document.getElementById('komut');
+        if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
+      });
+      var qsRoutine = document.getElementById('quick-start-routine');
+      if (qsRoutine) qsRoutine.addEventListener('click', function () {
+        window.location.href = 'ayarlar.html';
+      });
+
+      });
+    })();
+  </script>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+  <script>
+    (function () {
+      'use strict';
+      var installBanner = document.getElementById('install-banner');
+      var installBannerText = document.getElementById('install-banner-text');
+      var btnInstall = document.getElementById('btn-install');
+      var btnInstallDismiss = document.getElementById('btn-install-dismiss');
+      var deferredInstallPrompt = null;
+
+      function isStandalone() {
+        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      }
+      function isIOS() {
+        return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+      }
+      function bannerDismissed() {
+        try { return sessionStorage.getItem('one-install-dismissed') === '1'; } catch (e) { return false; }
+      }
+      function dismissBanner() {
+        installBanner.classList.add('hidden');
+        installBanner.classList.remove('flex');
+        try { sessionStorage.setItem('one-install-dismissed', '1'); } catch (e) {}
+      }
+
+      if (!isStandalone() && !bannerDismissed()) {
+        if (isIOS()) {
+          installBannerText.textContent = "ONE Global'ı uygulama gibi kullanmak için: Paylaş (square with an up arrow) -> \"Ana Ekrana Ekle\"";
+          btnInstall.classList.add('hidden');
+          installBanner.classList.remove('hidden');
+          installBanner.classList.add('flex');
+        } else {
+          window.addEventListener('beforeinstallprompt', function (event) {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            installBanner.classList.remove('hidden');
+            installBanner.classList.add('flex');
+          });
+        }
+      }
+
+      btnInstall.addEventListener('click', function () {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.finally(function () {
+          deferredInstallPrompt = null;
+          dismissBanner();
+        });
+      });
+      btnInstallDismiss.addEventListener('click', dismissBanner);
+      window.addEventListener('appinstalled', dismissBanner);
+    })();
+  </script>
+  <script>
+    (function () {
+      'use strict';
+      var form = document.getElementById('one-chat-form');
+      var input = document.getElementById('komut');
+      var log = document.getElementById('one-chat-log');
+      var errorBox = document.getElementById('one-chat-error');
+      var submitBtn = document.getElementById('one-chat-submit');
+      var history = [];
+
+      // Diğer ekranlarla (ayarlar.html, hosgeldin.html) aynı kalıcı kimlik —
+      // bu sayede sohbet geçmişi ("Bellek") aynı kişiye bağlanabiliyor.
+      var SUB_ID_KEY = 'one-sub-id';
+      function getSubId() {
+        var id = localStorage.getItem(SUB_ID_KEY);
+        if (!id) {
+          id = (crypto.randomUUID ? crypto.randomUUID() : 'one-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+          localStorage.setItem(SUB_ID_KEY, id);
+        }
+        return id;
+      }
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.classList.remove('hidden');
+      }
+      function clearError() {
+        errorBox.classList.add('hidden');
+        errorBox.textContent = '';
+      }
+      function addBubble(role, text) {
+        log.classList.remove('hidden');
+        var wrap = document.createElement('div');
+        wrap.className = role === 'user'
+          ? 'ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary/15 px-3 py-2 text-xs leading-5 text-foreground'
+          : 'mr-auto max-w-[85%] rounded-2xl rounded-bl-sm bg-secondary px-3 py-2 text-xs leading-5 text-secondary-foreground';
+        wrap.style.whiteSpace = 'pre-wrap';
+        wrap.textContent = text;
+        log.appendChild(wrap);
+        log.scrollTop = log.scrollHeight;
+        return wrap;
+      }
+
+      // Sayfa açılışında, daha önceki gerçek sohbet geçmişini sunucudan
+      // yükle ve göster (Bellek sekmesindeki gerçek geçmişin aynısı).
+      function loadHistory() {
+        fetch('/api/chat?id=' + encodeURIComponent(getSubId()))
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            if (data && Array.isArray(data.messages) && data.messages.length) {
+              history = data.messages;
+              history.forEach(function (m) { addBubble(m.role === 'user' ? 'user' : 'assistant', m.content); });
+            }
+          })
+          .catch(function () { /* geçmiş yüklenemezse sessizce boş başla */ });
+      }
+      loadHistory();
+
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var text = (input.value || '').trim();
+          if (!text) return;
+          clearError();
+          addBubble('user', text);
+          history.push({ role: 'user', content: text });
+          input.value = '';
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-50');
+          var thinking = addBubble('assistant', 'Yazıyor…');
+
+          fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ id: getSubId(), messages: history }),
+          })
+            .then(function (res) {
+              return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+            })
+            .then(function (result) {
+              if (!result.ok) {
+                thinking.remove();
+                showError(result.data && result.data.error ? result.data.error : 'Bir şeyler ters gitti.');
+                return;
+              }
+              var reply = (result.data && result.data.text) || '(Boş cevap)';
+              thinking.textContent = reply;
+              history.push({ role: 'assistant', content: reply });
+            })
+            .catch(function (err) {
+              thinking.remove();
+              showError('Sunucuya ulaşılamadı: ' + err.message);
+            })
+            .finally(function () {
+              submitBtn.disabled = false;
+              submitBtn.classList.remove('opacity-50');
+            });
+        });
+      }
+    })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js').catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+  <script>
+    (function () {
+      'use strict';
+      var listEl = document.getElementById('good-news-list');
+      var loadingEl = document.getElementById('good-news-loading');
+      var errorEl = document.getElementById('good-news-error');
+
+      function render(items) {
+        listEl.innerHTML = '';
+        items.forEach(function (item) {
+          var card = document.createElement('a');
+          card.href = item.url || '#';
+          card.target = '_blank';
+          card.rel = 'noopener noreferrer';
+          card.className = 'block rounded-xl border border-border bg-card/60 p-3';
+          var h = document.createElement('p');
+          h.className = 'text-xs font-semibold text-card-foreground';
+          h.textContent = item.headline || '';
+          var s = document.createElement('p');
+          s.className = 'mt-1 text-[11px] leading-5 text-muted-foreground';
+          s.textContent = item.summary || '';
+          var src = document.createElement('p');
+          src.className = 'mt-1 text-[10px] text-primary';
+          src.textContent = item.source || '';
+          card.appendChild(h);
+          card.appendChild(s);
+          if (item.source) card.appendChild(src);
+          listEl.appendChild(card);
+        });
+      }
+
+      function loadGoodNews() {
+        var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+        fetch('/api/good-news?lang=' + encodeURIComponent(lang))
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+          .then(function (result) {
+            if (!result.ok || !result.data || !Array.isArray(result.data.items)) throw new Error('bad response');
+            render(result.data.items);
+          })
+          .catch(function () {
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+          });
+      }
+      loadGoodNews();
+    })();
+  </script>
+  <script>
+    (function () {
+      'use strict';
+      var numberEl = document.getElementById('member-count-number');
+      var barEl = document.getElementById('member-count-bar');
+      var goalTextEl = document.getElementById('member-count-goal-text');
+      var activeTextEl = document.getElementById('member-count-active-text');
+
+      function formatNumber(n) {
+        var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+        try { return n.toLocaleString(lang); } catch (e) { return String(n); }
+      }
+
+      function render(data) {
+        numberEl.textContent = formatNumber(data.count);
+        if (data.donationActive) {
+          goalTextEl.classList.add('hidden');
+          activeTextEl.classList.remove('hidden');
+          barEl.style.width = Math.min(100, (data.count / data.nextGoal) * 100) + '%';
+        } else {
+          goalTextEl.classList.remove('hidden');
+          activeTextEl.classList.add('hidden');
+          barEl.style.width = Math.min(100, (data.count / data.goal) * 100) + '%';
+        }
+      }
+
+      function loadMemberCount() {
+        fetch('/api/member-count')
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+          .then(function (result) {
+            if (!result.ok || typeof result.data.count !== 'number') throw new Error('bad response');
+            render(result.data);
+          })
+          .catch(function () {
+            numberEl.textContent = '—';
+          });
+      }
+      loadMemberCount();
+    })();
+  </script>
+  <script src="i18n.js"></script>
+</body>
+</html>

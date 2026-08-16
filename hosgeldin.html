@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoş geldin — ONE Global</title>
+
+  <!-- Zaten onboarding'i tamamlamış bir kullanıcıysa, kart görünmeden önce
+       doğrudan asistan.html'e yönlendir (yanıp sönmeyi önlemek için head
+       içinde, mümkün olduğunca erken çalışır). -->
+  <script>
+    try {
+      if (localStorage.getItem('one-onboarded') === '1') {
+        location.replace('asistan.html');
+      }
+    } catch (e) {}
+  </script>
+
+  <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          chart1: 'rgb(57 215 255 / <alpha-value>)',
+          chart2: 'rgb(167 139 250 / <alpha-value>)',
+          chart3: 'rgb(61 219 165 / <alpha-value>)',
+          chart4: 'rgb(112 167 255 / <alpha-value>)',
+          chart5: 'rgb(242 182 109 / <alpha-value>)',
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+  </script>
+
+  <!-- Iconify Web Component -->
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+  <style>
+  :root {
+    --color-background: #07111F;
+    --color-foreground: #EFF7FF;
+    --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C;
+    --color-secondary: #162A46;
+    --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA;
+    --color-accent-foreground: #130D28;
+    --color-muted: #10213A;
+    --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30;
+    --color-card-foreground: #EFF7FF;
+    --color-border: #28415F;
+    --color-input: #102540;
+    --color-destructive: #FF657A;
+    --color-destructive-foreground: #26040A;
+    --color-success: #3DDBA5;
+    --color-success-foreground: #031B14;
+    --color-chart1: #39D7FF;
+    --color-chart2: #A78BFA;
+    --color-chart3: #3DDBA5;
+    --color-chart4: #70A7FF;
+    --color-chart5: #F2B66D;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --radius: 16px;
+  }
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ONE Global">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden">
+    <div class="pointer-events-none absolute -top-32 -right-28 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute top-[430px] -left-36 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
+
+    <header class="relative flex items-center justify-end px-5 pt-6">
+      <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-theme border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
+    </header>
+
+    <main class="relative flex min-h-[calc(100vh-72px)] flex-col items-center justify-center px-6 pb-10 text-center">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary shadow-[0_0_28px_rgba(57,215,255,0.22)]">
+        <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
+      </div>
+
+      <h1 class="mt-6 max-w-sm font-heading text-2xl font-semibold leading-tight tracking-tight" data-i18n="onboardHeadline">Şu anki ve gelecekteki seni düşünen, iyi hissettirecek tek uygulama</h1>
+
+      <div class="mt-5 flex items-center gap-2 rounded-full border border-success/25 bg-success/10 px-4 py-2">
+        <iconify-icon icon="lucide:gift" class="text-base text-success"></iconify-icon>
+        <span class="text-xs font-bold text-success" data-i18n="planTrialBadge">İlk 1 hafta ücretsiz</span>
+      </div>
+
+      <p class="mt-4 max-w-xs text-sm leading-6 text-muted-foreground" data-i18n="onboardTrial">İlk 1 hafta ücretsiz, sonrasında Türkiye'de ayda 10 TL (diğer ülkelerde yerel para biriminin 1 birimi).</p>
+
+      <button id="btn-start" class="mt-8 flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-theme bg-primary text-sm font-bold text-primary-foreground shadow-[0_0_24px_rgba(57,215,255,0.3)]">
+        <span data-i18n="onboardCta">Ücretsiz Başla</span>
+        <iconify-icon icon="lucide:arrow-right" class="text-lg"></iconify-icon>
+      </button>
+      <p class="mt-3 text-[11px] text-muted-foreground" data-i18n="onboardNote">İstediğin zaman iptal edebilirsin.</p>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      var SUB_ID_KEY = 'one-sub-id';
+      function getSubId() {
+        var id = localStorage.getItem(SUB_ID_KEY);
+        if (!id) {
+          id = (crypto.randomUUID ? crypto.randomUUID() : 'one-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+          localStorage.setItem(SUB_ID_KEY, id);
+        }
+        return id;
+      }
+
+      function goToApp() {
+        try {
+          localStorage.setItem('one-onboarded', '1');
+          localStorage.setItem('one-trial-start', new Date().toISOString().slice(0, 10));
+        } catch (e) {}
+        location.href = 'asistan.html';
+      }
+
+      document.getElementById('btn-start').addEventListener('click', function () {
+        var id = getSubId();
+        // Sunucuya yeni üye kaydını bildir (ana ekrandaki gerçek üye
+        // sayacı için). `keepalive: true` önemli: bunsuz, hemen ardından
+        // yaptığımız sayfa yönlendirmesi tarayıcının bu isteği yarıda kesip
+        // iptal etmesine (net::ERR_ABORTED) yol açabilir — test sırasında
+        // tam da bunu tespit ettim. keepalive, istek arka planda devam
+        // ederken sayfadan hemen çıkabilmemizi sağlıyor; kullanıcıyı ağ
+        // isteğinin bitmesini bekletmemize gerek kalmıyor.
+        try {
+          fetch('/api/member-count', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id }),
+            keepalive: true,
+          }).catch(function () {});
+        } catch (e) {}
+        goToApp();
+      });
+    })();
+  </script>
+  <script>
+    // Icon self-healing (see asistan.html for full explanation).
+    (function() {
+      var els = document.querySelectorAll('iconify-icon');
+      for (var i = 0; i < els.length; i++) (function(el) {
+        var tries = 0;
+        (function check() {
+          var s = el.status;
+          if (s === 'failed') el.setAttribute('icon', 'lucide:circle');
+          else if (s !== 'rendered' && tries++ < 40) setTimeout(check, 250);
+        })();
+      })(els[i]);
+    })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js').catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+  <script src="i18n.js"></script>
+</body>
+</html>

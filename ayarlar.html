@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bildirimler & Rutin — ONE Global</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+  </script>
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+  <style>
+  :root {
+    --color-background: #07111F; --color-foreground: #EFF7FF; --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C; --color-secondary: #162A46; --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA; --color-muted: #10213A; --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30; --color-card-foreground: #EFF7FF; --color-border: #28415F; --color-input: #102540;
+    --color-success: #3DDBA5; --font-heading: 'Space Grotesk', sans-serif; --font-body: 'Manrope', sans-serif; --radius: 16px;
+  }
+  body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
+  input[type="time"] { color-scheme: dark; }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ONE Global">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-16">
+    <div class="pointer-events-none absolute -top-32 -right-28 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
+
+    <header class="relative px-5 pt-12">
+      <div class="flex items-center justify-between">
+        <a href="asistan.html" aria-label="Asistan'a dön" class="flex h-11 w-11 items-center justify-center rounded-theme border border-border bg-card/80 text-foreground shadow-lg backdrop-blur-xl">
+          <iconify-icon icon="lucide:arrow-left" class="text-xl"></iconify-icon>
+        </a>
+        <span class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Bildirimler &amp; Rutin</span>
+        <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-theme border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
+      </div>
+    </header>
+
+    <main class="relative px-5 pt-6">
+      <section class="rounded-[22px] border border-primary/25 bg-card p-4">
+        <div class="flex items-center gap-3">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-theme bg-primary/10 text-primary ring-1 ring-primary/25">
+            <iconify-icon icon="lucide:bell-ring" class="text-xl"></iconify-icon>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h1 class="font-heading text-base font-semibold">Günlük bildirimler</h1>
+            <p id="notif-status" class="mt-1 text-xs text-muted-foreground">Henüz açık değil.</p>
+          </div>
+        </div>
+        <button id="btn-toggle-notif" class="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-theme bg-primary text-sm font-bold text-primary-foreground">
+          <iconify-icon icon="lucide:bell-plus" class="text-lg"></iconify-icon>
+          <span id="btn-toggle-notif-label">Bildirimlere izin ver</span>
+        </button>
+        <p id="notif-error" class="mt-2 hidden rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-[11px] text-destructive"></p>
+        <p class="mt-3 text-[11px] leading-5 text-muted-foreground">
+          Bildirimler, uyanma / eve geliş / yatma saatlerine göre gönderilir: sabah bir minnettarlık
+          mesajı, 15 dk sonra spor, 15 dk sonra küçük bir beyin egzersizi ipucu; eve geldiğinde bir
+          "günü kapatma" kontrolü, 1 saat sonra okuma hatırlatması; yatmadan 1 saat önce diş fırçalama,
+          30 dk sonra (yatmadan yarım saat önce) küçük bir akşam sporu, yatma saatinde de günü
+          bırakma nudge'ı.
+        </p>
+      </section>
+
+      <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
+        <h2 class="font-heading text-sm font-semibold">Günlük ritmin</h2>
+        <div class="mt-3 space-y-3">
+          <label class="flex items-center justify-between gap-3">
+            <span class="text-sm text-card-foreground">🌅 Uyanma saatin</span>
+            <input id="wake-time" type="time" value="07:30" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-3">
+            <span class="text-sm text-card-foreground">🏠 Eve ortalama geliş saatin</span>
+            <input id="home-time" type="time" value="18:30" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-3">
+            <span class="text-sm text-card-foreground">🌙 Yatma saatin</span>
+            <input id="bed-time" type="time" value="23:00" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
+          </label>
+        </div>
+      </section>
+
+      <section class="mt-5 rounded-[22px] border border-accent/25 bg-accent/5 p-4">
+        <h2 class="font-heading text-sm font-semibold text-accent">En verimli uyku için</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">
+          Uyku ortalama ~90 dakikalık döngülerden oluşur; bir döngünün ortasında değil, döngü
+          bittiğinde uyanmak kendini daha dinç hissettirir. Buna göre (ortalama bir tahmin, tıbbi
+          tavsiye değildir) öneriler:
+        </p>
+        <div class="mt-3">
+          <p class="text-[11px] font-semibold text-muted-foreground">Bu saatte yatarsan, önerilen kalkış saatleri:</p>
+          <div id="wake-suggestions" class="mt-2 flex flex-wrap gap-2"></div>
+        </div>
+        <div class="mt-3">
+          <p class="text-[11px] font-semibold text-muted-foreground">Bu saatte kalkacaksan, önerilen yatış saatleri:</p>
+          <div id="bed-suggestions" class="mt-2 flex flex-wrap gap-2"></div>
+        </div>
+      </section>
+
+      <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
+        <h2 class="font-heading text-sm font-semibold">Hedeflerin</h2>
+        <div class="mt-3 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">💪 Şınav</span>
+            <div class="flex items-center gap-3">
+              <button data-step="pushups" data-delta="-5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
+              <span id="pushups-val" class="w-8 text-center font-heading text-base font-semibold">10</span>
+              <button data-step="pushups" data-delta="5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">+</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">🔥 Mekik</span>
+            <div class="flex items-center gap-3">
+              <button data-step="situps" data-delta="-5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
+              <span id="situps-val" class="w-8 text-center font-heading text-base font-semibold">20</span>
+              <button data-step="situps" data-delta="5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">+</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">📖 Sayfa (okuma hedefi)</span>
+            <div class="flex items-center gap-3">
+              <button data-step="pages" data-delta="-1" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
+              <span id="pages-val" class="w-8 text-center font-heading text-base font-semibold">5</span>
+              <button data-step="pages" data-delta="1" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">+</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
+        <h2 class="font-heading text-sm font-semibold">Hatırlatmalarım</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">
+          Buraya hiç hatırlatma eklemezsen, öğlen saat 12 civarı sana nazikçe
+          "aklında bir şey var mı?" diye soran bir bildirim gönderiyoruz.
+        </p>
+        <div class="mt-3 flex gap-2">
+          <input id="reminder-input" type="text" placeholder="Örneğin: Anneni ara" class="min-w-0 flex-1 rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground outline-none" />
+          <button id="btn-add-reminder" class="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground">Ekle</button>
+        </div>
+        <ul id="reminder-list" class="mt-3 space-y-2"></ul>
+      </section>
+
+      <button id="btn-save" class="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-theme border border-primary/40 bg-primary/10 text-sm font-bold text-primary">
+        <iconify-icon icon="lucide:check" class="text-lg"></iconify-icon>
+        Ayarları kaydet
+      </button>
+      <p id="save-confirm" class="mt-2 hidden text-center text-[11px] text-success">Kaydedildi.</p>
+
+      <section class="mt-6 rounded-[22px] border border-border bg-card p-4">
+        <h2 class="font-heading text-sm font-semibold">Hesabın</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">Şu an ONE Global'ı bu cihaza özel kullanıyorsun (şifre yok, hesap yok). E-postanla bir giriş bağlantısı alarak verilerini başka bir cihazdan da açabilirsin.</p>
+        <div class="mt-3 flex gap-2">
+          <label for="auth-email" class="sr-only">E-posta adresin</label>
+          <input id="auth-email" type="email" autocomplete="email" placeholder="ornek@eposta.com" class="h-11 flex-1 rounded-theme border border-border bg-input px-3 text-sm text-card-foreground outline-none placeholder:text-muted-foreground" />
+          <button id="btn-auth-request" class="flex h-11 items-center justify-center rounded-theme bg-primary px-4 text-xs font-bold text-primary-foreground">Bağlantı gönder</button>
+        </div>
+        <p id="auth-status" class="mt-2 hidden text-[11px] text-muted-foreground"></p>
+      </section>
+
+      <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
+        <h2 class="font-heading text-sm font-semibold">Verilerin</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">ONE Global hakkında sakladığı verileri (rutin ayarların, hatırlatmaların ve sohbet geçmişin) buradan indirebilir veya tamamen silebilirsin. Ayrıntılar için <a href="gizlilik.html" class="font-semibold text-primary">Gizlilik Politikası</a>'na bakabilirsin.</p>
+        <div class="mt-3 flex flex-col gap-2">
+          <button id="btn-export-data" class="flex h-11 w-full items-center justify-center gap-2 rounded-theme border border-border bg-input text-xs font-bold text-foreground">
+            <iconify-icon icon="lucide:download" class="text-base"></iconify-icon>
+            Verilerimi indir
+          </button>
+          <button id="btn-delete-data" class="flex h-11 w-full items-center justify-center gap-2 rounded-theme border border-destructive/30 bg-destructive/10 text-xs font-bold text-destructive">
+            <iconify-icon icon="lucide:trash-2" class="text-base"></iconify-icon>
+            Verilerimi ve hesabımı sil
+          </button>
+        </div>
+        <p id="data-action-status" class="mt-2 hidden text-center text-[11px] text-muted-foreground"></p>
+      </section>
+
+      <section class="mt-4 flex flex-col gap-2 text-sm font-semibold text-primary">
+        <a href="yardim.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5">Yardım <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
+        <a href="gizlilik.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5">Gizlilik Politikası <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
+        <a href="sartlar.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5">Kullanım Şartları <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Icon self-healing (see asistan.html).
+    (function() {
+      var els = document.querySelectorAll('iconify-icon');
+      for (var i = 0; i < els.length; i++) (function(el) {
+        var tries = 0;
+        (function check() {
+          var s = el.status;
+          if (s === 'failed') el.setAttribute('icon', 'lucide:circle');
+          else if (s !== 'rendered' && tries++ < 40) setTimeout(check, 250);
+        })();
+      })(els[i]);
+    })();
+  </script>
+  <script>
+    (function () {
+      'use strict';
+      var VAPID_PUBLIC_KEY = 'BA7Bk293hs0UT0ttbxRiH608XSYkoWeMAJM_HYTzWou3B1l-b2XMCzq-dXIwuHc88HDmmwaGcXUSnlqutBHhKKQ';
+
+      var els = {
+        status: document.getElementById('notif-status'),
+        toggleBtn: document.getElementById('btn-toggle-notif'),
+        toggleLabel: document.getElementById('btn-toggle-notif-label'),
+        error: document.getElementById('notif-error'),
+        wake: document.getElementById('wake-time'),
+        home: document.getElementById('home-time'),
+        bed: document.getElementById('bed-time'),
+        save: document.getElementById('btn-save'),
+        saveConfirm: document.getElementById('save-confirm'),
+      };
+      var counters = { pushups: 10, situps: 20, pages: 5 };
+      var STORAGE_KEY = 'one-notif-settings';
+      var SUB_ID_KEY = 'one-sub-id';
+
+      function urlBase64ToUint8Array(base64String) {
+        var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+        var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        var rawData = atob(base64);
+        var outputArray = new Uint8Array(rawData.length);
+        for (var i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+        return outputArray;
+      }
+      function getSubId() {
+        var id = localStorage.getItem(SUB_ID_KEY);
+        if (!id) {
+          id = (crypto.randomUUID ? crypto.randomUUID() : 'one-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+          localStorage.setItem(SUB_ID_KEY, id);
+        }
+        return id;
+      }
+      function loadSettings() {
+        try {
+          var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+          if (saved.wakeTime) els.wake.value = saved.wakeTime;
+          if (saved.homeTime) els.home.value = saved.homeTime;
+          if (saved.bedTime) els.bed.value = saved.bedTime;
+          if (saved.pushups) counters.pushups = saved.pushups;
+          if (saved.situps) counters.situps = saved.situps;
+          if (saved.pages) counters.pages = saved.pages;
+        } catch (e) {}
+        renderCounters();
+      }
+      // --- Uyku döngüsü önerileri (~90 dk / döngü + ~15 dk uykuya dalma süresi) ---
+      var CYCLE_MIN = 90;
+      var FALL_ASLEEP_MIN = 15;
+      function fmtTime(totalMin) {
+        var m = ((totalMin % 1440) + 1440) % 1440;
+        var h = Math.floor(m / 60);
+        var mm = m % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (mm < 10 ? '0' : '') + mm;
+      }
+      function parseTimeToMin(hhmm) {
+        var parts = (hhmm || '00:00').split(':');
+        return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      }
+      function renderSleepSuggestions() {
+        var bedMin = parseTimeToMin(els.bed.value);
+        var wakeMin = parseTimeToMin(els.wake.value);
+        var wakeBox = document.getElementById('wake-suggestions');
+        var bedBox = document.getElementById('bed-suggestions');
+        wakeBox.innerHTML = '';
+        bedBox.innerHTML = '';
+        [4, 5, 6].forEach(function (cycles) {
+          var suggestedWake = bedMin + FALL_ASLEEP_MIN + cycles * CYCLE_MIN;
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent';
+          chip.textContent = fmtTime(suggestedWake) + ' (' + (cycles * 1.5) + ' sa)';
+          chip.addEventListener('click', function () { els.wake.value = fmtTime(suggestedWake); renderSleepSuggestions(); });
+          wakeBox.appendChild(chip);
+
+          var suggestedBed = wakeMin - FALL_ASLEEP_MIN - cycles * CYCLE_MIN;
+          var chip2 = document.createElement('button');
+          chip2.type = 'button';
+          chip2.className = 'rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent';
+          chip2.textContent = fmtTime(suggestedBed) + ' (' + (cycles * 1.5) + ' sa)';
+          chip2.addEventListener('click', function () { els.bed.value = fmtTime(suggestedBed); renderSleepSuggestions(); });
+          bedBox.appendChild(chip2);
+        });
+      }
+      els.bed.addEventListener('change', renderSleepSuggestions);
+      els.wake.addEventListener('change', renderSleepSuggestions);
+
+      function renderCounters() {
+        document.getElementById('pushups-val').textContent = counters.pushups;
+        document.getElementById('situps-val').textContent = counters.situps;
+        document.getElementById('pages-val').textContent = counters.pages;
+      }
+      function currentSettings() {
+        return {
+          wakeTime: els.wake.value || '07:30',
+          homeTime: els.home.value || '18:30',
+          bedTime: els.bed.value || '23:00',
+          pushups: counters.pushups,
+          situps: counters.situps,
+          pages: counters.pages,
+          notifyBedtime: true,
+        };
+      }
+      function showError(msg) {
+        els.error.textContent = msg;
+        els.error.classList.remove('hidden');
+      }
+      function clearError() {
+        els.error.classList.add('hidden');
+      }
+
+      document.querySelectorAll('.stepper-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-step');
+          var delta = parseInt(btn.getAttribute('data-delta'), 10);
+          var min = key === 'pages' ? 1 : 0;
+          counters[key] = Math.max(min, counters[key] + delta);
+          renderCounters();
+        });
+      });
+
+      function saveLocalAndMaybeSync(showConfirm) {
+        var settings = currentSettings();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+        if (showConfirm) {
+          els.saveConfirm.classList.remove('hidden');
+          setTimeout(function () { els.saveConfirm.classList.add('hidden'); }, 2000);
+        }
+        // Eğer bildirimler zaten açıksa, ayarları sunucuya da güncelle.
+        if (localStorage.getItem('one-notif-enabled') === '1') {
+          syncToServer(settings);
+        }
+      }
+      function syncToServer(settings) {
+        var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+        var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        navigator.serviceWorker.ready.then(function (reg) {
+          return reg.pushManager.getSubscription();
+        }).then(function (sub) {
+          if (!sub) return;
+          return fetch('/api/subscribe', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: settings }),
+          });
+        }).catch(function () {});
+      }
+
+      els.save.addEventListener('click', function () { saveLocalAndMaybeSync(true); });
+
+      // --- Hatırlatmalarım ---
+      var REMINDERS_KEY = 'one-reminders';
+      var reminders = [];
+      function loadReminders() {
+        try { reminders = JSON.parse(localStorage.getItem(REMINDERS_KEY) || '[]'); } catch (e) { reminders = []; }
+        renderReminders();
+      }
+      function renderReminders() {
+        var list = document.getElementById('reminder-list');
+        list.innerHTML = '';
+        reminders.forEach(function (r, idx) {
+          var li = document.createElement('li');
+          li.className = 'flex items-center justify-between gap-2 rounded-lg border border-border bg-input px-3 py-2';
+          var span = document.createElement('span');
+          span.className = 'min-w-0 flex-1 truncate text-sm text-card-foreground';
+          span.textContent = r.text;
+          var btn = document.createElement('button');
+          btn.setAttribute('aria-label', 'Sil');
+          btn.className = 'shrink-0 text-muted-foreground';
+          btn.innerHTML = '<iconify-icon icon="lucide:x" class="text-base"></iconify-icon>';
+          btn.addEventListener('click', function () {
+            reminders.splice(idx, 1);
+            persistReminders();
+          });
+          li.appendChild(span);
+          li.appendChild(btn);
+          list.appendChild(li);
+        });
+      }
+      function persistReminders() {
+        localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
+        renderReminders();
+        if (localStorage.getItem('one-notif-enabled') === '1') syncRemindersToServer();
+      }
+      function syncRemindersToServer() {
+        var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+        var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        navigator.serviceWorker.ready.then(function (reg) {
+          return reg.pushManager.getSubscription();
+        }).then(function (sub) {
+          if (!sub) return;
+          return fetch('/api/subscribe', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: currentSettings(), reminders: reminders }),
+          });
+        }).catch(function () {});
+      }
+      document.getElementById('btn-add-reminder').addEventListener('click', function () {
+        var input = document.getElementById('reminder-input');
+        var text = (input.value || '').trim();
+        if (!text) return;
+        reminders.push({ text: text, createdAt: Date.now() });
+        input.value = '';
+        persistReminders();
+      });
+      document.getElementById('reminder-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('btn-add-reminder').click();
+      });
+      loadReminders();
+
+      function refreshNotifStatus() {
+        if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+          els.status.textContent = 'Bu tarayıcı bildirimleri desteklemiyor.';
+          els.toggleBtn.disabled = true;
+          els.toggleBtn.classList.add('opacity-50');
+          return;
+        }
+        if (Notification.permission === 'granted' && localStorage.getItem('one-notif-enabled') === '1') {
+          els.status.textContent = 'Açık — günlük ritmine göre bildirim alacaksın.';
+          els.toggleLabel.textContent = 'Bildirimleri kapat';
+        } else {
+          els.status.textContent = 'Henüz açık değil.';
+          els.toggleLabel.textContent = 'Bildirimlere izin ver';
+        }
+      }
+
+      function enableNotifications() {
+        clearError();
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+          showError('Bu tarayıcı/cihaz push bildirimlerini desteklemiyor.');
+          return;
+        }
+        Notification.requestPermission().then(function (perm) {
+          if (perm !== 'granted') {
+            showError('Bildirim izni verilmedi.');
+            return;
+          }
+          return navigator.serviceWorker.ready.then(function (reg) {
+            return reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+            });
+          }).then(function (sub) {
+            var settings = currentSettings();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+            var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+            return fetch('/api/subscribe', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: settings, reminders: reminders }),
+            });
+          }).then(function (res) {
+            if (!res || !res.ok) throw new Error('Sunucuya kaydedilemedi.');
+            localStorage.setItem('one-notif-enabled', '1');
+            refreshNotifStatus();
+          });
+        }).catch(function (err) {
+          showError('Bir şeyler ters gitti: ' + err.message);
+        });
+      }
+
+      function disableNotifications() {
+        clearError();
+        navigator.serviceWorker.ready.then(function (reg) {
+          return reg.pushManager.getSubscription();
+        }).then(function (sub) {
+          var unsub = sub ? sub.unsubscribe() : Promise.resolve();
+          return unsub.then(function () {
+            return fetch('/api/unsubscribe', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ id: getSubId() }),
+            });
+          });
+        }).then(function () {
+          localStorage.setItem('one-notif-enabled', '0');
+          refreshNotifStatus();
+        }).catch(function (err) {
+          showError('Kapatılamadı: ' + err.message);
+        });
+      }
+
+      els.toggleBtn.addEventListener('click', function () {
+        if (localStorage.getItem('one-notif-enabled') === '1') disableNotifications();
+        else enableNotifications();
+      });
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js').catch(function () {});
+      }
+
+      // --- Verilerin: indir / sil ---
+      var exportBtn = document.getElementById('btn-export-data');
+      var deleteBtn = document.getElementById('btn-delete-data');
+      var dataStatus = document.getElementById('data-action-status');
+
+      function showDataStatus(msg) {
+        dataStatus.textContent = msg;
+        dataStatus.classList.remove('hidden');
+      }
+
+      if (exportBtn) {
+        exportBtn.addEventListener('click', function () {
+          exportBtn.disabled = true;
+          fetch('/api/chat?id=' + encodeURIComponent(getSubId()))
+            .then(function (res) { return res.json(); })
+            .catch(function () { return { messages: [] }; })
+            .then(function (chatData) {
+              var exportObj = {
+                exportedAt: new Date().toISOString(),
+                id: getSubId(),
+                lang: (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : null,
+                routineSettings: currentSettings(),
+                reminders: reminders,
+                chatHistory: (chatData && Array.isArray(chatData.messages)) ? chatData.messages : [],
+                note: 'Bu, ONE Global uygulamasının senin hakkında sakladığı verilerin tamamıdır (push bildirim aboneliğinin teknik uç noktası hariç — o, bu ayarların bir kopyasını taşımaz).',
+              };
+              var blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+              var url = URL.createObjectURL(blob);
+              var a = document.createElement('a');
+              a.href = url;
+              a.download = 'one-verilerim.json';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            })
+            .finally(function () { exportBtn.disabled = false; });
+        });
+      }
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function () {
+          if (!window.confirm('Rutin ayarların, hatırlatmaların ve sohbet geçmişin dahil TÜM verilerin kalıcı olarak silinecek. Bu işlem geri alınamaz. Devam edilsin mi?')) return;
+          deleteBtn.disabled = true;
+          showDataStatus('Siliniyor…');
+          var id = getSubId();
+
+          var tasks = [
+            fetch('/api/chat?id=' + encodeURIComponent(id), { method: 'DELETE' }).catch(function () {}),
+            fetch('/api/member-count?id=' + encodeURIComponent(id), { method: 'DELETE' }).catch(function () {}),
+            fetch('/api/unsubscribe', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ id: id }),
+            }).catch(function () {}),
+          ];
+
+          Promise.all(tasks).then(function () {
+            // Bu cihazdaki push aboneliğini de iptal et (varsa).
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then(function (reg) {
+                return reg.pushManager.getSubscription();
+              }).then(function (sub) {
+                return sub ? sub.unsubscribe() : null;
+              }).catch(function () {});
+            }
+            // Bu cihazdaki tüm ONE Global verilerini temizle.
+            ['one-sub-id', 'one-notif-settings', 'one-notif-enabled', 'one-reminders', 'one-lang', 'one-onboarded', 'one-trial-start'].forEach(function (k) {
+              try { localStorage.removeItem(k); } catch (e) {}
+            });
+            showDataStatus('Tüm verilerin silindi. Yönlendiriliyorsun…');
+            setTimeout(function () { window.location.href = 'hosgeldin.html'; }, 1200);
+          });
+        });
+      }
+
+      // --- Hesabın: e-posta ile giriş bağlantısı (magic link) ---
+      var authEmailInput = document.getElementById('auth-email');
+      var authRequestBtn = document.getElementById('btn-auth-request');
+      var authStatus = document.getElementById('auth-status');
+
+      function showAuthStatus(msg) {
+        if (!authStatus) return;
+        authStatus.textContent = msg;
+        authStatus.classList.remove('hidden');
+      }
+
+      if (authRequestBtn) {
+        authRequestBtn.addEventListener('click', function () {
+          var email = (authEmailInput.value || '').trim();
+          if (!email || email.indexOf('@') === -1) {
+            showAuthStatus('Geçerli bir e-posta adresi yaz.');
+            return;
+          }
+          authRequestBtn.disabled = true;
+          showAuthStatus('Gönderiliyor…');
+          fetch('/api/auth-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, deviceId: getSubId() }),
+          })
+            .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }); })
+            .then(function (result) {
+              if (result.ok) {
+                showAuthStatus('Bağlantı ' + email + ' adresine gönderildi — gelen kutunu kontrol et.');
+              } else if (result.status === 501) {
+                showAuthStatus('E-posta ile giriş altyapısı hazır ama henüz aktif edilmedi (e-posta gönderici hesabı eklenmeli).');
+              } else {
+                showAuthStatus((result.data && result.data.error) || 'Bağlantı gönderilemedi, tekrar dene.');
+              }
+            })
+            .catch(function () { showAuthStatus('Şu an bağlanılamadı, tekrar dene.'); })
+            .finally(function () { authRequestBtn.disabled = false; });
+        });
+      }
+
+      // Bir giriş bağlantısından geldiysek (?authToken=...), doğrula ve bu
+      // cihazın kimliğini hesabın kalıcı kimliğiyle eşitle.
+      (function checkIncomingAuthToken() {
+        var params = new URLSearchParams(window.location.search);
+        var token = params.get('authToken');
+        if (!token) return;
+        // Token'ı adres çubuğundan hemen temizle (geçmişte/paylaşımda kalmasın).
+        params.delete('authToken');
+        var cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+        window.history.replaceState({}, '', cleanUrl);
+
+        showAuthStatus('Giriş doğrulanıyor…');
+        fetch('/api/auth-verify?token=' + encodeURIComponent(token))
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+          .then(function (result) {
+            if (!result.ok || !result.data || !result.data.id) {
+              showAuthStatus((result.data && result.data.error) || 'Giriş bağlantısı doğrulanamadı.');
+              return;
+            }
+            if (result.data.id !== getSubId()) {
+              localStorage.setItem(SUB_ID_KEY, result.data.id);
+              showAuthStatus('Hesabın bu cihaza bağlandı — verilerin yükleniyor…');
+              setTimeout(function () { window.location.reload(); }, 900);
+            } else {
+              showAuthStatus('Bu cihaz zaten hesabına bağlı.');
+            }
+          })
+          .catch(function () { showAuthStatus('Giriş bağlantısı doğrulanamadı.'); });
+      })();
+
+      loadSettings();
+      refreshNotifStatus();
+      renderSleepSuggestions();
+    })();
+  </script>
+  <script src="i18n.js"></script>
+</body>
+</html>
