@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v6';
+const CACHE_NAME = 'one-shell-v7';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -41,7 +41,20 @@ self.addEventListener('fetch', (event) => {
   const isAppShell = APP_SHELL.some((path) => req.url.endsWith(path.replace('./', '/')) || req.url.endsWith(path));
 
   if (isAppShell) {
-    event.respondWith(caches.match(req).then((cached) => cached || fetch(req)));
+    // Önce ağdan dene, başarılıysa önbelleği güncelle. Böylece yeni bir
+    // deploy yapıldığında (metin/kaydırma/logo düzeltmeleri gibi) kullanıcı
+    // CACHE_NAME sürümünü elle artırmayı beklemeden en güncel sürümü görür.
+    // Ağ başarısız olursa (çevrimdışı) önbellekteki son bilinen sürüme düş —
+    // PWA'nın çevrimdışı çalışma özelliği böylece korunuyor.
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+          return res;
+        })
+        .catch(() => caches.match(req)),
+    );
     return;
   }
 
