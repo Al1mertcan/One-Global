@@ -101,16 +101,17 @@
           <div>
             <div class="mb-2 flex items-center gap-2">
               <span class="h-2 w-2 rounded-full bg-success shadow-[0_0_12px_rgba(61,219,165,0.9)]"></span>
-              <span class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Komuta zekân</span>
+              <span class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground" data-i18n="kicker">Komuta zekân</span>
             </div>
-            <h1 class="font-heading text-3xl font-semibold tracking-tight">Otomasyonlar</h1>
-            <p id="automation-count" class="mt-2 text-sm text-muted-foreground">Yükleniyor…</p>
+            <h1 class="font-heading text-3xl font-semibold tracking-tight" data-i18n="autoTitle">Otomasyonlar</h1>
+            <p id="automation-count" class="mt-2 text-sm text-muted-foreground" data-i18n="goodNewsLoading">Yükleniyor…</p>
           </div>
-          <a href="ayarlar.html" aria-label="Rutini düzenle" class="mt-1 flex h-12 shrink-0 items-center gap-2 rounded-theme bg-primary px-4 text-sm font-bold text-primary-foreground shadow-[0_0_24px_rgba(57,215,255,0.24)]">
-            <iconify-icon icon="lucide:pencil" class="text-lg"></iconify-icon>
-            <span>Rutini düzenle</span>
-          </a>
+          <select id="lang-select" aria-label="Dili değiştir / Change language" class="mt-1 h-11 max-w-[80px] shrink-0 rounded-[15px] border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
         </div>
+        <a href="ayarlar.html" aria-label="Rutini düzenle" class="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-theme bg-primary px-4 text-sm font-bold text-primary-foreground shadow-[0_0_24px_rgba(57,215,255,0.24)]">
+          <iconify-icon icon="lucide:pencil" class="text-lg"></iconify-icon>
+          <span data-i18n="autoEditRoutineBtn">Rutini düzenle</span>
+        </a>
       </header>
 
       <main class="relative px-5 pt-6">
@@ -120,16 +121,16 @@
               <iconify-icon icon="lucide:info" class="text-xl"></iconify-icon>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="font-heading text-sm font-semibold">Burada ne var?</p>
-              <p class="mt-1 text-xs leading-5 text-muted-foreground">Bu, gerçekten çalışan tek otomasyon: ayarlar.html'de kurduğun günlük bildirim rutini. ONE Global şu an takvim/e-posta/dosya gibi başka sistemlere bağlı değil — o yüzden burada onlarla ilgili sahte otomasyon göstermiyoruz.</p>
+              <p class="font-heading text-sm font-semibold" data-i18n="whatIsHereTitle">Burada ne var?</p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground" data-i18n="autoWhatBody">Bu, gerçekten çalışan tek otomasyon: ayarlar.html'de kurduğun günlük bildirim rutini. ONE Global şu an takvim/e-posta/dosya gibi başka sistemlere bağlı değil — o yüzden burada onlarla ilgili sahte otomasyon göstermiyoruz.</p>
             </div>
           </div>
         </section>
 
         <div class="mt-7 flex items-center justify-between">
           <div>
-            <h2 class="font-heading text-lg font-semibold">Günlük rutinin</h2>
-            <p class="mt-1 text-xs text-muted-foreground" id="notif-status-note">Bildirim durumu kontrol ediliyor…</p>
+            <h2 class="font-heading text-lg font-semibold" data-i18n="autoRoutineTitle">Günlük rutinin</h2>
+            <p class="mt-1 text-xs text-muted-foreground" id="notif-status-note" data-i18n="autoNotifChecking">Bildirim durumu kontrol ediliyor…</p>
           </div>
         </div>
 
@@ -137,8 +138,8 @@
 
         <section id="reminders-section" class="mt-7 hidden">
           <div class="mb-3 flex items-center justify-between">
-            <h2 class="font-heading text-lg font-semibold">Hatırlatmaların</h2>
-            <a href="ayarlar.html" class="text-xs font-bold text-primary">Düzenle</a>
+            <h2 class="font-heading text-lg font-semibold" data-i18n="autoRemindersTitle">Hatırlatmaların</h2>
+            <a href="ayarlar.html" class="text-xs font-bold text-primary" data-i18n="autoEditLink">Düzenle</a>
           </div>
           <div id="reminders-list" class="overflow-hidden rounded-[22px] border border-border bg-card divide-y divide-border"></div>
         </section>
@@ -147,19 +148,19 @@
       <nav data-fv-tabbar class="fixed bottom-5 left-4 right-4 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-2 shadow-2xl backdrop-blur-2xl">
         <a data-fv-tab="Asistan" href="asistan.html" class="flex h-12 min-w-[72px] flex-col items-center justify-center gap-1 rounded-[17px] px-3 text-muted-foreground">
           <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold">Asistan</span>
+          <span class="text-[10px] font-semibold" data-i18n="tabAssistant">Asistan</span>
         </a>
         <a data-fv-tab="Otomasyonlar" data-fv-tab-active="true" href="otomasyonlar.html" class="flex h-12 min-w-[72px] flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-3 text-primary ring-1 ring-primary/35">
           <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-bold">Otomasyonlar</span>
+          <span class="text-[10px] font-bold" data-i18n="tabAutomations">Otomasyonlar</span>
         </a>
         <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-[58px] flex-col items-center justify-center gap-1 px-2 text-muted-foreground">
           <iconify-icon icon="lucide:brain-circuit" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold">Bellek</span>
+          <span class="text-[10px] font-semibold" data-i18n="tabMemory">Bellek</span>
         </a>
         <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-[58px] flex-col items-center justify-center gap-1 px-2 text-muted-foreground">
           <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold">Cihazlar</span>
+          <span class="text-[10px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
         </a>
       </nav>
     </div>
@@ -180,10 +181,12 @@
     })();
   </script>
 
+  <script src="i18n.js"></script>
+
   <script>
     (function () {
       'use strict';
-      
+
     // ---- ONE Global cross-screen navigation helpers ----
     function wireNavByText(text, url, tag) {
       // Match only elements of the exact tag (button/article), on their OWN
@@ -224,6 +227,10 @@
     (function () {
       'use strict';
       var DEFAULTS = { wakeTime: '07:30', homeTime: '18:30', bedTime: '23:00', pushups: 10, situps: 20, pages: 5, notifyBedtime: true };
+
+      function t(key, vars) {
+        return (window.ONE_I18N && window.ONE_I18N.t) ? window.ONE_I18N.t(key, vars) : key;
+      }
 
       function loadSettings() {
         try {
@@ -270,25 +277,26 @@
         var container = document.getElementById('routine-cards');
         var statusNote = document.getElementById('notif-status-note');
         var countEl = document.getElementById('automation-count');
+        var min = t('minAbbrev');
 
         if (perm === 'granted') {
-          statusNote.textContent = 'Bildirimler açık — bu rutin cihazına gönderiliyor.';
+          statusNote.textContent = t('autoNotifOn');
         } else {
-          statusNote.innerHTML = 'Bildirimler henüz açık değil — <a href="ayarlar.html" class="font-semibold text-primary">ayarlar.html\'den aç</a>.';
+          statusNote.innerHTML = t('autoNotifOff');
         }
 
         var items = [
-          ['lucide:sunrise', 'Sabah minnettarlık bildirimi', s.wakeTime, 'Uyandığında hayatta olmaya şükür ve sevdiklerinle vakit geçirme hatırlatması.'],
-          ['lucide:dumbbell', 'Sabah sporu', s.wakeTime + ' + 15dk', s.pushups + ' şınav, ' + s.situps + ' mekik.'],
-          ['lucide:brain', 'Beyin sağlığı ipucu', s.wakeTime + ' + 30dk', 'Günlük değişen küçük bir "farklı yoldan git" önerisi.'],
-          ['lucide:door-open', 'Günü kapatma kontrolü', s.homeTime, '"Her şey yolunda mı?" ve hatırlatma sorusu.'],
-          ['lucide:book-open', 'Okuma hatırlatması', s.homeTime + ' + 60dk', s.pages + ' sayfa okudun mu?'],
-          ['lucide:smile', 'Diş fırçalama hatırlatması', s.bedTime + ' - 60dk', 'Diş sağlığı hatırlatması.'],
-          ['lucide:moon-star', 'Akşam sporu', s.bedTime + ' - 30dk', s.pushups + ' şınav, ' + s.situps + ' mekik.'],
-          ['lucide:bed', 'Günü bırakma nudge\'ı', s.bedTime, 'Telefonu bırakma / uyku vakti hatırlatması.'],
+          ['lucide:sunrise', t('autoCard1Title'), s.wakeTime, t('autoCard1Desc')],
+          ['lucide:dumbbell', t('autoCard2Title'), s.wakeTime + ' + 15' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, situps: s.situps })],
+          ['lucide:brain', t('autoCard3Title'), s.wakeTime + ' + 30' + min, t('autoCard3Desc')],
+          ['lucide:door-open', t('autoCard4Title'), s.homeTime, t('autoCard4Desc')],
+          ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 60' + min, t('autoCard5Desc', { pages: s.pages })],
+          ['lucide:smile', t('autoCard6Title'), s.bedTime + ' - 60' + min, t('autoCard6Desc')],
+          ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 30' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, situps: s.situps })],
+          ['lucide:bed', t('autoCard8Title'), s.bedTime, t('autoCard8Desc')],
         ];
         container.innerHTML = items.map(function (it) { return card(it[0], it[1], it[2], it[3]); }).join('');
-        countEl.textContent = items.length + ' otomatik bildirim · günlük rutinin';
+        countEl.textContent = t('autoCountLabel', { n: items.length });
 
         var remSection = document.getElementById('reminders-section');
         var remList = document.getElementById('reminders-list');
@@ -300,6 +308,10 @@
         }
       }
       render();
+
+      // Dil değişince kartları ve durum metnini yeniden çiz — apply()
+      // sadece [data-i18n] öğelerini bilir, JS ile üretilen bu içeriği bilmez.
+      window.addEventListener('one-lang-changed', render);
     })();
   </script>
 

@@ -60,7 +60,7 @@
         <a href="asistan.html" aria-label="Asistan'a dön" class="flex h-11 w-11 items-center justify-center rounded-theme border border-border bg-card/80 text-foreground shadow-lg backdrop-blur-xl">
           <iconify-icon icon="lucide:arrow-left" class="text-xl"></iconify-icon>
         </a>
-        <span class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Bildirimler &amp; Rutin</span>
+        <span class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground" data-i18n="settingsHeaderTitle">Bildirimler &amp; Rutin</span>
         <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-theme border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
       </div>
     </header>
@@ -72,16 +72,16 @@
             <iconify-icon icon="lucide:bell-ring" class="text-xl"></iconify-icon>
           </div>
           <div class="min-w-0 flex-1">
-            <h1 class="font-heading text-base font-semibold">Günlük bildirimler</h1>
-            <p id="notif-status" class="mt-1 text-xs text-muted-foreground">Henüz açık değil.</p>
+            <h1 class="font-heading text-base font-semibold" data-i18n="settingsNotifTitle">Günlük bildirimler</h1>
+            <p id="notif-status" class="mt-1 text-xs text-muted-foreground" data-i18n="settingsNotifOff">Henüz açık değil.</p>
           </div>
         </div>
         <button id="btn-toggle-notif" class="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-theme bg-primary text-sm font-bold text-primary-foreground">
           <iconify-icon icon="lucide:bell-plus" class="text-lg"></iconify-icon>
-          <span id="btn-toggle-notif-label">Bildirimlere izin ver</span>
+          <span id="btn-toggle-notif-label" data-i18n="settingsNotifEnableBtn">Bildirimlere izin ver</span>
         </button>
         <p id="notif-error" class="mt-2 hidden rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-[11px] text-destructive"></p>
-        <p class="mt-3 text-[11px] leading-5 text-muted-foreground">
+        <p class="mt-3 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsNotifExplain">
           Bildirimler, uyanma / eve geliş / yatma saatlerine göre gönderilir: sabah bir minnettarlık
           mesajı, 15 dk sonra spor, 15 dk sonra küçük bir beyin egzersizi ipucu; eve geldiğinde bir
           "günü kapatma" kontrolü, 1 saat sonra okuma hatırlatması; yatmadan 1 saat önce diş fırçalama,
@@ -91,45 +91,45 @@
       </section>
 
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
-        <h2 class="font-heading text-sm font-semibold">Günlük ritmin</h2>
+        <h2 class="font-heading text-sm font-semibold" data-i18n="settingsRhythmTitle">Günlük ritmin</h2>
         <div class="mt-3 space-y-3">
           <label class="flex items-center justify-between gap-3">
-            <span class="text-sm text-card-foreground">🌅 Uyanma saatin</span>
+            <span class="text-sm text-card-foreground" data-i18n="settingsWakeLabel">🌅 Uyanma saatin</span>
             <input id="wake-time" type="time" value="07:30" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
           </label>
           <label class="flex items-center justify-between gap-3">
-            <span class="text-sm text-card-foreground">🏠 Eve ortalama geliş saatin</span>
+            <span class="text-sm text-card-foreground" data-i18n="settingsHomeLabel">🏠 Eve ortalama geliş saatin</span>
             <input id="home-time" type="time" value="18:30" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
           </label>
           <label class="flex items-center justify-between gap-3">
-            <span class="text-sm text-card-foreground">🌙 Yatma saatin</span>
+            <span class="text-sm text-card-foreground" data-i18n="settingsBedLabel">🌙 Yatma saatin</span>
             <input id="bed-time" type="time" value="23:00" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
           </label>
         </div>
       </section>
 
       <section class="mt-5 rounded-[22px] border border-accent/25 bg-accent/5 p-4">
-        <h2 class="font-heading text-sm font-semibold text-accent">En verimli uyku için</h2>
-        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">
+        <h2 class="font-heading text-sm font-semibold text-accent" data-i18n="settingsSleepTitle">En verimli uyku için</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsSleepExplain">
           Uyku ortalama ~90 dakikalık döngülerden oluşur; bir döngünün ortasında değil, döngü
           bittiğinde uyanmak kendini daha dinç hissettirir. Buna göre (ortalama bir tahmin, tıbbi
           tavsiye değildir) öneriler:
         </p>
         <div class="mt-3">
-          <p class="text-[11px] font-semibold text-muted-foreground">Bu saatte yatarsan, önerilen kalkış saatleri:</p>
+          <p class="text-[11px] font-semibold text-muted-foreground" data-i18n="settingsSleepWakeSuggest">Bu saatte yatarsan, önerilen kalkış saatleri:</p>
           <div id="wake-suggestions" class="mt-2 flex flex-wrap gap-2"></div>
         </div>
         <div class="mt-3">
-          <p class="text-[11px] font-semibold text-muted-foreground">Bu saatte kalkacaksan, önerilen yatış saatleri:</p>
+          <p class="text-[11px] font-semibold text-muted-foreground" data-i18n="settingsSleepBedSuggest">Bu saatte kalkacaksan, önerilen yatış saatleri:</p>
           <div id="bed-suggestions" class="mt-2 flex flex-wrap gap-2"></div>
         </div>
       </section>
 
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
-        <h2 class="font-heading text-sm font-semibold">Hedeflerin</h2>
+        <h2 class="font-heading text-sm font-semibold" data-i18n="settingsGoalsTitle">Hedeflerin</h2>
         <div class="mt-3 space-y-4">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-card-foreground">💪 Şınav</span>
+            <span class="text-sm text-card-foreground" data-i18n="settingsPushupsLabel">💪 Şınav</span>
             <div class="flex items-center gap-3">
               <button data-step="pushups" data-delta="-5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
               <span id="pushups-val" class="w-8 text-center font-heading text-base font-semibold">10</span>
@@ -137,7 +137,7 @@
             </div>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-card-foreground">🔥 Mekik</span>
+            <span class="text-sm text-card-foreground" data-i18n="settingsSitupsLabel">🔥 Mekik</span>
             <div class="flex items-center gap-3">
               <button data-step="situps" data-delta="-5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
               <span id="situps-val" class="w-8 text-center font-heading text-base font-semibold">20</span>
@@ -145,7 +145,7 @@
             </div>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-card-foreground">📖 Sayfa (okuma hedefi)</span>
+            <span class="text-sm text-card-foreground" data-i18n="settingsPagesLabel">📖 Sayfa (okuma hedefi)</span>
             <div class="flex items-center gap-3">
               <button data-step="pages" data-delta="-1" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
               <span id="pages-val" class="w-8 text-center font-heading text-base font-semibold">5</span>
@@ -156,55 +156,55 @@
       </section>
 
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
-        <h2 class="font-heading text-sm font-semibold">Hatırlatmalarım</h2>
-        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">
+        <h2 class="font-heading text-sm font-semibold" data-i18n="settingsRemindersTitle">Hatırlatmalarım</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsRemindersExplain">
           Buraya hiç hatırlatma eklemezsen, öğlen saat 12 civarı sana nazikçe
           "aklında bir şey var mı?" diye soran bir bildirim gönderiyoruz.
         </p>
         <div class="mt-3 flex gap-2">
-          <input id="reminder-input" type="text" placeholder="Örneğin: Anneni ara" class="min-w-0 flex-1 rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground outline-none" />
-          <button id="btn-add-reminder" class="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground">Ekle</button>
+          <input id="reminder-input" type="text" data-i18n-placeholder="settingsReminderPlaceholder" placeholder="Örneğin: Anneni ara" class="min-w-0 flex-1 rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground outline-none" />
+          <button id="btn-add-reminder" class="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground" data-i18n="settingsAddBtn">Ekle</button>
         </div>
         <ul id="reminder-list" class="mt-3 space-y-2"></ul>
       </section>
 
       <button id="btn-save" class="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-theme border border-primary/40 bg-primary/10 text-sm font-bold text-primary">
         <iconify-icon icon="lucide:check" class="text-lg"></iconify-icon>
-        Ayarları kaydet
+        <span data-i18n="settingsSaveBtn">Ayarları kaydet</span>
       </button>
-      <p id="save-confirm" class="mt-2 hidden text-center text-[11px] text-success">Kaydedildi.</p>
+      <p id="save-confirm" class="mt-2 hidden text-center text-[11px] text-success" data-i18n="settingsSavedConfirm">Kaydedildi.</p>
 
       <section class="mt-6 rounded-[22px] border border-border bg-card p-4">
-        <h2 class="font-heading text-sm font-semibold">Hesabın</h2>
-        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">Şu an ONE Global'ı bu cihaza özel kullanıyorsun (şifre yok, hesap yok). E-postanla bir giriş bağlantısı alarak verilerini başka bir cihazdan da açabilirsin.</p>
+        <h2 class="font-heading text-sm font-semibold" data-i18n="settingsAccountTitle">Hesabın</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsAccountExplain">Şu an ONE Global'ı bu cihaza özel kullanıyorsun (şifre yok, hesap yok). E-postanla bir giriş bağlantısı alarak verilerini başka bir cihazdan da açabilirsin.</p>
         <div class="mt-3 flex gap-2">
           <label for="auth-email" class="sr-only">E-posta adresin</label>
-          <input id="auth-email" type="email" autocomplete="email" placeholder="ornek@eposta.com" class="h-11 flex-1 rounded-theme border border-border bg-input px-3 text-sm text-card-foreground outline-none placeholder:text-muted-foreground" />
-          <button id="btn-auth-request" class="flex h-11 items-center justify-center rounded-theme bg-primary px-4 text-xs font-bold text-primary-foreground">Bağlantı gönder</button>
+          <input id="auth-email" type="email" autocomplete="email" data-i18n-placeholder="settingsEmailPlaceholder" placeholder="ornek@eposta.com" class="h-11 flex-1 rounded-theme border border-border bg-input px-3 text-sm text-card-foreground outline-none placeholder:text-muted-foreground" />
+          <button id="btn-auth-request" class="flex h-11 items-center justify-center rounded-theme bg-primary px-4 text-xs font-bold text-primary-foreground" data-i18n="settingsSendLinkBtn">Bağlantı gönder</button>
         </div>
         <p id="auth-status" class="mt-2 hidden text-[11px] text-muted-foreground"></p>
       </section>
 
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
-        <h2 class="font-heading text-sm font-semibold">Verilerin</h2>
-        <p class="mt-1 text-[11px] leading-5 text-muted-foreground">ONE Global hakkında sakladığı verileri (rutin ayarların, hatırlatmaların ve sohbet geçmişin) buradan indirebilir veya tamamen silebilirsin. Ayrıntılar için <a href="gizlilik.html" class="font-semibold text-primary">Gizlilik Politikası</a>'na bakabilirsin.</p>
+        <h2 class="font-heading text-sm font-semibold" data-i18n="settingsDataTitle">Verilerin</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsDataExplain">ONE Global hakkında sakladığı verileri (rutin ayarların, hatırlatmaların ve sohbet geçmişin) buradan indirebilir veya tamamen silebilirsin. Ayrıntılar için <a href="gizlilik.html" class="font-semibold text-primary">Gizlilik Politikası</a>'na bakabilirsin.</p>
         <div class="mt-3 flex flex-col gap-2">
           <button id="btn-export-data" class="flex h-11 w-full items-center justify-center gap-2 rounded-theme border border-border bg-input text-xs font-bold text-foreground">
             <iconify-icon icon="lucide:download" class="text-base"></iconify-icon>
-            Verilerimi indir
+            <span data-i18n="settingsExportBtn">Verilerimi indir</span>
           </button>
           <button id="btn-delete-data" class="flex h-11 w-full items-center justify-center gap-2 rounded-theme border border-destructive/30 bg-destructive/10 text-xs font-bold text-destructive">
             <iconify-icon icon="lucide:trash-2" class="text-base"></iconify-icon>
-            Verilerimi ve hesabımı sil
+            <span data-i18n="settingsDeleteDataBtn">Verilerimi ve hesabımı sil</span>
           </button>
         </div>
         <p id="data-action-status" class="mt-2 hidden text-center text-[11px] text-muted-foreground"></p>
       </section>
 
       <section class="mt-4 flex flex-col gap-2 text-sm font-semibold text-primary">
-        <a href="yardim.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5">Yardım <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
-        <a href="gizlilik.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5">Gizlilik Politikası <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
-        <a href="sartlar.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5">Kullanım Şartları <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
+        <a href="yardim.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5"><span data-i18n="settingsHelpLink">Yardım</span> <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
+        <a href="gizlilik.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5"><span data-i18n="settingsPrivacyLink">Gizlilik Politikası</span> <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
+        <a href="sartlar.html" class="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5"><span data-i18n="settingsTermsLink">Kullanım Şartları</span> <iconify-icon icon="lucide:chevron-right" class="text-base"></iconify-icon></a>
       </section>
     </main>
   </div>
@@ -223,10 +223,16 @@
       })(els[i]);
     })();
   </script>
+  <script src="currencies.js"></script>
+  <script src="i18n.js"></script>
   <script>
     (function () {
       'use strict';
       var VAPID_PUBLIC_KEY = 'BA7Bk293hs0UT0ttbxRiH608XSYkoWeMAJM_HYTzWou3B1l-b2XMCzq-dXIwuHc88HDmmwaGcXUSnlqutBHhKKQ';
+
+      function t(key, vars) {
+        return (window.ONE_I18N && window.ONE_I18N.t) ? window.ONE_I18N.t(key, vars) : key;
+      }
 
       var els = {
         status: document.getElementById('notif-status'),
@@ -292,11 +298,12 @@
         wakeBox.innerHTML = '';
         bedBox.innerHTML = '';
         [4, 5, 6].forEach(function (cycles) {
+          var hoursAbbrev = t('hoursAbbrev');
           var suggestedWake = bedMin + FALL_ASLEEP_MIN + cycles * CYCLE_MIN;
           var chip = document.createElement('button');
           chip.type = 'button';
           chip.className = 'rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent';
-          chip.textContent = fmtTime(suggestedWake) + ' (' + (cycles * 1.5) + ' sa)';
+          chip.textContent = fmtTime(suggestedWake) + ' (' + (cycles * 1.5) + ' ' + hoursAbbrev + ')';
           chip.addEventListener('click', function () { els.wake.value = fmtTime(suggestedWake); renderSleepSuggestions(); });
           wakeBox.appendChild(chip);
 
@@ -304,7 +311,7 @@
           var chip2 = document.createElement('button');
           chip2.type = 'button';
           chip2.className = 'rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent';
-          chip2.textContent = fmtTime(suggestedBed) + ' (' + (cycles * 1.5) + ' sa)';
+          chip2.textContent = fmtTime(suggestedBed) + ' (' + (cycles * 1.5) + ' ' + hoursAbbrev + ')';
           chip2.addEventListener('click', function () { els.bed.value = fmtTime(suggestedBed); renderSleepSuggestions(); });
           bedBox.appendChild(chip2);
         });
@@ -392,7 +399,7 @@
           span.className = 'min-w-0 flex-1 truncate text-sm text-card-foreground';
           span.textContent = r.text;
           var btn = document.createElement('button');
-          btn.setAttribute('aria-label', 'Sil');
+          btn.setAttribute('aria-label', t('settingsDeleteAria'));
           btn.className = 'shrink-0 text-muted-foreground';
           btn.innerHTML = '<iconify-icon icon="lucide:x" class="text-base"></iconify-icon>';
           btn.addEventListener('click', function () {
@@ -438,29 +445,29 @@
 
       function refreshNotifStatus() {
         if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
-          els.status.textContent = 'Bu tarayıcı bildirimleri desteklemiyor.';
+          els.status.textContent = t('settingsNotifUnsupported');
           els.toggleBtn.disabled = true;
           els.toggleBtn.classList.add('opacity-50');
           return;
         }
         if (Notification.permission === 'granted' && localStorage.getItem('one-notif-enabled') === '1') {
-          els.status.textContent = 'Açık — günlük ritmine göre bildirim alacaksın.';
-          els.toggleLabel.textContent = 'Bildirimleri kapat';
+          els.status.textContent = t('autoNotifOn');
+          els.toggleLabel.textContent = t('settingsNotifDisableBtn');
         } else {
-          els.status.textContent = 'Henüz açık değil.';
-          els.toggleLabel.textContent = 'Bildirimlere izin ver';
+          els.status.textContent = t('settingsNotifOff');
+          els.toggleLabel.textContent = t('settingsNotifEnableBtn');
         }
       }
 
       function enableNotifications() {
         clearError();
         if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-          showError('Bu tarayıcı/cihaz push bildirimlerini desteklemiyor.');
+          showError(t('settingsNotifUnsupported2'));
           return;
         }
         Notification.requestPermission().then(function (perm) {
           if (perm !== 'granted') {
-            showError('Bildirim izni verilmedi.');
+            showError(t('settingsNotifDenied'));
             return;
           }
           return navigator.serviceWorker.ready.then(function (reg) {
@@ -479,12 +486,12 @@
               body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: settings, reminders: reminders }),
             });
           }).then(function (res) {
-            if (!res || !res.ok) throw new Error('Sunucuya kaydedilemedi.');
+            if (!res || !res.ok) throw new Error('subscribe failed');
             localStorage.setItem('one-notif-enabled', '1');
             refreshNotifStatus();
           });
-        }).catch(function (err) {
-          showError('Bir şeyler ters gitti: ' + err.message);
+        }).catch(function () {
+          showError(t('settingsNotifError'));
         });
       }
 
@@ -504,8 +511,8 @@
         }).then(function () {
           localStorage.setItem('one-notif-enabled', '0');
           refreshNotifStatus();
-        }).catch(function (err) {
-          showError('Kapatılamadı: ' + err.message);
+        }).catch(function () {
+          showError(t('settingsNotifDisableError'));
         });
       }
 
@@ -542,7 +549,7 @@
                 routineSettings: currentSettings(),
                 reminders: reminders,
                 chatHistory: (chatData && Array.isArray(chatData.messages)) ? chatData.messages : [],
-                note: 'Bu, ONE Global uygulamasının senin hakkında sakladığı verilerin tamamıdır (push bildirim aboneliğinin teknik uç noktası hariç — o, bu ayarların bir kopyasını taşımaz).',
+                note: t('settingsExportNote'),
               };
               var blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
               var url = URL.createObjectURL(blob);
@@ -560,9 +567,9 @@
 
       if (deleteBtn) {
         deleteBtn.addEventListener('click', function () {
-          if (!window.confirm('Rutin ayarların, hatırlatmaların ve sohbet geçmişin dahil TÜM verilerin kalıcı olarak silinecek. Bu işlem geri alınamaz. Devam edilsin mi?')) return;
+          if (!window.confirm(t('settingsDeleteConfirm'))) return;
           deleteBtn.disabled = true;
-          showDataStatus('Siliniyor…');
+          showDataStatus(t('settingsDeleting'));
           var id = getSubId();
 
           var tasks = [
@@ -588,7 +595,7 @@
             ['one-sub-id', 'one-notif-settings', 'one-notif-enabled', 'one-reminders', 'one-lang', 'one-onboarded', 'one-trial-start'].forEach(function (k) {
               try { localStorage.removeItem(k); } catch (e) {}
             });
-            showDataStatus('Tüm verilerin silindi. Yönlendiriliyorsun…');
+            showDataStatus(t('settingsDeleted'));
             setTimeout(function () { window.location.href = 'hosgeldin.html'; }, 1200);
           });
         });
@@ -609,11 +616,11 @@
         authRequestBtn.addEventListener('click', function () {
           var email = (authEmailInput.value || '').trim();
           if (!email || email.indexOf('@') === -1) {
-            showAuthStatus('Geçerli bir e-posta adresi yaz.');
+            showAuthStatus(t('settingsAuthInvalidEmail'));
             return;
           }
           authRequestBtn.disabled = true;
-          showAuthStatus('Gönderiliyor…');
+          showAuthStatus(t('settingsAuthSending'));
           fetch('/api/auth-request', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -622,14 +629,14 @@
             .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }); })
             .then(function (result) {
               if (result.ok) {
-                showAuthStatus('Bağlantı ' + email + ' adresine gönderildi — gelen kutunu kontrol et.');
+                showAuthStatus(t('settingsAuthSent', { email: email }));
               } else if (result.status === 501) {
-                showAuthStatus('E-posta ile giriş altyapısı hazır ama henüz aktif edilmedi (e-posta gönderici hesabı eklenmeli).');
+                showAuthStatus(t('settingsAuthNotConfigured'));
               } else {
-                showAuthStatus((result.data && result.data.error) || 'Bağlantı gönderilemedi, tekrar dene.');
+                showAuthStatus(t('settingsAuthSendFailed'));
               }
             })
-            .catch(function () { showAuthStatus('Şu an bağlanılamadı, tekrar dene.'); })
+            .catch(function () { showAuthStatus(t('settingsAuthUnreachable')); })
             .finally(function () { authRequestBtn.disabled = false; });
         });
       }
@@ -645,30 +652,37 @@
         var cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
         window.history.replaceState({}, '', cleanUrl);
 
-        showAuthStatus('Giriş doğrulanıyor…');
+        showAuthStatus(t('settingsAuthVerifying'));
         fetch('/api/auth-verify?token=' + encodeURIComponent(token))
           .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
           .then(function (result) {
             if (!result.ok || !result.data || !result.data.id) {
-              showAuthStatus((result.data && result.data.error) || 'Giriş bağlantısı doğrulanamadı.');
+              showAuthStatus(t('settingsAuthVerifyFailed'));
               return;
             }
             if (result.data.id !== getSubId()) {
               localStorage.setItem(SUB_ID_KEY, result.data.id);
-              showAuthStatus('Hesabın bu cihaza bağlandı — verilerin yükleniyor…');
+              showAuthStatus(t('settingsAuthLinked'));
               setTimeout(function () { window.location.reload(); }, 900);
             } else {
-              showAuthStatus('Bu cihaz zaten hesabına bağlı.');
+              showAuthStatus(t('settingsAuthAlreadyLinked'));
             }
           })
-          .catch(function () { showAuthStatus('Giriş bağlantısı doğrulanamadı.'); });
+          .catch(function () { showAuthStatus(t('settingsAuthVerifyFailed')); });
       })();
 
       loadSettings();
       refreshNotifStatus();
       renderSleepSuggestions();
+
+      // Dil değişince JS ile üretilen dinamik metinleri (bildirim durumu,
+      // uyku önerisi çipleri) yeniden çiz — apply() sadece [data-i18n]
+      // öğelerini bilir, bunları bilmez.
+      window.addEventListener('one-lang-changed', function () {
+        refreshNotifStatus();
+        renderSleepSuggestions();
+      });
     })();
   </script>
-  <script src="i18n.js"></script>
 </body>
 </html>
