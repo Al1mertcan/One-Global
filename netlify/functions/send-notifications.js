@@ -62,6 +62,7 @@ const CONTENT = {
       title: 'İyi geceler 🌙',
       body: 'Günü kapatma vakti. Telefonu bırak, güzel bir uyku seni bekliyor. Yarın yeniden buradayım.',
     },
+    reminder: { title: 'Hatırlatma ⏰' },
   },
   en: {
     wake: {
@@ -95,6 +96,7 @@ const CONTENT = {
       title: 'Good night 🌙',
       body: "Time to close the day. Put the phone down — good sleep is waiting for you. I'll be here again tomorrow.",
     },
+    reminder: { title: 'Reminder ⏰' },
   },
 };
 
@@ -163,6 +165,32 @@ function dayOfYear(dateStr) {
   return Math.floor((d - start) / 86400000);
 }
 
+// ayarlar.html'deki <input type="datetime-local"> alanından gelen
+// "YYYY-MM-DDTHH:MM" biçimindeki, kullanıcının kendi cihaz saatine göre
+// yerel bir zaman damgasını ayrıştırır. Zaman dilimi bilgisi taşımaz —
+// kullanıcının record.timezone alanına göre yorumlanır (nowInTz ile aynı
+// mantık).
+function parseAt(at) {
+  if (!at || typeof at !== 'string') return null;
+  var m = at.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/);
+  if (!m) return null;
+  var h = parseInt(m[2], 10);
+  var mi = parseInt(m[3], 10);
+  if (isNaN(h) || isNaN(mi)) return null;
+  return { dateStr: m[1], minutes: h * 60 + mi };
+}
+
+// Hedef zaman şu ana kadar (bugün dahil, geçmişte kalan günler dahil)
+// gelmiş mi? Fonksiyon her ~15 dakikada bir çalıştığı için "geçti mi"
+// kontrolü yeterli — tekrarlı günlük hatırlatmaların aksine bunlar tek
+// seferlik olduğu için pencere (window) kontrolüne gerek yok, gönderildikten
+// sonra listeden tamamen kaldırılıyorlar.
+function isDue(target, nowDateStr, nowMin) {
+  if (target.dateStr < nowDateStr) return true;
+  if (target.dateStr > nowDateStr) return false;
+  return target.minutes <= nowMin;
+}
+
 async function sendPush(subscription, payload) {
   try {
     await webpush.sendNotification(subscription, JSON.stringify(payload));
@@ -223,6 +251,23 @@ exports.handler = async (event) => {
       toSend.push(['sentNoonCheck', c.noonCheck]);
     }
 
+    // Kullanıcının kendi eklediği, belirli bir zamana bağlı hatırlatmalar
+    // (ayarlar.html'deki "Hatırlatmalarım" listesi, "at" alanı doluysa).
+    // Zamanı geçmiş/gelmiş olanları ayıklıyoruz — bunlar tek seferlik,
+    // gönderildikten (ya da başarısız da olsa denendikten) sonra listeden
+    // düşecekler; "at" alanı boş olanlar (eski, zamansız notlar) hiç
+    // dokunulmadan listede kalmaya devam eder.
+    const dueReminders = [];
+    const remainingReminders = [];
+    for (const rem of reminders) {
+      const target = rem && parseAt(rem.at);
+      if (target && isDue(target, dateStr, nowMin)) {
+        dueReminders.push(rem);
+      } else {
+        remainingReminders.push(rem);
+      }
+    }
+
     // Saat 13:00 civarı: günlük 10 bin adım hatırlatması (sabit saat).
     if (!state.sentSteps && inWindow(nowMin, 13 * 60, WINDOW_MIN)) {
       toSend.push(['sentSteps', c.steps]);
@@ -249,14 +294,28 @@ exports.handler = async (event) => {
       if (result === true) { sent++; state[flag] = true; } else { /* transient failure: leave flag false, retry next run */ }
     }
 
+    // Zamanı gelmiş özel hatırlatmaları gönder. Başarılı olursa listeden
+    // kalıcı olarak düşer (tek seferlik); geçici bir hata olursa (expired
+    // değilse) bir sonraki çalıştırmada tekrar denenmek üzere listede kalır
+    // — zamanı zaten geçtiği için isDue() true dönmeye devam edecektir.
+    if (!expired) {
+      for (const rem of dueReminders) {
+        const result = await sendPush(record.subscription, { title: c.reminder.title, body: rem.text });
+        if (result === 'expired') { expired = true; break; }
+        if (result === true) { sent++; } else { remainingReminders.push(rem); }
+      }
+    }
+
     if (expired) {
       await store.delete(key);
       dropped++;
       continue;
     }
 
-    if (toSend.length > 0) {
+    const remindersChanged = remainingReminders.length !== reminders.length;
+    if (toSend.length > 0 || remindersChanged) {
       record.state = state;
+      if (remindersChanged) record.reminders = remainingReminders;
       await store.setJSON(key, record);
     }
   }

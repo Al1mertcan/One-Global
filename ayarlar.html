@@ -161,9 +161,14 @@
           Buraya hiç hatırlatma eklemezsen, öğlen saat 12 civarı sana nazikçe
           "aklında bir şey var mı?" diye soran bir bildirim gönderiyoruz.
         </p>
-        <div class="mt-3 flex gap-2">
-          <input id="reminder-input" type="text" data-i18n-placeholder="settingsReminderPlaceholder" placeholder="Örneğin: Anneni ara" class="min-w-0 flex-1 rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground outline-none" />
-          <button id="btn-add-reminder" class="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground" data-i18n="settingsAddBtn">Ekle</button>
+        <div class="mt-3 space-y-2">
+          <input id="reminder-input" type="text" data-i18n-placeholder="settingsReminderPlaceholder" placeholder="Örneğin: Anneni ara" class="w-full rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground outline-none" />
+          <div class="flex items-center gap-2">
+            <iconify-icon icon="lucide:clock" class="shrink-0 text-base text-muted-foreground"></iconify-icon>
+            <input id="reminder-at" type="datetime-local" aria-label="Hatırlatma zamanı (opsiyonel) / Reminder time (optional)" class="min-w-0 flex-1 rounded-lg border border-border bg-input px-3 py-2 text-xs text-card-foreground outline-none" />
+            <button id="btn-add-reminder" class="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground" data-i18n="settingsAddBtn">Ekle</button>
+          </div>
+          <p class="text-[11px] leading-4 text-muted-foreground" data-i18n="settingsReminderAtHint">Bir zaman seçersen, tam o saatte bildirim göndeririz. Boş bırakırsan sadece bir not olarak kalır.</p>
         </div>
         <ul id="reminder-list" class="mt-3 space-y-2"></ul>
       </section>
@@ -389,15 +394,34 @@
         try { reminders = JSON.parse(localStorage.getItem(REMINDERS_KEY) || '[]'); } catch (e) { reminders = []; }
         renderReminders();
       }
+      function formatReminderAt(at) {
+        var d = new Date(at);
+        if (isNaN(d.getTime())) return '';
+        try {
+          return d.toLocaleString(undefined, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        } catch (e) {
+          return at;
+        }
+      }
       function renderReminders() {
         var list = document.getElementById('reminder-list');
         list.innerHTML = '';
         reminders.forEach(function (r, idx) {
           var li = document.createElement('li');
           li.className = 'flex items-center justify-between gap-2 rounded-lg border border-border bg-input px-3 py-2';
+          var textWrap = document.createElement('div');
+          textWrap.className = 'min-w-0 flex-1';
           var span = document.createElement('span');
-          span.className = 'min-w-0 flex-1 truncate text-sm text-card-foreground';
+          span.className = 'block truncate text-sm text-card-foreground';
           span.textContent = r.text;
+          textWrap.appendChild(span);
+          if (r.at) {
+            var timeSpan = document.createElement('span');
+            timeSpan.className = 'mt-0.5 flex items-center gap-1 text-[11px] font-semibold text-primary';
+            timeSpan.innerHTML = '<iconify-icon icon="lucide:bell" class="text-xs"></iconify-icon>';
+            timeSpan.appendChild(document.createTextNode(formatReminderAt(r.at)));
+            textWrap.appendChild(timeSpan);
+          }
           var btn = document.createElement('button');
           btn.setAttribute('aria-label', t('settingsDeleteAria'));
           btn.className = 'shrink-0 text-muted-foreground';
@@ -406,7 +430,7 @@
             reminders.splice(idx, 1);
             persistReminders();
           });
-          li.appendChild(span);
+          li.appendChild(textWrap);
           li.appendChild(btn);
           list.appendChild(li);
         });
@@ -432,10 +456,18 @@
       }
       document.getElementById('btn-add-reminder').addEventListener('click', function () {
         var input = document.getElementById('reminder-input');
+        var atInput = document.getElementById('reminder-at');
         var text = (input.value || '').trim();
         if (!text) return;
-        reminders.push({ text: text, createdAt: Date.now() });
+        // "at" (opsiyonel): "YYYY-MM-DDTHH:MM" biçiminde, kullanıcının kendi
+        // cihaz saatine göre yerel bir zaman damgası. Belirtilirse,
+        // send-notifications.js bu tam zamanda gerçek bir push bildirimi
+        // gönderir ve hatırlatmayı listeden kaldırır (tek seferlik).
+        // Boş bırakılırsa eskisi gibi sadece pasif bir not olarak kalır.
+        var at = (atInput && atInput.value) ? atInput.value : null;
+        reminders.push({ text: text, createdAt: Date.now(), at: at });
         input.value = '';
+        if (atInput) atInput.value = '';
         persistReminders();
       });
       document.getElementById('reminder-input').addEventListener('keydown', function (e) {

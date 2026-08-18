@@ -303,8 +303,20 @@
         if (reminders.length > 0) {
           remSection.classList.remove('hidden');
           remList.innerHTML = reminders.map(function (r) {
-            return '<div class="p-4 text-sm text-card-foreground">' + (typeof r === 'string' ? r : (r.text || '')) + '</div>';
+            var text = typeof r === 'string' ? r : (r.text || '');
+            var at = (r && typeof r === 'object' && r.at) ? r.at : null;
+            var timeHtml = at ? '<div class="mt-0.5 flex items-center gap-1 text-xs font-semibold text-primary"><iconify-icon icon="lucide:bell" class="text-xs"></iconify-icon>' + formatReminderAt(at) + '</div>' : '';
+            return '<div class="p-4 text-sm text-card-foreground">' + text + timeHtml + '</div>';
           }).join('');
+        }
+      }
+      function formatReminderAt(at) {
+        var d = new Date(at);
+        if (isNaN(d.getTime())) return '';
+        try {
+          return d.toLocaleString(undefined, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        } catch (e) {
+          return at;
         }
       }
       render();
