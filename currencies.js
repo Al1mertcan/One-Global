@@ -186,14 +186,21 @@
   }
 
   // Ülkeye göre fiyat istisnaları: varsayılan model "her yerde ayda 1 birim"
-  // olsa da, Türkiye için aylık ücret bilinçli olarak 10 birim (10 TL) olarak
-  // belirlendi. Burada listelenmeyen tüm para birimleri varsayılan olarak
-  // 1 birim/ay olmaya devam eder. Bu eşleme, sunucu tarafındaki
-  // netlify/functions/create-checkout-session.js dosyasındaki
-  // PRICE_OVERRIDES ile birebir aynı tutulmalıdır (gerçek tahsilat orada
-  // yapılır) — burası sadece kullanıcıya ödeme öncesi doğru fiyatı
-  // göstermek için var.
-  var PRICE_OVERRIDES = { TRY: 10 };
+  // olsa da, yıllık enflasyonu ~%15 ve üzerinde olan ülkelerde (IMF'in 2026
+  // tahminlerine göre) "1 birim" o ülkenin zayıf/aşırı değer kaybetmiş para
+  // biriminde neredeyse sıfıra denk geldiği için aylık ücret bilinçli olarak
+  // 10 birim olacak şekilde ayarlandı: Türkiye (TRY), Venezuela (VES), Sudan
+  // (SDG), İran (IRR), Arjantin (ARS), Yemen (YER), Malavi (MWK), Haiti
+  // (HTG), Bolivya (BOB), Myanmar (MMK), Nijerya (NGN). Burada listelenmeyen
+  // tüm para birimleri varsayılan olarak 1 birim/ay olmaya devam eder. Bu
+  // eşleme, sunucu tarafındaki netlify/functions/create-checkout-session.js
+  // dosyasındaki PRICE_OVERRIDES ile birebir aynı tutulmalıdır (gerçek
+  // tahsilat orada yapılır) — burası sadece kullanıcıya ödeme öncesi doğru
+  // fiyatı göstermek için var.
+  var PRICE_OVERRIDES = {
+    TRY: 10, VES: 10, SDG: 10, IRR: 10, ARS: 10, YER: 10,
+    MWK: 10, HTG: 10, BOB: 10, MMK: 10, NGN: 10,
+  };
 
   function getPrice(code) {
     return PRICE_OVERRIDES.hasOwnProperty(code) ? PRICE_OVERRIDES[code] : 1;

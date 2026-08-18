@@ -39,12 +39,18 @@ const ZERO_DECIMAL_CURRENCIES = new Set([
 ]);
 
 // Ülkeye göre fiyat istisnaları: varsayılan "her yerde ayda 1 birim" modeli
-// üzerine, Türkiye için aylık ücret bilinçli olarak 10 birim (10 TL) olacak
-// şekilde ayarlandı. Burada listelenmeyen tüm para birimleri 1 birim/ay
-// olmaya devam eder. Bu, GERÇEK tahsilat tutarını belirleyen taraftır —
-// currencies.js'teki eşleme sadece istemcide önizleme göstermek içindir ve
-// bununla senkron tutulmalıdır.
-const PRICE_OVERRIDES = { TRY: 10 };
+// üzerine, yıllık enflasyonu ~%15 ve üzerinde olan ülkelerde (IMF'in 2026
+// tahminlerine göre) aylık ücret bilinçli olarak 10 birim olacak şekilde
+// ayarlandı: Türkiye (TRY), Venezuela (VES), Sudan (SDG), İran (IRR),
+// Arjantin (ARS), Yemen (YER), Malavi (MWK), Haiti (HTG), Bolivya (BOB),
+// Myanmar (MMK), Nijerya (NGN). Burada listelenmeyen tüm para birimleri
+// 1 birim/ay olmaya devam eder. Bu, GERÇEK tahsilat tutarını belirleyen
+// taraftır — currencies.js'teki eşleme sadece istemcide önizleme göstermek
+// içindir ve bununla senkron tutulmalıdır.
+const PRICE_OVERRIDES = {
+  TRY: 10, VES: 10, SDG: 10, IRR: 10, ARS: 10, YER: 10,
+  MWK: 10, HTG: 10, BOB: 10, MMK: 10, NGN: 10,
+};
 
 exports.handler = async (event) => {
   const corsHeaders = {
@@ -72,6 +78,7 @@ exports.handler = async (event) => {
   let payload;
   try {
     payload = JSON.parse(event.body || '{}');
+    if (!payload || typeof payload !== 'object') throw new Error('payload not an object');
   } catch (e) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz istek gövdesi.' }) };
   }
@@ -129,7 +136,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: corsHeaders,
-      body: JSON.stringify({ error: 'Ödeme oturumu oluşturulamadı: ' + err.message }),
+      body: JSON.stringify({ error: 'Ödeme oturumu oluşturulamadı.' }),
     };
   }
 };
