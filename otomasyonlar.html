@@ -226,7 +226,7 @@
   <script>
     (function () {
       'use strict';
-      var DEFAULTS = { wakeTime: '07:30', homeTime: '18:30', bedTime: '23:00', pushups: 10, situps: 20, pages: 5, notifyBedtime: true };
+      var DEFAULTS = { wakeTime: '07:30', homeTime: '18:30', bedTime: '23:00', pushups: 10, squat: 10, situps: 20, pages: 5, notifyBedtime: true, customExercises: [] };
 
       function t(key, vars) {
         return (window.ONE_I18N && window.ONE_I18N.t) ? window.ONE_I18N.t(key, vars) : key;
@@ -270,6 +270,17 @@
         );
       }
 
+      // Kullanıcının eklediği, sayısı 0'dan büyük olan ek hareketleri
+      // ", 5 Barfiks" gibi ek bir metin parçası olarak döndürür — hiç yoksa
+      // (ya da hepsi 0'daysa) boş string döner.
+      function customExerciseSuffix(s) {
+        var list = Array.isArray(s.customExercises) ? s.customExercises : [];
+        var parts = list
+          .filter(function (ex) { return ex && ex.name && ex.count > 0; })
+          .map(function (ex) { return ex.count + ' ' + ex.name; });
+        return parts.length ? ', ' + parts.join(', ') : '';
+      }
+
       function render() {
         var s = loadSettings();
         var reminders = loadReminders();
@@ -287,12 +298,12 @@
 
         var items = [
           ['lucide:sunrise', t('autoCard1Title'), s.wakeTime, t('autoCard1Desc')],
-          ['lucide:dumbbell', t('autoCard2Title'), s.wakeTime + ' + 15' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, situps: s.situps })],
+          ['lucide:dumbbell', t('autoCard2Title'), s.wakeTime + ' + 15' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s)],
           ['lucide:brain', t('autoCard3Title'), s.wakeTime + ' + 30' + min, t('autoCard3Desc')],
           ['lucide:door-open', t('autoCard4Title'), s.homeTime, t('autoCard4Desc')],
           ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 60' + min, t('autoCard5Desc', { pages: s.pages })],
           ['lucide:smile', t('autoCard6Title'), s.bedTime + ' - 60' + min, t('autoCard6Desc')],
-          ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 30' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, situps: s.situps })],
+          ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 30' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s)],
           ['lucide:bed', t('autoCard8Title'), s.bedTime, t('autoCard8Desc')],
         ];
         container.innerHTML = items.map(function (it) { return card(it[0], it[1], it[2], it[3]); }).join('');

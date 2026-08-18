@@ -33,7 +33,7 @@ const CONTENT = {
       title: 'Günaydın 🌅',
       body: "Bugün yine hayattasın — bunun için şükretmeyi unutma. Sevdiklerinle güzel vakit geçir, çünkü yarın sen ya da sevdiğin biri burada olmayabilir. O yüzden sonra değil, şimdi ve bugün. Hatırlatmamı istediğin bir şey var mı? Unutma, ben her gün buradayım.",
     },
-    exercise: (p, s) => ({ title: 'Sabah sporu zamanı 💪', body: `Hadi başlayalım: ${p} şınav, ${s} mekik. Kendini nasıl hissettiğini merak ediyorum.` }),
+    exercise: (p, sq, s, extra) => ({ title: 'Sabah sporu zamanı 💪', body: `Hadi başlayalım: ${p} şınav, ${sq} squat, ${s} mekik${extra}. Kendini nasıl hissettiğini merak ediyorum.` }),
     brain: {
       title: 'Küçük bir beyin egzersizi 🧠',
       body: '', // pool'dan seçilecek
@@ -55,9 +55,9 @@ const CONTENT = {
       title: 'Diş fırçalama zamanı 🦷',
       body: 'Dişlerini fırçaladın mı? Diş sağlığı çok önemli — ileriki sen teşekkür edecek :)',
     },
-    eveningExercise: (p, s) => ({
+    eveningExercise: (p, sq, s, extra) => ({
       title: 'Küçük bir akşam hareketi 💪',
-      body: `${p} şınav, ${s} mekik çek — sağlıklı ve güzel bir vücut için. İleriki sen, şu anki sana teşekkür edecek.`,
+      body: `${p} şınav, ${sq} squat, ${s} mekik çek${extra} — sağlıklı ve güzel bir vücut için. İleriki sen, şu anki sana teşekkür edecek.`,
     }),
     bed: {
       title: 'İyi geceler 🌙',
@@ -70,7 +70,7 @@ const CONTENT = {
       title: 'Good morning 🌅',
       body: "You're alive again today — don't forget to be grateful for that. Spend real time with the people you love, because tomorrow you or someone you love might not be here. So not later — now, today. Anything you'd like me to remind you of? I'm here every day.",
     },
-    exercise: (p, s) => ({ title: 'Morning workout time 💪', body: `Let's go: ${p} push-ups, ${s} sit-ups. Curious how you'll feel after.` }),
+    exercise: (p, sq, s, extra) => ({ title: 'Morning workout time 💪', body: `Let's go: ${p} push-ups, ${sq} squats, ${s} sit-ups${extra}. Curious how you'll feel after.` }),
     brain: { title: 'A small brain exercise 🧠', body: '' },
     home: {
       title: 'Wrapping up the day 🙏',
@@ -89,9 +89,9 @@ const CONTENT = {
       title: 'Brush your teeth 🦷',
       body: "Did you brush your teeth? Dental health matters — future you will thank you :)",
     },
-    eveningExercise: (p, s) => ({
+    eveningExercise: (p, sq, s, extra) => ({
       title: 'A little evening movement 💪',
-      body: `${p} push-ups, ${s} sit-ups — for a healthy, strong body. Future you will thank present you.`,
+      body: `${p} push-ups, ${sq} squats, ${s} sit-ups${extra} — for a healthy, strong body. Future you will thank present you.`,
     }),
     bed: {
       title: 'Good night 🌙',
@@ -160,6 +160,18 @@ const BRAIN_TIPS = {
 
 function contentFor(lang) {
   return CONTENT[lang] || CONTENT.en;
+}
+
+// Kullanıcının kendi eklediği, sayısı 0'dan büyük olan ek hareketleri
+// ", 5 Barfiks, 3 Dips" gibi bir ek metin parçası olarak döndürür — hiç
+// yoksa (ya da hepsi 0'daysa) boş string döner. 0'daki hareketler bilerek
+// hatırlatmaya dahil edilmiyor (ayarlar.html'deki açıklama da bunu söylüyor).
+function customExerciseSuffix(settings) {
+  var list = Array.isArray(settings && settings.customExercises) ? settings.customExercises : [];
+  var parts = list
+    .filter(function (ex) { return ex && typeof ex.name === 'string' && ex.name.trim() && ex.count > 0; })
+    .map(function (ex) { return ex.count + ' ' + ex.name.trim(); });
+  return parts.length ? ', ' + parts.join(', ') : '';
 }
 function brainTipsFor(lang) {
   return BRAIN_TIPS[lang] || BRAIN_TIPS.en;
@@ -320,7 +332,7 @@ exports.handler = async (event) => {
     if (wakeMin !== null && !state.sentWake && inWindow(nowMin, wakeMin, WINDOW_MIN)) {
       toSend.push(['sentWake', c.wake]);
     } else if (wakeMin !== null && state.sentWake && !state.sentExercise && inWindow(nowMin, wakeMin + 15, WINDOW_MIN)) {
-      toSend.push(['sentExercise', c.exercise(settings.pushups || 10, settings.situps || 20)]);
+      toSend.push(['sentExercise', c.exercise(settings.pushups || 10, settings.squat || 10, settings.situps || 20, customExerciseSuffix(settings))]);
     } else if (wakeMin !== null && state.sentExercise && !state.sentBrain && inWindow(nowMin, wakeMin + 30, WINDOW_MIN)) {
       const tips = brainTipsFor(lang);
       const tip = tips[dayOfYear(dateStr) % tips.length];
@@ -364,7 +376,7 @@ exports.handler = async (event) => {
     if (bedMin !== null && !state.sentTeeth && inWindow(nowMin, bedMin - 60, WINDOW_MIN)) {
       toSend.push(['sentTeeth', c.teeth]);
     } else if (bedMin !== null && state.sentTeeth && !state.sentEveningExercise && inWindow(nowMin, bedMin - 30, WINDOW_MIN)) {
-      toSend.push(['sentEveningExercise', c.eveningExercise(settings.pushups || 10, settings.situps || 20)]);
+      toSend.push(['sentEveningExercise', c.eveningExercise(settings.pushups || 10, settings.squat || 10, settings.situps || 20, customExerciseSuffix(settings))]);
     } else if (bedMin !== null && settings.notifyBedtime !== false && !state.sentBed && inWindow(nowMin, bedMin, WINDOW_MIN)) {
       toSend.push(['sentBed', c.bed]);
     }

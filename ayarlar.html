@@ -137,6 +137,14 @@
             </div>
           </div>
           <div class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground" data-i18n="settingsSquatLabel">🏋️ Squat</span>
+            <div class="flex items-center gap-3">
+              <button data-step="squat" data-delta="-5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
+              <span id="squat-val" class="w-8 text-center font-heading text-base font-semibold">10</span>
+              <button data-step="squat" data-delta="5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">+</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
             <span class="text-sm text-card-foreground" data-i18n="settingsSitupsLabel">🔥 Mekik</span>
             <div class="flex items-center gap-3">
               <button data-step="situps" data-delta="-5" class="stepper-btn flex h-9 w-9 items-center justify-center rounded-lg border border-border text-lg">−</button>
@@ -153,6 +161,16 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
+        <h2 class="font-heading text-sm font-semibold" data-i18n="settingsCustomExercisesTitle">Ek hareketler</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsCustomExercisesExplain">İstersen kendi hareketlerini ekleyip hedef sayısını belirleyebilirsin. 0'da bırakırsan bildirimlerde görünmez.</p>
+        <div class="mt-3 flex items-center gap-2">
+          <input id="exercise-input" type="text" data-i18n-placeholder="settingsCustomExercisePlaceholder" placeholder="Örneğin: Barfiks" class="w-full rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground outline-none" />
+          <button id="btn-add-exercise" class="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground" data-i18n="settingsAddBtn">Ekle</button>
+        </div>
+        <ul id="exercise-list" class="mt-3 space-y-2"></ul>
       </section>
 
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
@@ -250,7 +268,8 @@
         save: document.getElementById('btn-save'),
         saveConfirm: document.getElementById('save-confirm'),
       };
-      var counters = { pushups: 10, situps: 20, pages: 5 };
+      var counters = { pushups: 10, squat: 10, situps: 20, pages: 5 };
+      var customExercises = [];
       var STORAGE_KEY = 'one-notif-settings';
       var SUB_ID_KEY = 'one-sub-id';
 
@@ -277,10 +296,25 @@
           if (saved.homeTime) els.home.value = saved.homeTime;
           if (saved.bedTime) els.bed.value = saved.bedTime;
           if (saved.pushups) counters.pushups = saved.pushups;
+          if (saved.squat) counters.squat = saved.squat;
           if (saved.situps) counters.situps = saved.situps;
           if (saved.pages) counters.pages = saved.pages;
+          // Kaydedilmiş bir "ek hareketler" listesi varsa (boş dizi [] dahil,
+          // kullanıcı hepsini bilerek silmiş olabilir) onu kullan. Hiç
+          // kaydedilmemişse (alan tanımsızsa — ör. bu özellik eklenmeden
+          // önceki bir kullanıcı ya da hiç ayar kaydetmemiş yeni bir
+          // kullanıcı), örnek olması için birkaç hareketi 0'da ekleyelim.
+          if (Array.isArray(saved.customExercises)) {
+            customExercises = saved.customExercises;
+          } else {
+            customExercises = [
+              { name: t('exerciseSeedBarfiks'), count: 0 },
+              { name: t('exerciseSeedDips'), count: 0 },
+            ];
+          }
         } catch (e) {}
         renderCounters();
+        renderCustomExercises();
       }
       // --- Uyku döngüsü önerileri (~90 dk / döngü + ~15 dk uykuya dalma süresi) ---
       var CYCLE_MIN = 90;
@@ -326,8 +360,58 @@
 
       function renderCounters() {
         document.getElementById('pushups-val').textContent = counters.pushups;
+        document.getElementById('squat-val').textContent = counters.squat;
         document.getElementById('situps-val').textContent = counters.situps;
         document.getElementById('pages-val').textContent = counters.pages;
+      }
+      function renderCustomExercises() {
+        var list = document.getElementById('exercise-list');
+        list.innerHTML = '';
+        customExercises.forEach(function (ex, idx) {
+          var li = document.createElement('li');
+          li.className = 'flex items-center justify-between gap-2 rounded-lg border border-border bg-input px-3 py-2';
+
+          var nameSpan = document.createElement('span');
+          nameSpan.className = 'min-w-0 flex-1 truncate text-sm text-card-foreground';
+          nameSpan.textContent = ex.name;
+
+          var stepperWrap = document.createElement('div');
+          stepperWrap.className = 'flex shrink-0 items-center gap-2';
+          var minus = document.createElement('button');
+          minus.type = 'button';
+          minus.className = 'stepper-btn flex h-8 w-8 items-center justify-center rounded-lg border border-border text-base';
+          minus.textContent = '−';
+          minus.setAttribute('data-step', 'custom');
+          minus.setAttribute('data-idx', String(idx));
+          minus.setAttribute('data-delta', '-1');
+          var valSpan = document.createElement('span');
+          valSpan.className = 'w-6 text-center font-heading text-sm font-semibold';
+          valSpan.textContent = ex.count;
+          var plus = document.createElement('button');
+          plus.type = 'button';
+          plus.className = 'stepper-btn flex h-8 w-8 items-center justify-center rounded-lg border border-border text-base';
+          plus.textContent = '+';
+          plus.setAttribute('data-step', 'custom');
+          plus.setAttribute('data-idx', String(idx));
+          plus.setAttribute('data-delta', '1');
+          stepperWrap.appendChild(minus);
+          stepperWrap.appendChild(valSpan);
+          stepperWrap.appendChild(plus);
+
+          var delBtn = document.createElement('button');
+          delBtn.setAttribute('aria-label', t('settingsDeleteAria'));
+          delBtn.className = 'shrink-0 text-muted-foreground';
+          delBtn.innerHTML = '<iconify-icon icon="lucide:x" class="text-base"></iconify-icon>';
+          delBtn.addEventListener('click', function () {
+            customExercises.splice(idx, 1);
+            renderCustomExercises();
+          });
+
+          li.appendChild(nameSpan);
+          li.appendChild(stepperWrap);
+          li.appendChild(delBtn);
+          list.appendChild(li);
+        });
       }
       function currentSettings() {
         return {
@@ -335,8 +419,10 @@
           homeTime: els.home.value || '18:30',
           bedTime: els.bed.value || '23:00',
           pushups: counters.pushups,
+          squat: counters.squat,
           situps: counters.situps,
           pages: counters.pages,
+          customExercises: customExercises,
           notifyBedtime: true,
         };
       }
@@ -348,14 +434,38 @@
         els.error.classList.add('hidden');
       }
 
-      document.querySelectorAll('.stepper-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var key = btn.getAttribute('data-step');
-          var delta = parseInt(btn.getAttribute('data-delta'), 10);
-          var min = key === 'pages' ? 1 : 0;
-          counters[key] = Math.max(min, counters[key] + delta);
-          renderCounters();
-        });
+      // Delegasyon kullanıyoruz (tek bir document-level listener) çünkü
+      // "Ek hareketler" listesindeki stepper butonları sonradan (dinamik
+      // olarak) DOM'a ekleniyor — sayfa yüklenirken tek seferlik querySelectorAll
+      // ile bağlarsak bu yeni butonlar hiç çalışmaz.
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest && e.target.closest('.stepper-btn');
+        if (!btn) return;
+        var key = btn.getAttribute('data-step');
+        var delta = parseInt(btn.getAttribute('data-delta'), 10);
+        if (key === 'custom') {
+          var idx = parseInt(btn.getAttribute('data-idx'), 10);
+          var ex = customExercises[idx];
+          if (!ex) return;
+          ex.count = Math.max(0, ex.count + delta);
+          renderCustomExercises();
+          return;
+        }
+        var min = key === 'pages' ? 1 : 0;
+        counters[key] = Math.max(min, counters[key] + delta);
+        renderCounters();
+      });
+
+      document.getElementById('btn-add-exercise').addEventListener('click', function () {
+        var input = document.getElementById('exercise-input');
+        var name = (input.value || '').trim();
+        if (!name) return;
+        customExercises.push({ name: name, count: 0 });
+        input.value = '';
+        renderCustomExercises();
+      });
+      document.getElementById('exercise-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('btn-add-exercise').click();
       });
 
       function saveLocalAndMaybeSync(showConfirm) {

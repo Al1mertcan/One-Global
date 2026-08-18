@@ -24,6 +24,7 @@ exports.handler = async (event) => {
   let payload;
   try {
     payload = JSON.parse(event.body || '{}');
+    if (!payload || typeof payload !== 'object') throw new Error('payload not an object');
   } catch (e) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz istek gövdesi.' }) };
   }
@@ -44,7 +45,7 @@ exports.handler = async (event) => {
       timezone: timezone || existing.timezone || 'UTC',
       lang: lang || existing.lang || 'en',
       settings: Object.assign(
-        { wakeTime: '07:30', homeTime: '18:30', bedTime: '23:00', pushups: 10, situps: 20, pages: 5, notifyBedtime: true },
+        { wakeTime: '07:30', homeTime: '18:30', bedTime: '23:00', pushups: 10, squat: 10, situps: 20, pages: 5, notifyBedtime: true, customExercises: [] },
         existing.settings || {},
         settings || {}
       ),
@@ -59,6 +60,6 @@ exports.handler = async (event) => {
 
     return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true }) };
   } catch (err) {
-    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Kaydedilemedi: ' + err.message }) };
+    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Kaydedilemedi.' }) };
   }
 };

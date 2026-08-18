@@ -11,9 +11,12 @@
 </head>
 <body style="background:#07111F">
   <script>
+    // hosgeldin.html artık hem ilk kayıt akışını hem de her açılıştaki
+    // kısa marka ekranını (splash) kendisi yönetiyor (bkz. o dosyadaki
+    // "returning-user" mantığı) — bu yüzden buradan her zaman oraya
+    // yönlendiriyoruz, onboarding durumuna bakmamıza gerek kalmadı.
     try {
-      var target = (localStorage.getItem('one-onboarded') === '1') ? 'asistan.html' : 'hosgeldin.html';
-      window.location.replace(target);
+      window.location.replace('hosgeldin.html');
     } catch (e) {
       window.location.replace('asistan.html');
     }
