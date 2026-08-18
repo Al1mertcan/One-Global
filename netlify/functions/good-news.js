@@ -14,12 +14,36 @@
 // içinde — send-notifications.js (zamanlanmış fonksiyon) her 15 dakikada
 // bir sırayla bir dilin önbelleğini arka planda tazeliyor, böylece bu uç
 // nokta neredeyse her zaman hazır önbellekten anında cevap verir. Önbellek
-// gerçekten boşsa (ör. bir dilin ilk kullanımı) burada canlı üretime
-// düşüyoruz — bu nadir durumda, arama uzun sürerse zaman aşımı riski
-// (Netlify'ın senkron fonksiyon süre sınırı) hâlâ teorik olarak mevcut,
-// ama artık istisna, kural değil.
+// gerçekten boşsa (ör. bir dilin ilk kullanımı ya da henüz sırası
+// gelmediği için arka planda hiç tazelenmemiş bir dil) burada canlı
+// üretime düşüyoruz.
+//
+// ÖNEMLİ: Netlify'ın senkron fonksiyon süre sınırı (bu sitede 30sn) benim
+// kendi try/catch'imin DIŞINDA, platform seviyesinde işliyor — yani canlı
+// üretim 30 saniyeyi geçerse Netlify fonksiyonu kendisi öldürüyor ve benim
+// hiçbir JSON hata biçimime uymayan çirkin bir "Sandbox.Timedout" sayfası
+// dönüyor (bunu canlıda gözlemledim). Bunu önlemek için üretimi kendi
+// içimde, platform sınırının belirgin şekilde altında bir süre (20sn) ile
+// yarıştırıyorum (Promise.race) — böylece süre dolarsa Netlify bizi
+// öldürmeden ÖNCE kendi düzgün JSON hata cevabımızı (ya da varsa bayat
+// önbelleği) döndürebiliyoruz.
+const GENERATION_TIMEOUT_MS = 20000;
 
 const { LANG_NAMES, getCached, generateAndCache } = require('./_good-news-core');
+
+function withTimeout(promise, ms, message) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      const err = new Error(message);
+      err.statusCode = 503;
+      reject(err);
+    }, ms);
+    promise.then(
+      (v) => { clearTimeout(timer); resolve(v); },
+      (e) => { clearTimeout(timer); reject(e); }
+    );
+  });
+}
 
 exports.handler = async (event) => {
   const corsHeaders = {
@@ -50,7 +74,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    const result = await generateAndCache(store, apiKey, lang);
+    const result = await withTimeout(
+      generateAndCache(store, apiKey, lang),
+      GENERATION_TIMEOUT_MS,
+      'Haberler hazırlanıyor, birazdan tekrar dene.'
+    );
     return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(result) };
   } catch (err) {
     // Canlı üretim başarısız oldu (hata ya da zaman aşımı). Elimizde bayat
