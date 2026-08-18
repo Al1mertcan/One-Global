@@ -19,6 +19,7 @@
 
 const webpush = require('web-push');
 const { getStore, connectLambda } = require('@netlify/blobs');
+const { LANG_NAMES, getCached, generateAndCache } = require('./_good-news-core');
 
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
@@ -241,8 +242,49 @@ async function sendPush(subscription, payload) {
   }
 }
 
+// "Bugünün iyi haberleri" önbelleğini arka planda tazele — bkz.
+// _good-news-core.js üstündeki açıklama. Bu fonksiyon her çalıştırmada
+// (15 dakikada bir) 21 dilden SADECE BİRİNİ dener (zamana göre dönüşümlü),
+// ve o dilin önbelleği zaten tazeyse (yeni üretilmiş, 20 saatten küçükse)
+// hiçbir şey yapmadan çıkar — yani gerçek bir Claude çağrısı, pratikte
+// dil başına günde sadece 1 kez oluyor (öncekiyle aynı maliyet), ama artık
+// kullanıcı beklerken değil, arka planda gerçekleşiyor. Bu fonksiyonun
+// kendisi asla push bildirim gönderimini bloklamamalı ya da onu çökertmemeli
+// — bu yüzden süresi sınırlı (budget ms) ve tamamen kendi try/catch'i içinde.
+async function refreshOneGoodNewsLanguage(budgetMs) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return; // AI hiç yapılandırılmamışsa sessizce atla
+
+  const langs = Object.keys(LANG_NAMES);
+  const slot = Math.floor(Date.now() / (15 * 60 * 1000));
+  const lang = langs[slot % langs.length];
+
+  const store = getStore('one-good-news');
+  const cached = await getCached(store, lang);
+  if (cached && !cached.stale) return; // zaten taze — yapacak bir şey yok
+
+  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve('timeout'), budgetMs));
+  try {
+    await Promise.race([generateAndCache(store, apiKey, lang), timeoutPromise]);
+  } catch (e) {
+    // sessizce yut — bir sonraki 15dk'lık çalıştırmada tekrar denenecek
+    // (aynı dil hâlâ bayat/eksik olduğu için gelecekte tekrar seçilebilir)
+  }
+}
+
 exports.handler = async (event) => {
   connectLambda(event || {});
+
+  // Push bildirimlerinden bağımsız, kendi başına güvenli bir arka plan
+  // görevi — asla ana akışı (push gönderimini) engellemesin diye süresi
+  // sınırlı ve hataları yutuluyor.
+  try {
+    await refreshOneGoodNewsLanguage(12000);
+  } catch (e) {
+    // yukarıdaki fonksiyon zaten kendi hatalarını yutuyor, ama yine de
+    // beklenmedik bir şey olursa push akışını etkilemesin.
+  }
+
   if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
     return { statusCode: 200, body: 'VAPID keys not configured — skipping (set VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY in Netlify env vars).' };
   }
