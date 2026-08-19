@@ -7,6 +7,18 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
+# Android (TWA) uygulamasının bu siteyle bağını doğrulamak için gereken
+# Digital Asset Links dosyası. Not: Netlify'ın manuel (sürükle-bırak/zip)
+# deploy yöntemi, "." ile başlayan klasörleri (ör. .well-known) deploy'dan
+# otomatik olarak siliyor — bu yüzden gerçek içeriği normal bir dosyada
+# (assetlinks-content.json) tutup buradan "/.well-known/assetlinks.json"
+# isteğini ona yönlendiriyoruz (status 200 = adres çubuğu değişmeden,
+# şeffaf olarak o dosyanın içeriğini döndürür).
+[[redirects]]
+  from = "/.well-known/assetlinks.json"
+  to = "/assetlinks-content.json"
+  status = 200
+
 # Bildirim gönderici — her 15 dakikada bir çalışır (bkz. send-notifications.js).
 [functions."send-notifications"]
   schedule = "*/15 * * * *"

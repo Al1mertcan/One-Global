@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.netlify.cheery_rolypoly_540555.twa",
+        "sha256_cert_fingerprints": ["EF:B5:1C:D7:42:87:F6:DC:CC:A7:5B:59:47:2D:C0:E9:8C:02:D1:BD:2C:97:A4:6D:3A:26:33:0E:24:AA:E3:09"]
+      }
+    }]
