@@ -1,4 +1,4 @@
-// ONE Global — dünya para birimleri listesi + tarayıcı diline göre otomatik tahmin.
+// Hemcan — dünya para birimleri listesi + tarayıcı diline göre otomatik tahmin.
 // Kapsam notu: ISO 4217'deki neredeyse tüm ülke para birimlerini içerir
 // (bazı küçük ada ülkeleri komşu büyük ülkenin parasını -ör. USD, AUD, EUR-
 // paylaştığı için ayrı satır olarak listelenmemiştir). Otomatik tahmin,

@@ -1,4 +1,4 @@
-// ONE Global — e-posta ile giriş (magic link) isteği.
+// Hemcan — e-posta ile giriş (magic link) isteği.
 //
 // DÜRÜSTLÜK NOTU: create-checkout-session.js ile aynı iskelet mantığı.
 // Kod gerçek ve çalışır durumdadır, ama devreye girmesi için Netlify'da
@@ -6,7 +6,7 @@
 // var) hesabının açılıp şu ortam değişkenlerinin tanımlanması gerekir:
 //   RESEND_API_KEY  -> Resend panelinden alınan API anahtarı
 //   AUTH_FROM_EMAIL -> gönderen adres (Resend'de doğrulanmış bir alan adı gerekir,
-//                       örn. "ONE Global <giris@onlarınalanadın.com>")
+//                       örn. "Hemcan <giris@onlarınalanadın.com>")
 // Bu değişkenler tanımlı değilse fonksiyon 501 döner; ayarlar.html bunu
 // yakalayıp "e-posta ile giriş henüz aktif değil" notunu gösterir —
 // hiçbir zaman "bağlantı gönderildi" gibi sahte bir onay verilmez.
@@ -79,6 +79,11 @@ exports.handler = async (event) => {
   let payload;
   try {
     payload = JSON.parse(event.body || '{}');
+    // JSON.parse("null") / ("123") / ('"x"') all succeed without throwing,
+    // but return something that isn't a plain object — the very next line
+    // would then crash on property access. Guard against that explicitly
+    // instead of leaking a raw 500 stack trace to the caller.
+    if (!payload || typeof payload !== 'object') throw new Error('payload not an object');
   } catch (e) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz istek gövdesi.' }) };
   }
@@ -126,22 +131,24 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         from: fromEmail,
         to: email,
-        subject: 'ONE Global — Giriş bağlantın',
+        subject: 'Hemcan — Giriş bağlantın',
         html:
           '<p>Merhaba,</p>' +
-          '<p>ONE Global\'a giriş yapmak ve verilerini bu cihaza bağlamak için aşağıdaki bağlantıya tıkla (15 dakika geçerlidir):</p>' +
+          '<p>Hemcan\'a giriş yapmak ve verilerini bu cihaza bağlamak için aşağıdaki bağlantıya tıkla (15 dakika geçerlidir):</p>' +
           '<p><a href="' + magicLink + '">' + magicLink + '</a></p>' +
           '<p>Bu isteği sen yapmadıysan, bu e-postayı görmezden gelebilirsin.</p>',
       }),
     });
 
     if (!emailRes.ok) {
-      const errText = await emailRes.text().catch(() => '');
-      return { statusCode: 502, headers: corsHeaders, body: JSON.stringify({ error: 'E-posta gönderilemedi: ' + errText }) };
+      // Resend'in ham hata metnini (hesap/alan adı doğrulama durumu gibi
+      // detaylar içerebilir) doğrulanmamış çağırana aynen yansıtmıyoruz —
+      // sadece temiz, genel bir Türkçe mesaj dönüyoruz.
+      return { statusCode: 502, headers: corsHeaders, body: JSON.stringify({ error: 'E-posta gönderilemedi — az sonra tekrar dene.' }) };
     }
 
     return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true }) };
   } catch (err) {
-    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'İstek işlenemedi: ' + err.message }) };
+    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'İstek işlenemedi.' }) };
   }
 };

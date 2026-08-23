@@ -1,4 +1,4 @@
-// ONE Global — "Bugünün iyi haberleri" uç noktası.
+// Hemcan — "Bugünün iyi haberleri" uç noktası.
 // Claude'un web_search aracını kullanarak dünyadan gerçek, güncel, olumlu
 // haberleri toplar ve kısa bir özet olarak döner. Günde bir kez (dil başına)
 // üretilip Netlify Blobs'ta önbelleğe alınır — her sayfa yüklemesinde yeni

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bildirimler & Rutin — ONE Global</title>
+  <title>Bildirimler & Rutin — Hemcan</title>
 
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script>
@@ -49,7 +49,7 @@
   <link rel="icon" href="icons/favicon.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="ONE Global">
+  <meta name="apple-mobile-web-app-title" content="Hemcan">
 </head>
 <body class="bg-background text-foreground m-0 p-0">
   <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-16">
@@ -199,7 +199,7 @@
 
       <section class="mt-6 rounded-[22px] border border-border bg-card p-4">
         <h2 class="font-heading text-sm font-semibold" data-i18n="settingsAccountTitle">Hesabın</h2>
-        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsAccountExplain">Şu an ONE Global'ı bu cihaza özel kullanıyorsun (şifre yok, hesap yok). E-postanla bir giriş bağlantısı alarak verilerini başka bir cihazdan da açabilirsin.</p>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsAccountExplain">Şu an Hemcan'ı bu cihaza özel kullanıyorsun (şifre yok, hesap yok). E-postanla bir giriş bağlantısı alarak verilerini başka bir cihazdan da açabilirsin.</p>
         <div class="mt-3 flex gap-2">
           <label for="auth-email" class="sr-only">E-posta adresin</label>
           <input id="auth-email" type="email" autocomplete="email" data-i18n-placeholder="settingsEmailPlaceholder" placeholder="ornek@eposta.com" class="h-11 flex-1 rounded-theme border border-border bg-input px-3 text-sm text-card-foreground outline-none placeholder:text-muted-foreground" />
@@ -210,7 +210,7 @@
 
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
         <h2 class="font-heading text-sm font-semibold" data-i18n="settingsDataTitle">Verilerin</h2>
-        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsDataExplain">ONE Global hakkında sakladığı verileri (rutin ayarların, hatırlatmaların ve sohbet geçmişin) buradan indirebilir veya tamamen silebilirsin. Ayrıntılar için <a href="gizlilik.html" class="font-semibold text-primary">Gizlilik Politikası</a>'na bakabilirsin.</p>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsDataExplain">Hemcan hakkında sakladığı verileri (rutin ayarların, hatırlatmaların ve sohbet geçmişin) buradan indirebilir veya tamamen silebilirsin. Ayrıntılar için <a href="gizlilik.html" class="font-semibold text-primary">Gizlilik Politikası</a>'na bakabilirsin.</p>
         <div class="mt-3 flex flex-col gap-2">
           <button id="btn-export-data" class="flex h-11 w-full items-center justify-center gap-2 rounded-theme border border-border bg-input text-xs font-bold text-foreground">
             <iconify-icon icon="lucide:download" class="text-base"></iconify-icon>
@@ -733,7 +733,7 @@
                 return sub ? sub.unsubscribe() : null;
               }).catch(function () {});
             }
-            // Bu cihazdaki tüm ONE Global verilerini temizle.
+            // Bu cihazdaki tüm Hemcan verilerini temizle.
             ['one-sub-id', 'one-notif-settings', 'one-notif-enabled', 'one-reminders', 'one-lang', 'one-onboarded', 'one-trial-start'].forEach(function (k) {
               try { localStorage.removeItem(k); } catch (e) {}
             });

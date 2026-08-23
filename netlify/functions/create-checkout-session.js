@@ -1,4 +1,4 @@
-// ONE Global — gerçek ödeme altyapısı: Stripe Checkout oturumu oluşturur.
+// Hemcan — gerçek ödeme altyapısı: Stripe Checkout oturumu oluşturur.
 //
 // DÜRÜSTLÜK NOTU: Bu fonksiyon bir "iskelet"tir — kodun kendisi gerçek ve
 // çalışır durumdadır, ama devreye girmesi için Netlify'da şu ortam
@@ -110,7 +110,7 @@ exports.handler = async (event) => {
             unit_amount: unitAmount,
             recurring: { interval: 'month' },
             product_data: {
-              name: 'ONE Global — Aylık Abonelik',
+              name: 'Hemcan — Aylık Abonelik',
               description: PRICE_OVERRIDES.hasOwnProperty(cur)
                 ? 'Aylık abonelik — ' + baseUnits + ' ' + cur + '.'
                 : 'Dünyanın her yerinde, ayda sadece 1 birim.',

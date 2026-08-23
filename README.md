@@ -1,4 +1,4 @@
-# ONE Global
+# Hemcan
 
 Dünyanın her yerinde, ayda sadece 1 birim (yerel para biriminin 1 birimi)
 ile kullanılabilecek kişisel yapay zeka asistanı — FireVibe'da tasarlanan
@@ -19,7 +19,7 @@ sistemi, ana ekranda her gün tazelenen "dünyadan iyi haberler" bölümü,
   sürüm — bkz. "Otomasyonlar, Bellek, Cihazlar: dürüstlük denetimi")
 - `bellek.html` — Gerçek, kalıcı sohbet geçmişi (dürüst sürüm)
 - `cihazlar.html` — "Henüz yok" diyen dürüst bir bilgi ekranı (dürüst sürüm)
-- `abonelik.html` — ONE Global Plan: "ayda sadece 1 birim" fiyatlandırma ekranı +
+- `abonelik.html` — Hemcan Plan: "ayda sadece 1 birim" fiyatlandırma ekranı +
   gerçek Stripe ödeme akışına bağlı "Abone ol" düğmesi (bkz. "Gerçek ödeme
   altyapısı — Stripe")
 - `ayarlar.html` — Bildirimler & Rutin, Hesabın (e-posta ile giriş/senkron),
@@ -46,7 +46,7 @@ sistemi, ana ekranda her gün tazelenen "dünyadan iyi haberler" bölümü,
   / cihazlar arası senkron iskeleti (bkz. "E-posta ile giriş ve cihazlar
   arası senkron")
 - `manifest.json`, `service-worker.js`, `icons/` — PWA + push bildirim
-  desteği; ikonlar ONE Global'ın kendi marka renkleriyle (camgöbeği/mor) yenilendi
+  desteği; ikonlar Hemcan'ın kendi marka renkleriyle (camgöbeği/mor) yenilendi
 - `index.html` — Kök adrese girildiğinde, daha önce onboarding'i tamamlamış
   mı diye bakıp `hosgeldin.html` veya `asistan.html`'e yönlendirir
 - `LICENSE.md` — Telif hakkı/mülkiyet notu (bkz. "Fikri mülkiyet ve koruma")
@@ -55,7 +55,7 @@ sistemi, ana ekranda her gün tazelenen "dünyadan iyi haberler" bölümü,
 
 **Kaldırılanlar:** `canl-kontrol.html`, `otomasyon-detay.html`, `onay.html`
 — bunlar FireVibe şablonundan kalma, hiçbir gerçek işlevi olmayan tamamen
-sahte demo ekranlarıydı (uzaktan cihaz kontrolü gibi ONE Global'ın yapmadığı
+sahte demo ekranlarıydı (uzaktan cihaz kontrolü gibi Hemcan'ın yapmadığı
 şeyleri yapıyormuş gibi gösteriyorlardı) ve artık hiçbir yerden
 bağlanmadıkları için dosyalar tamamen silindi.
 
@@ -118,7 +118,7 @@ hesabı gerekiyor. Hazır olduğunda:
 1. https://resend.com adresinden ücretsiz bir hesap aç (aylık ücretsiz
    kotası var), bir gönderen alan adı doğrula.
 2. Netlify'da iki değişken ekle: `RESEND_API_KEY` (Resend panelinden) ve
-   `AUTH_FROM_EMAIL` (örn. `ONE Global <giris@senin-alan-adin.com>`).
+   `AUTH_FROM_EMAIL` (örn. `Hemcan <giris@senin-alan-adin.com>`).
 
 Bu iki değişken yoksa "Bağlantı gönder" düğmesi dürüstçe "e-posta ile
 giriş henüz aktif değil" der — sahte bir "gönderildi" onayı asla vermez.
@@ -211,12 +211,12 @@ Uygulamayı ilk kez açan herkes önce `hosgeldin.html`'i görüyor: "Şu anki v
 gelecekteki seni düşünen, iyi hissettirecek tek uygulama" başlığı, "İlk 1
 hafta ücretsiz" rozeti ve "Ücretsiz Başla" düğmesi. Bastığında kişi doğrudan
 ana ekrana giriyor; bir daha aynı cihazda bu ekranı görmüyor (tercihi
-tarayıcıda hatırlanıyor). `abonelik.html` (ONE Global Plan) ekranında da aynı
+tarayıcıda hatırlanıyor). `abonelik.html` (Hemcan Plan) ekranında da aynı
 "ilk hafta ücretsiz" mesajı tutarlılık için tekrar ediliyor.
 
 **Neden 1 gün değil, 1 hafta önerdim:** Bana sorduğunda iki seçenek
 arasında kaldın — ilk gün ücretsiz mi, ilk hafta mı. Ben 1 haftayı önerdim
-ve öyle kodladım, sebebi şu: ONE Global'ın asıl değeri günlük bir döngüde ortaya
+ve öyle kodladım, sebebi şu: Hemcan'ın asıl değeri günlük bir döngüde ortaya
 çıkıyor (sabah minnettarlık bildirimi, spor, akşam kontrolü, okuma,
 diş fırçalama hatırlatması gibi) — 1 günde bu döngünün sadece küçük bir
 parçası yaşanır, kişi tam resmi göremeden karar vermiş olur. Ayrıca "1
@@ -285,7 +285,7 @@ dil değişmedi, çünkü onlar için fiyat hâlâ doğru.
 
 ## İhtiyaç sahipleriyle paylaşım — canlı üye sayacı ve 1 milyon hedefi
 
-Ana ekranın en tepesinde artık gerçek bir "ONE Global ailesi" sayacı var.
+Ana ekranın en tepesinde artık gerçek bir "Hemcan ailesi" sayacı var.
 `hosgeldin.html`'de biri "Ücretsiz Başla"ya her bastığında,
 `netlify/functions/member-count.js` bu kişiyi bir kez sayıyor (aynı
 kişi/cihaz ikinci kez sayılmıyor — tarayıcıda saklanan benzersiz bir
@@ -368,14 +368,14 @@ bağlamı kayıp gitmiyor.
 Cihazlar sekmelerini de dikkatle inceledim ve ikisinin de (ayrıca ana
 ekranın bir kısmının) **tamamen sahte, FireVibe şablonundan kalma demo
 içerik** olduğunu buldum — uzaktan bilgisayar/telefon kontrolü, otomatik
-e-posta gönderimi, takvim erişimi gibi ONE Global'ın yapmadığı ve yapmayı
+e-posta gönderimi, takvim erişimi gibi Hemcan'ın yapmadığı ve yapmayı
 planlamadığımız şeyleri yapıyormuş gibi gösteriyorlardı. Bunu olduğu gibi
 bırakmak gerçek bir kullanıcıyı yanıltabilirdi, o yüzden:
 
 - **Otomasyonlar** artık gerçek: `ayarlar.html`'de kurduğun bildirim
   rutinini (uyanma/eve geliş/yatma saatlerine göre) gerçek zamanlarıyla
   listeliyor — uydurma bir "Zoom toplantısı özeti" otomasyonu değil.
-- **Cihazlar** artık dürüst bir "henüz yok" ekranı: ONE Global'ın şu an gerçekten
+- **Cihazlar** artık dürüst bir "henüz yok" ekranı: Hemcan'ın şu an gerçekten
   neler yapabildiğini/yapamadığını açıkça anlatıyor.
 - **Ana ekranda** da aynı sorun vardı: sahte "3 bağlı cihaz / 248 bellek
   güncellemesi / 12 tamamlandı" istatistikleri, sahte bir "şu an görev
@@ -386,7 +386,7 @@ bırakmak gerçek bir kullanıcıyı yanıltabilirdi, o yüzden:
   başlamak, rutinini ayarlamak). Ayrıca ana ekranda herkese "Günaydın,
   Deniz" diye hitap eden, var olmayan bir kullanıcıya ait sahte bir isim
   vardı (tüm 21 dilde) — bu da kaldırıldı, artık kimsenin adı olmadan
-  genel bir selamlama var (ONE Global'da henüz hesap/isim sistemi olmadığı için
+  genel bir selamlama var (Hemcan'da henüz hesap/isim sistemi olmadığı için
   bu daha dürüst).
 - Hiçbir yerden bağlanmayan üç sahte "detay" ekranı
   (`canl-kontrol.html`, `otomasyon-detay.html`, `onay.html`) tamamen
@@ -437,14 +437,14 @@ gönderilmez (bkz. "Kurulum" bölümü, madde 4).
 ## Uygulama ikonları
 
 `icons/` klasöründeki tüm ikonlar (192/512, maskable varyantlar, Apple
-touch icon, favicon) ONE Global'ın kendi marka renkleriyle (camgöbeği `#39D7FF`
+touch icon, favicon) Hemcan'ın kendi marka renkleriyle (camgöbeği `#39D7FF`
 merkez, mor `#A78BFA` dış hare) yeniden üretildi; maskable ikonlar artık
 Android/iOS'un yuvarlak/squircle kırpmasında kesilmeyecek şekilde güvenli
 alan içinde tasarlandı.
 
 ## App Store / Play Store yol haritası
 
-`app-store-yol-haritasi.md` dosyasında, ONE Global'ı gerçek bir mobil mağaza
+`app-store-yol-haritasi.md` dosyasında, Hemcan'ı gerçek bir mobil mağaza
 uygulaması haline getirmek için adım adım, güncel (Ağustos 2026 itibarıyla
 araştırılmış) bir plan var: Apple ($99/yıl) ve Google Play ($25 tek
 seferlik) için güncel ücretler, Google'ın yeni "12 test kullanıcısı/14 gün"
@@ -490,7 +490,7 @@ harcayıp muhtemelen sonuç alamayacağın bir yol — bunu sana önermem.
    bunun çok yaygın/jenerik bir kelime olduğunu ve özellikle finans/
    abonelik alanında (Capital One, Walmart destekli OnePay gibi) yakın
    isimlerin zaten yoğun şekilde kullanıldığını konuştuktan sonra
-   **"ONE Global"a geçtik** — hem vizyonunla ("dünyanın her yerinde")
+   **"Hemcan"a geçtik** — hem vizyonunla ("dünyanın her yerinde")
    doğrudan örtüşen, hem de tek başına "ONE"dan daha ayırt edici bir isim.
    Bu, riski sıfırlamaz ("Global" da tek başına sık kullanılan bir kelime)
    ama en keskin çakışma ihtimalini azaltır. Resmi başvurudan önce yine de
@@ -525,7 +525,7 @@ makul, uygun maliyetli bir koruma sağlar.
   durumlarda tıklamaları yanlış (sayfayı saran) bir elemente bağlıyordu; bu
   7 ekranın hepsinde düzeltildi ve her senaryo ayrı ayrı test edildi.
 - Asistan ekranındaki sohbet kutusu gerçek Claude API'sine bağlandı.
-- "ONE Global Plan" (abonelik.html) fiyatlandırma ekranı — 139 para birimi.
+- "Hemcan Plan" (abonelik.html) fiyatlandırma ekranı — 139 para birimi.
 - 21 dilli arayüz + otomatik dil/para birimi tahmini.
 - "Bildirimler & Rutin" (ayarlar.html) — gerçek push bildirimli günlük
   rutin sistemi (yukarı bakınız).
@@ -533,7 +533,7 @@ makul, uygun maliyetli bir koruma sağlar.
   günlük önbellekli, gerçek dünya haberleri bölümü (yukarı bakınız).
 - Karşılama ekranı (`hosgeldin.html`) — "ilk 1 hafta ücretsiz" mesajıyla
   yeni kullanıcıları karşılıyor (yukarı bakınız).
-- Ana ekranda gerçek "ONE Global ailesi" üye sayacı ve 1 milyon/1 milyar bağış
+- Ana ekranda gerçek "Hemcan ailesi" üye sayacı ve 1 milyon/1 milyar bağış
   hedefi mesajları, bot/sahte-kayıt koruması (yukarı bakınız).
 - `LICENSE.md` ile temel telif hakkı/mülkiyet kaydı eklendi.
 - Bellek sekmesi gerçek, kalıcı sohbet geçmişi gösteriyor; Otomasyonlar ve
@@ -545,7 +545,7 @@ makul, uygun maliyetli bir koruma sağlar.
 - Gerçek ödeme (Stripe) ve e-posta ile giriş/cihazlar arası senkron için
   çalışan, test edilmiş iskelet altyapılar eklendi (anahtar eklemeden
   hiçbir şey bozulmaz).
-- Uygulama ikonları ONE Global'ın marka renkleriyle yenilendi.
+- Uygulama ikonları Hemcan'ın marka renkleriyle yenilendi.
 - App Store / Play Store'a çıkış için güncel bir yol haritası belgesi
   (`app-store-yol-haritasi.md`) eklendi.
 

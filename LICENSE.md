@@ -7,7 +7,7 @@ Ali Mertcan'ın önceden yazılı izni olmaksızın bu Yazılımın hiçbir kıs
 kopyalanamaz, çoğaltılamaz, değiştirilemez, birleştirilemez, yayımlanamaz,
 dağıtılamaz, alt lisanslanamaz ve/veya satılamaz.
 
-Bu dosya, "ONE Global" adlı uygulamanın ilk yazıldığı tarihten (2026) itibaren
+Bu dosya, "Hemcan" adlı uygulamanın ilk yazıldığı tarihten (2026) itibaren
 Ali Mertcan'a ait olduğunu gösteren bir telif hakkı/mülkiyet kaydıdır.
 Resmi bir tescil belgesi yerine geçmez — bkz. README.md içindeki
 "Fikri mülkiyet ve koruma" bölümü.

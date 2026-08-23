@@ -1,5 +1,5 @@
-// ONE Global — üye sayacı uç noktası.
-// Ana ekranın en üstünde gösterilen "ONE Global ailesi" üye sayısını besler.
+// Hemcan — üye sayacı uç noktası.
+// Ana ekranın en üstünde gösterilen "Hemcan ailesi" üye sayısını besler.
 // Sayı GERÇEKtir: her yeni kişi onboarding ekranında "Ücretsiz Başla"ya
 // bastığında bir kez artırılır (aynı cihaz/tarayıcı ikinci kez saymaz —
 // benzersiz kimlik localStorage'da tutulur). Sahte/rastgele artan bir sayı
@@ -97,7 +97,7 @@ exports.handler = async (event) => {
       const count = await readCount();
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Sayı okunamadı: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Sayı okunamadı.' }) };
     }
   }
 
@@ -105,6 +105,7 @@ exports.handler = async (event) => {
     let payload;
     try {
       payload = JSON.parse(event.body || '{}');
+      if (!payload || typeof payload !== 'object') throw new Error('payload not an object');
     } catch (e) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz istek gövdesi.' }) };
     }
@@ -147,7 +148,7 @@ exports.handler = async (event) => {
 
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Kaydedilemedi: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Kaydedilemedi.' }) };
     }
   }
 
@@ -160,7 +161,7 @@ exports.handler = async (event) => {
       await membersStore.delete('m_' + id);
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true }) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi.' }) };
     }
   }
 

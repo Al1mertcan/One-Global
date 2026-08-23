@@ -1,4 +1,4 @@
-// ONE Global — e-posta ile giriş bağlantısını doğrular ve cihazlar arası senkronu
+// Hemcan — e-posta ile giriş bağlantısını doğrular ve cihazlar arası senkronu
 // sağlar.
 //
 // GET /api/auth-verify?token=xxx -> { id, email }
@@ -10,7 +10,7 @@
 //  - `one-accounts` deposunda bu e-postaya ait bir kayıt varsa (kullanıcı
 //    daha önce başka bir cihazda hesap oluşturmuş), o kaydın kalıcı
 //    kimliği (id) döndürülür.
-//  - Kayıt yoksa (bu, e-postanın ONE Global'da ilk kullanımı demektir), tokeni
+//  - Kayıt yoksa (bu, e-postanın Hemcan'da ilk kullanımı demektir), tokeni
 //    isteyen cihazın O ANKİ yerel kimliği (deviceId) kalıcı hesap kimliği
 //    olarak kaydedilir — yani o cihazdaki mevcut sohbet geçmişi ve
 //    ayarlar "hesabın" verisi haline gelir, kaybolmaz.
@@ -69,6 +69,6 @@ exports.handler = async (event) => {
       body: JSON.stringify({ id: account.id, email: account.email }),
     };
   } catch (err) {
-    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Doğrulanamadı: ' + err.message }) };
+    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Doğrulanamadı.' }) };
   }
 };

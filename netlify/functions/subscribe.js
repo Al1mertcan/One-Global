@@ -1,4 +1,4 @@
-// ONE Global — bildirim aboneliği kaydetme uç noktası.
+// Hemcan — bildirim aboneliği kaydetme uç noktası.
 // Tarayıcıdan gelen push subscription'ı ve kullanıcının rutin ayarlarını
 // (uyanma/eve geliş/yatma saatleri, spor/okuma hedefleri) Netlify Blobs'a
 // kaydeder. send-notifications.js (zamanlanmış fonksiyon) bu kayıtları

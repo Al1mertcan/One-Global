@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bellek — ONE Global</title>
+  <title>Bellek — Hemcan</title>
 
   <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -89,7 +89,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ONE Global">
+  <meta name="apple-mobile-web-app-title" content="Hemcan">
 </head>
 <body class="bg-background text-foreground m-0 p-0">
   <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-36">
@@ -104,7 +104,7 @@
               <span class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground" data-i18n="memoryKicker">Kişisel bağlam</span>
             </div>
             <h1 class="font-heading text-3xl font-semibold tracking-tight" data-i18n="memoryTitle">Bellek</h1>
-            <p class="mt-1 text-sm text-muted-foreground" data-i18n="memorySubtitle">ONE Global'ın seninle konuştuğu gerçek sohbet geçmişi</p>
+            <p class="mt-1 text-sm text-muted-foreground" data-i18n="memorySubtitle">Hemcan'ın seninle konuştuğu gerçek sohbet geçmişi</p>
           </div>
           <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-[15px] border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
         </div>
@@ -137,7 +137,7 @@
 
           <div id="memory-empty" class="hidden rounded-theme border border-border bg-card p-6 text-center">
             <iconify-icon icon="lucide:message-circle-dashed" class="text-3xl text-muted-foreground"></iconify-icon>
-            <p class="mt-3 text-sm text-muted-foreground" data-i18n="memoryEmptyBody">Henüz bir sohbetin yok. Asistan sekmesinden ONE Global'a bir şey sor, geçmişin burada görünecek.</p>
+            <p class="mt-3 text-sm text-muted-foreground" data-i18n="memoryEmptyBody">Henüz bir sohbetin yok. Asistan sekmesinden Hemcan'a bir şey sor, geçmişin burada görünecek.</p>
           </div>
 
           <div id="memory-log" class="max-h-[55vh] space-y-2.5 overflow-y-auto rounded-theme border border-border bg-card/60 p-3"></div>
@@ -149,8 +149,8 @@
               <iconify-icon icon="lucide:sparkles" class="text-xl"></iconify-icon>
             </div>
             <div>
-              <h2 class="font-heading text-sm font-semibold" data-i18n="memoryHowTitle">ONE Global bunu nasıl kullanır?</h2>
-              <p class="mt-2 text-xs leading-5 text-muted-foreground" data-i18n="memoryHowBody">ONE Global, sohbete devam ederken son konuşmalarını hatırlamak için bu geçmişi kullanır (yaklaşık son 20 karşılıklı mesaj). Cihaz/tarayıcı verilerini silersen veya "Geçmişi sil"e basarsan bu bağlam da tamamen kaybolur — kalıcı bir profil veya sana dair "gerçek dışı çıkarım" oluşturmaz, sadece konuşmanın kendisini saklar.</p>
+              <h2 class="font-heading text-sm font-semibold" data-i18n="memoryHowTitle">Hemcan bunu nasıl kullanır?</h2>
+              <p class="mt-2 text-xs leading-5 text-muted-foreground" data-i18n="memoryHowBody">Hemcan, sohbete devam ederken son konuşmalarını hatırlamak için bu geçmişi kullanır (yaklaşık son 20 karşılıklı mesaj). Cihaz/tarayıcı verilerini silersen veya "Geçmişi sil"e basarsan bu bağlam da tamamen kaybolur — kalıcı bir profil veya sana dair "gerçek dışı çıkarım" oluşturmaz, sadece konuşmanın kendisini saklar.</p>
             </div>
           </div>
         </section>
@@ -276,7 +276,7 @@
         });
       }
 
-    // ---- ONE Global cross-screen navigation helpers ----
+    // ---- Hemcan cross-screen navigation helpers ----
     function wireNavByText(text, url, tag) {
       // Match only elements of the exact tag (button/article), on their OWN
       // text. (Previous version also matched generic ancestor <div>s, which

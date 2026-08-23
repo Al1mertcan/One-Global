@@ -71,9 +71,9 @@ self.addEventListener('fetch', (event) => {
 
 // --- Push bildirimleri (bkz. netlify/functions/send-notifications.js) ---
 self.addEventListener('push', (event) => {
-  let data = { title: 'ONE Global', body: '' };
+  let data = { title: 'Hemcan', body: '' };
   try { data = event.data ? event.data.json() : data; } catch (e) {}
-  const title = data.title || 'ONE Global';
+  const title = data.title || 'Hemcan';
   const options = {
     body: data.body || '',
     icon: './icons/icon-192.png',

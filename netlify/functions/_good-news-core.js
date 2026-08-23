@@ -1,4 +1,4 @@
-// ONE Global — "Bugünün iyi haberleri" ortak üretim mantığı.
+// Hemcan — "Bugünün iyi haberleri" ortak üretim mantığı.
 // good-news.js (kullanıcı isteğiyle, anlık) ve send-notifications.js
 // (zamanlanmış, arka planda önbelleği tazeleyen) tarafından paylaşılır.
 //

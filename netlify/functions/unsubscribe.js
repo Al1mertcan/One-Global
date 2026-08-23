@@ -1,4 +1,4 @@
-// ONE Global — bildirimleri kapatma uç noktası: kaydı Netlify Blobs'tan siler.
+// Hemcan — bildirimleri kapatma uç noktası: kaydı Netlify Blobs'tan siler.
 const { getStore, connectLambda } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
@@ -15,6 +15,7 @@ exports.handler = async (event) => {
   let payload;
   try {
     payload = JSON.parse(event.body || '{}');
+    if (!payload || typeof payload !== 'object') throw new Error('payload not an object');
   } catch (e) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz istek gövdesi.' }) };
   }
@@ -26,6 +27,6 @@ exports.handler = async (event) => {
     await store.delete(payload.id);
     return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true }) };
   } catch (err) {
-    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi: ' + err.message }) };
+    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi.' }) };
   }
 };

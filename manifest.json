@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "ONE Global — Kişisel Asistan",
-  "short_name": "ONE Global",
-  "description": "ONE Global — çoğu ülkede ayda yerel para biriminin sadece 1 birimi, Türkiye gibi yüksek enflasyonlu ülkelerde ise 10 birimi ile herkesin hayatını kolaylaştıran kişisel yapay zeka asistanı.",
+  "name": "Hemcan — Kişisel Asistan",
+  "short_name": "Hemcan",
+  "description": "Hemcan — çoğu ülkede ayda yerel para biriminin sadece 1 birimi, Türkiye gibi yüksek enflasyonlu ülkelerde ise 10 birimi ile herkesin hayatını kolaylaştıran kişisel yapay zeka asistanı.",
   "start_url": "./hosgeldin.html",
   "scope": "./",
   "display": "standalone",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cihazlar — ONE Global</title>
+  <title>Cihazlar — Hemcan</title>
 
   <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -89,7 +89,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ONE Global">
+  <meta name="apple-mobile-web-app-title" content="Hemcan">
 </head>
 <body class="bg-background text-foreground m-0 p-0">
   <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-36">
@@ -107,7 +107,7 @@
           </div>
           <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-[15px] border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
         </div>
-        <p class="mt-3 max-w-[320px] text-sm leading-5 text-muted-foreground" data-i18n="devicesSubtitle">Cihazlar arası gerçek senkron ve kontrol henüz ONE Global'ın kapsamında değil.</p>
+        <p class="mt-3 max-w-[320px] text-sm leading-5 text-muted-foreground" data-i18n="devicesSubtitle">Cihazlar arası gerçek senkron ve kontrol henüz Hemcan'ın kapsamında değil.</p>
       </header>
 
       <main class="relative px-5 pt-5">
@@ -116,8 +116,8 @@
             <iconify-icon icon="lucide:hammer" class="text-2xl"></iconify-icon>
           </div>
           <h2 class="mt-4 font-heading text-lg font-semibold" data-i18n="devicesSoonTitle">Yakında</h2>
-          <p class="mt-2 text-sm leading-6 text-muted-foreground" data-i18n="devicesSoonBody1">Uzaktan cihaz kontrolü, ekran paylaşımı veya senin adına dosya/e-posta işlemleri gibi özellikler şu anda ONE Global'da yok — bunları vaat eden eski bir demo ekranının yerine bu dürüst notu koyduk. Bu tür bir cihaz kontrolü, gerçek bir güvenlik/izin altyapısı gerektiren, ileride ayrıca değerlendirilecek büyük bir iş.</p>
-          <p class="mt-3 text-sm leading-6 text-muted-foreground" data-i18n="devicesSoonBody2">Şu an ONE Global'ın gerçekten yaptığı: bu cihazda gerçek bir yapay zeka sohbeti, günlük bildirim rutinin ve sohbet geçmişini hatırlaması. Henüz bir hesap sistemi olmadığı için ayarların ve sohbetin bu cihaza/tarayıcıya özel — bir sonraki cihazında yeniden kurman gerekiyor.</p>
+          <p class="mt-2 text-sm leading-6 text-muted-foreground" data-i18n="devicesSoonBody1">Uzaktan cihaz kontrolü, ekran paylaşımı veya senin adına dosya/e-posta işlemleri gibi özellikler şu anda Hemcan'da yok — bunları vaat eden eski bir demo ekranının yerine bu dürüst notu koyduk. Bu tür bir cihaz kontrolü, gerçek bir güvenlik/izin altyapısı gerektiren, ileride ayrıca değerlendirilecek büyük bir iş.</p>
+          <p class="mt-3 text-sm leading-6 text-muted-foreground" data-i18n="devicesSoonBody2">Şu an Hemcan'ın gerçekten yaptığı: bu cihazda gerçek bir yapay zeka sohbeti, günlük bildirim rutinin ve sohbet geçmişini hatırlaması. Henüz bir hesap sistemi olmadığı için ayarların ve sohbetin bu cihaza/tarayıcıya özel — bir sonraki cihazında yeniden kurman gerekiyor.</p>
           <a href="asistan.html" class="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-theme bg-primary text-sm font-bold text-primary-foreground shadow-[0_0_18px_rgba(57,215,255,0.25)]" data-i18n="devicesBackBtn">
             Asistan'a dön
           </a>
@@ -164,7 +164,7 @@
     (function () {
       'use strict';
       
-    // ---- ONE Global cross-screen navigation helpers ----
+    // ---- Hemcan cross-screen navigation helpers ----
     function wireNavByText(text, url, tag) {
       // Match only elements of the exact tag (button/article), on their OWN
       // text. (Previous version also matched generic ancestor <div>s, which

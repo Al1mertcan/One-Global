@@ -1,4 +1,4 @@
-// ONE Global — Stripe webhook uç noktası.
+// Hemcan — Stripe webhook uç noktası.
 //
 // DÜRÜSTLÜK NOTU: create-checkout-session.js gibi bu da bir iskelettir.
 // Devreye girmesi için Netlify'da şu ortam değişkenlerinin tanımlanması,
@@ -43,7 +43,7 @@ exports.handler = async (event) => {
     const rawBody = event.isBase64Encoded ? Buffer.from(event.body, 'base64') : event.body;
     stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (err) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Webhook imzası doğrulanamadı: ' + err.message }) };
+    return { statusCode: 400, body: JSON.stringify({ error: 'Webhook imzası doğrulanamadı.' }) };
   }
 
   try {
@@ -98,6 +98,6 @@ exports.handler = async (event) => {
 
     return { statusCode: 200, body: JSON.stringify({ received: true }) };
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'Webhook işlenemedi: ' + err.message }) };
+    return { statusCode: 500, body: JSON.stringify({ error: 'Webhook işlenemedi.' }) };
   }
 };

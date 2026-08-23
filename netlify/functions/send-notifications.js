@@ -1,4 +1,4 @@
-// ONE Global — günlük bildirim gönderici (Netlify Scheduled Function).
+// Hemcan — günlük bildirim gönderici (Netlify Scheduled Function).
 // Her ~15 dakikada bir çalışır (bkz. netlify.toml: functions."send-notifications".schedule).
 // Netlify Blobs'ta kayıtlı her abone için, kendi saat diliminde şu anki
 // saate göre hangi bildirimin sırası geldiyse onu gönderir:

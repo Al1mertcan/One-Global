@@ -1,4 +1,4 @@
-// ONE Global — Asistan sohbet uç noktası
+// Hemcan — Asistan sohbet uç noktası
 // Bu fonksiyon, tarayıcıdan gelen mesajları Anthropic'in Claude API'sine iletir
 // ve cevabı geri döner. API anahtarı yalnızca sunucu tarafında (Netlify ortam
 // değişkeni) tutulur; tarayıcıya asla gönderilmez.
@@ -35,6 +35,13 @@ const MAX_HISTORY_MESSAGES = 40; // ~20 karşılıklı tur — hem maliyeti hem 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 dakika
 const RATE_LIMIT_MAX = 20;
 
+// id, tarayıcının hosgeldin.html'deki getSubId() ile ürettiği kimlikle aynı
+// biçimde olmalı (standart UUID ya da 'one-<timestamp>-<random>' yedeği) —
+// aksi halde bu uç nokta rastgele string'leri Blobs anahtarı olarak kabul
+// eden genel bir okuma/silme aracına dönüşür (bkz. member-count.js/
+// auth-request.js'deki aynı kalıp).
+const ID_PATTERN = /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|one-\d{10,}-[0-9a-z]{4,})$/i;
+
 function getClientIp(event) {
   const headers = event.headers || {};
   return (
@@ -45,7 +52,7 @@ function getClientIp(event) {
   );
 }
 
-const SYSTEM_PROMPT = `Sen ONE Global adlı, dünyanın her yerinden kullanıcılara hizmet veren kişisel yapay
+const SYSTEM_PROMPT = `Sen Hemcan adlı, dünyanın her yerinden kullanıcılara hizmet veren kişisel yapay
 zeka asistanı uygulamasının konuşma çekirdeğisin. Kullanıcının yazdığı dilde (Türkçe, İngilizce
 veya başka bir dil) sıcak, kısa ve net cevaplar ver. Görevleri, hatırlatmaları ve planları
 organize etmesine yardımcı ol. Gerçekte cihazlara bağlı olmadığını veya bir eylemi gerçekten
@@ -72,12 +79,15 @@ exports.handler = async (event) => {
     if (!id) {
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [] }) };
     }
+    if (!ID_PATTERN.test(id)) {
+      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz id.' }) };
+    }
     try {
       const rec = await historyStore.get(id, { type: 'json' });
       const messages = rec && Array.isArray(rec.messages) ? rec.messages : [];
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ messages }) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Geçmiş okunamadı: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Geçmiş okunamadı.' }) };
     }
   }
 
@@ -86,11 +96,14 @@ exports.handler = async (event) => {
     if (!id) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'id zorunludur.' }) };
     }
+    if (!ID_PATTERN.test(id)) {
+      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz id.' }) };
+    }
     try {
       await historyStore.delete(id);
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true }) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi.' }) };
     }
   }
 
@@ -117,6 +130,7 @@ exports.handler = async (event) => {
   let payload;
   try {
     payload = JSON.parse(event.body || '{}');
+    if (!payload || typeof payload !== 'object') throw new Error('payload not an object');
   } catch (e) {
     return {
       statusCode: 400,
@@ -125,7 +139,7 @@ exports.handler = async (event) => {
     };
   }
 
-  const id = typeof payload.id === 'string' ? payload.id : null;
+  const id = typeof payload.id === 'string' && ID_PATTERN.test(payload.id) ? payload.id : null;
   let messages = Array.isArray(payload.messages) ? payload.messages : [];
   if (messages.length === 0) {
     return {
@@ -220,7 +234,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 502,
       headers: corsHeaders,
-      body: JSON.stringify({ error: 'Ağ hatası: ' + err.message }),
+      body: JSON.stringify({ error: 'Ağ hatası.' }),
     };
   }
 };
