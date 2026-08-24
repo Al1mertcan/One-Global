@@ -72,20 +72,22 @@ gerekiyor.
 
 ### 2) Push bildirimleri (Bildirimler & Rutin ekranı)
 
-Senin için bir VAPID anahtar çifti ürettim (push bildirimlerinin kimlik
-doğrulaması için gerekli, herhangi bir hesaba bağlı değil, sadece bu
-uygulamaya özel). Netlify'da şu iki değişkeni ekle:
+Push bildirimlerinin kimlik doğrulaması için bir VAPID anahtar çifti
+gerekiyor (herhangi bir hesaba bağlı değil, sadece bu uygulamaya özel).
+Bu değerler artık bu dosyada **tutulmuyor** — bu repo public olduğu için
+gerçek anahtar değerini buraya yazmak, herkesin görebileceği bir sırrı
+ifşa etmek anlamına gelir. Sana ayrı bir kanaldan (sohbet üzerinden)
+ilettiğim güncel `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` çiftini
+Netlify'da "Site configuration → Environment variables" sayfasından
+kendin ekle. `VAPID_PUBLIC_KEY` değeri zaten `ayarlar.html` içine de
+gömülü (public anahtar olduğu için bunun açıkta olması sorun değil);
+sadece `VAPID_PRIVATE_KEY`'i gizli tutman yeterli.
 
-```
-VAPID_PUBLIC_KEY=BA7Bk293hs0UT0ttbxRiH608XSYkoWeMAJM_HYTzWou3B1l-b2XMCzq-dXIwuHc88HDmmwaGcXUSnlqutBHhKKQ
-VAPID_PRIVATE_KEY=mxbVCBj6FWHd4dHS-70rBl5HorvnbrSD1trkut7KoOM
-```
-
-(Genel/public anahtar zaten `ayarlar.html` içine gömülü — sadece özel/private
-anahtarı Netlify'a eklemen yeterli, ama ikisini birden eklemek daha güvenli
-ve tutarlı.) Bu anahtarları başka bir yerle paylaşma; sızarsa yeni bir çift
-üretip her ikisini de (Netlify + `ayarlar.html` içindeki `VAPID_PUBLIC_KEY`
-sabiti) güncellemen yeterli.
+Yeni bir çift üretmek istersen (ör. mevcut anahtar bir şekilde sızarsa):
+`npx web-push generate-vapid-keys` komutunu kendi bilgisayarında
+çalıştırıp çıkan `publicKey`/`privateKey` değerlerini hem Netlify'a hem
+de `ayarlar.html` içindeki `VAPID_PUBLIC_KEY` sabitine yaz — private
+anahtarı asla bir dosyaya/commit'e ekleme.
 
 Her iki değişkeni de ekledikten sonra siteyi yeniden deploy et (bu klasörü
 tekrar sürükle-bırak).
