@@ -1,8 +1,13 @@
 [{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "app.netlify.cheery_rolypoly_540555.twa",
-        "sha256_cert_fingerprints": ["EF:B5:1C:D7:42:87:F6:DC:CC:A7:5B:59:47:2D:C0:E9:8C:02:D1:BD:2C:97:A4:6D:3A:26:33:0E:24:AA:E3:09"]
-      }
-    }]
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.netlify.cheery_rolypoly_540555.twa",
+    "sha256_cert_fingerprints": [
+      "F5:3B:AB:72:E2:1A:D9:BB:80:A7:15:F4:AF:DC:B7:48:40:E1:04:DF:E8:9E:69:C1:E4:9D:09:67:99:D4:41:91",
+      "E0:D4:91:F9:FF:DE:A6:4D:B9:99:23:03:A7:1A:8F:86:45:D1:EE:14:60:FA:07:DA:80:13:A9:11:C5:6F:D8:B8",
+      "EA:33:F6:C7:CC:77:60:02:1E:DE:C4:A2:D6:DC:EC:9A:82:3E:EE:FB:FA:85:D3:12:29:BB:CF:8C:20:E6:DD:9D",
+      "EF:B5:1C:D7:42:87:F6:DC:CC:A7:5B:59:47:2D:C0:E9:8C:02:D1:BD:2C:97:A4:6D:3A:26:33:0E:24:AA:E3:09"
+    ]
+  }
+}]
