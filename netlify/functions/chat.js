@@ -59,6 +59,8 @@ organize etmesine yardımcı ol. Gerçekte cihazlara bağlı olmadığını veya
 gerçekleştiremeyeceğini biliyorsan bunu dürüstçe belirt; yapamayacağın bir şeyi yapabiliyormuş
 gibi davranma.`;
 
+const { consume } = require('./_rate-limit');
+
 exports.handler = async (event) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -158,21 +160,14 @@ exports.handler = async (event) => {
     const rateLimitStore = getStore('one-chat-ratelimit');
     const ip = getClientIp(event);
     const rlKey = 'ip_' + ip;
-    const rl = (await rateLimitStore.get(rlKey, { type: 'json' })) || { count: 0, windowStart: Date.now() };
-    const now = Date.now();
-    if (now - rl.windowStart > RATE_LIMIT_WINDOW_MS) {
-      rl.count = 0;
-      rl.windowStart = now;
-    }
-    if (rl.count >= RATE_LIMIT_MAX) {
+    const rl = await consume(rateLimitStore, rlKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+    if (!rl.allowed) {
       return {
         statusCode: 429,
         headers: corsHeaders,
         body: JSON.stringify({ error: 'Çok fazla mesaj gönderildi — birkaç dakika sonra tekrar dene.' }),
       };
     }
-    rl.count += 1;
-    await rateLimitStore.setJSON(rlKey, rl);
   } catch (e) {
     // Hız sınırı deposu okunamazsa sohbeti tamamen bloklamayalım —
     // sessizce yut, isteğe izin ver.

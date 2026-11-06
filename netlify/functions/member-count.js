@@ -64,6 +64,8 @@ function getClientIp(event) {
   );
 }
 
+const { consume, increment } = require('./_rate-limit');
+
 exports.handler = async (event) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -125,25 +127,32 @@ exports.handler = async (event) => {
         // takılıp gereksiz yere 429 almamalı.
         const ip = getClientIp(event);
         const rlKey = 'ip_' + ip;
-        const rl = (await rateLimitStore.get(rlKey, { type: 'json' })) || { count: 0, windowStart: Date.now() };
-        const now = Date.now();
-        if (now - rl.windowStart > RATE_LIMIT_WINDOW_MS) {
-          rl.count = 0;
-          rl.windowStart = now;
-        }
-        if (rl.count >= RATE_LIMIT_MAX) {
+        const rl = await consume(rateLimitStore, rlKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+        if (!rl.allowed) {
           return {
             statusCode: 429,
             headers: corsHeaders,
             body: JSON.stringify({ error: 'Çok fazla istek — biraz sonra tekrar dene.' }),
           };
         }
-        rl.count += 1;
-        await rateLimitStore.setJSON(rlKey, rl);
 
-        await membersStore.set(memberKey, new Date().toISOString());
-        count += 1;
-        await counterStore.setJSON('total', { count });
+        // onlyIfNew: aynı kişi aynı anda iki istek gönderse bile yalnızca biri
+        // "yeni üye" sayılır, sayaç iki kez artmaz. (Çok eski bir SDK koşulu yok
+        // sayarsa `modified` alanı gelmez; o durumda eskisi gibi yeni sayıyoruz.)
+        const reg = await membersStore.set(memberKey, new Date().toISOString(), { onlyIfNew: true });
+        const isNew = !(reg && typeof reg === 'object' && 'modified' in reg) || reg.modified;
+        if (isNew) {
+          try {
+            count = await increment(counterStore, 'total');
+          } catch (e) {
+            // Sayaç çok yoğun bir çakışma yüzünden güncellenemedi. Üye kaydı yapıldı;
+            // kullanıcıya hata göstermeyelim. Sayaç bu üye için bir adım eksik
+            // kalabilir (nadir ve zararsız); mevcut değeri okuyup dönüyoruz.
+            count = await readCount();
+          }
+        } else {
+          count = await readCount();
+        }
       }
 
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };

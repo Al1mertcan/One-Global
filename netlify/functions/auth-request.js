@@ -52,6 +52,8 @@ function randomToken() {
   return crypto.randomBytes(24).toString('hex');
 }
 
+const { consume } = require('./_rate-limit');
+
 exports.handler = async (event) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -107,17 +109,11 @@ exports.handler = async (event) => {
     // göndermesini engellemek için).
     const ip = getClientIp(event);
     const rlKey = 'ip_' + ip;
-    const rl = (await rateLimitStore.get(rlKey, { type: 'json' })) || { count: 0, windowStart: Date.now() };
     const now = Date.now();
-    if (now - rl.windowStart > RATE_LIMIT_WINDOW_MS) {
-      rl.count = 0;
-      rl.windowStart = now;
-    }
-    if (rl.count >= RATE_LIMIT_MAX) {
+    const rl = await consume(rateLimitStore, rlKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS, now);
+    if (!rl.allowed) {
       return { statusCode: 429, headers: corsHeaders, body: JSON.stringify({ error: 'Çok fazla istek — biraz sonra tekrar dene.' }) };
     }
-    rl.count += 1;
-    await rateLimitStore.setJSON(rlKey, rl);
 
     const token = randomToken();
     await tokenStore.setJSON(token, { email, deviceId, expiresAt: now + TOKEN_TTL_MS });
