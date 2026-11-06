@@ -147,14 +147,17 @@
     (function () {
       'use strict';
 
-      // Dönen (zaten onboarding'i tamamlamış) kullanıcı: bu ekranı kısa bir
-      // marka/slogan ekranı ("splash") olarak ~2 saniye göster, sonra
-      // otomatik olarak anasayfaya geç. Onboarding akışının geri kalanı
-      // (üyelik, deneme süresi vb.) bu durumda hiç çalıştırılmaz.
+      // Dönen (zaten onboarding'i tamamlamış) kullanıcı: bu ekranı marka/slogan
+      // ekranı ("splash") olarak ~6 saniye göster, sonra otomatik olarak
+      // anasayfaya geç. Ekrana dokunan beklemeden geçebilir. Onboarding akışının
+      // geri kalanı (üyelik, deneme süresi vb.) bu durumda hiç çalıştırılmaz.
+      var SPLASH_MS = 6000;
       var isReturningUser = false;
       try { isReturningUser = localStorage.getItem('one-onboarded') === '1'; } catch (e) {}
       if (isReturningUser) {
-        setTimeout(function () { location.replace('asistan.html'); }, 2000);
+        var splashTimer = setTimeout(goHome, SPLASH_MS);
+        function goHome() { clearTimeout(splashTimer); location.replace('asistan.html'); }
+        document.addEventListener('click', goHome, { once: true });
         return;
       }
 
