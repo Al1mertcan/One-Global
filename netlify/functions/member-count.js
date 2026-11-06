@@ -5,7 +5,7 @@
 // benzersiz kimlik localStorage'da tutulur). Sahte/rastgele artan bir sayı
 // DEĞİLDİR.
 //
-// GET    /api/member-count            -> { count, goal, nextGoal, donationActive }
+// GET    /api/member-count            -> { count, goal, nextGoal, bigGoal, donationActive }
 // POST   /api/member-count {id}       -> aynı şekli döner; id daha önce
 //                                         kaydedilmediyse sayaç 1 artar.
 // DELETE /api/member-count?id=xxx     -> kişinin "üye" kaydını (sadece
@@ -41,8 +41,9 @@
 // farklı kişileri de nadiren yanlışlıkla geçici olarak engelleyebilir —
 // bu bilinen ve kabul edilen bir ödünleşim.
 
-const GOAL = 1000000; // bu sayıya ulaşınca bağış mekanizması "aktif" gösterilir
-const NEXT_GOAL = 1000000000; // sıradaki hedef
+const GOAL = 100000; // 100 bin: bu sayıya ulaşınca bağış mekanizması "aktif" gösterilir
+const NEXT_GOAL = 1000000; // küçük hedef: 1 milyon abone (bağış aktifken ilerleme çubuğu buna göre dolar)
+const BIG_GOAL = 2000000000; // büyük hedef: 2 milyar abone
 
 // Bir id'nin gerçekten client tarafında (hosgeldin.html'deki getSubId())
 // üretilmiş gibi görünmesini zorunlu kılan iki kabul edilebilir kalıp:
@@ -85,6 +86,7 @@ exports.handler = async (event) => {
       count,
       goal: GOAL,
       nextGoal: NEXT_GOAL,
+      bigGoal: BIG_GOAL,
       donationActive: count >= GOAL,
     };
   }

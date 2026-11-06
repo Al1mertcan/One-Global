@@ -3,12 +3,13 @@
 // Netlify Blobs'ta kayıtlı her abone için, kendi saat diliminde şu anki
 // saate göre hangi bildirimin sırası geldiyse onu gönderir:
 //
-//   uyanma saati            -> minnettarlık mesajı
 //   uyanma + 15dk           -> spor hatırlatması (ayarlanabilir şınav/mekik)
-//   uyanma + 30dk           -> beyin sağlığı ipucu (dönen bir havuzdan)
+//   uyanma + 60dk           -> minnettarlık mesajı ("bugün yine hayattasın")
+//   uyanma + 120dk, +480dk  -> su içme hatırlatması (günde 2-3 litre)
 //   eve geliş saati         -> günü kapatma / iyi misin kontrolü
-//   eve geliş + 60dk        -> kitap okuma hatırlatması (ayarlanabilir sayfa hedefi)
-//   yatma saati - 60dk      -> diş fırçalama hatırlatması
+//   eve geliş + 60dk        -> akşam minnettarlık mesajı (aynı mesajın tekrarı)
+//   eve geliş + 90dk        -> kitap okuma hatırlatması (ayarlanabilir sayfa hedefi)
+//   yatma saati - 60dk      -> diş sağlığı hatırlatması
 //   yatma saati             -> günü kapatma / telefonu bırakma nudge'ı (açılır/kapanır)
 //
 // Not (dürüstlük payı): Bu, "gerçek zamanlı push" için gereken tüm sunucu
@@ -33,11 +34,17 @@ const CONTENT = {
       title: 'Günaydın 🌅',
       body: "Bugün yine hayattasın — bunun için şükretmeyi unutma. Sevdiklerinle güzel vakit geçir, çünkü yarın sen ya da sevdiğin biri burada olmayabilir. O yüzden sonra değil, şimdi ve bugün. Hatırlatmamı istediğin bir şey var mı? Unutma, ben her gün buradayım.",
     },
-    exercise: (p, sq, s, extra) => ({ title: 'Sabah sporu zamanı 💪', body: `Hadi başlayalım: ${p} şınav, ${sq} squat, ${s} mekik${extra}. Kendini nasıl hissettiğini merak ediyorum.` }),
-    brain: {
-      title: 'Küçük bir beyin egzersizi 🧠',
-      body: '', // pool'dan seçilecek
+    // wake mesajının akşam tekrarı (eve geliş + 60 dk): aynı metin, "günaydın" başlığı yok.
+    wakeEvening: {
+      title: 'Bugün yine hayattasın 🙏',
+      body: "Bugün yine hayattasın — bunun için şükretmeyi unutma. Sevdiklerinle güzel vakit geçir, çünkü yarın sen ya da sevdiğin biri burada olmayabilir. O yüzden sonra değil, şimdi ve bugün.",
     },
+    waterButtons: { glass: '🥛 Bir bardak', ml500: '500 ml', l1: '1 lt' },
+    water: {
+      title: 'Su vakti 💧',
+      body: 'Günde 2-3 litre su tüketmen önemli. Ne kadar içtiysen aşağıdan ekle, günlük toplamını uygulamada gör.',
+    },
+    exercise: (p, sq, s, extra) => ({ title: 'Sabah sporu zamanı 💪', body: `Hadi başlayalım: ${p} şınav, ${sq} squat, ${s} mekik${extra}. Kendini nasıl hissettiğini merak ediyorum.` }),
     home: {
       title: 'Günü kapatıyoruz 🙏',
       body: 'Çok şükür, bugünü de bitirdik. Umarım her şey yolundadır. Hatırlatmamı istediğin bir şey var mı?',
@@ -52,12 +59,12 @@ const CONTENT = {
     },
     reading: (pages) => ({ title: 'Kitap vakti 📖', body: `Bugün en az ${pages} sayfa okudun mu? Birkaç sayfa bile kendine güzel bir ara.` }),
     teeth: {
-      title: 'Diş fırçalama zamanı 🦷',
-      body: 'Dişlerini fırçaladın mı? Diş sağlığı çok önemli — ileriki sen teşekkür edecek :)',
+      title: 'Diş sağlığı hatırlatması 🦷',
+      body: 'Dişlerini fırçaladın mı? Diş sağlığı çok önemli.',
     },
     eveningExercise: (p, sq, s, extra) => ({
       title: 'Küçük bir akşam hareketi 💪',
-      body: `${p} şınav, ${sq} squat, ${s} mekik çek${extra} — sağlıklı ve güzel bir vücut için. İleriki sen, şu anki sana teşekkür edecek.`,
+      body: `${p} şınav, ${sq} squat, ${s} mekik çek${extra} — sağlıklı ve güzel bir vücut için. Gelecekteki sen, şu anki sana teşekkür edecek.`,
     }),
     bed: {
       title: 'İyi geceler 🌙',
@@ -70,8 +77,16 @@ const CONTENT = {
       title: 'Good morning 🌅',
       body: "You're alive again today — don't forget to be grateful for that. Spend real time with the people you love, because tomorrow you or someone you love might not be here. So not later — now, today. Anything you'd like me to remind you of? I'm here every day.",
     },
+    wakeEvening: {
+      title: "You're alive again today 🙏",
+      body: "You're alive again today — don't forget to be grateful for that. Spend real time with the people you love, because tomorrow you or someone you love might not be here. So not later — now, today.",
+    },
+    waterButtons: { glass: '🥛 A glass', ml500: '500 ml', l1: '1 L' },
+    water: {
+      title: 'Water time 💧',
+      body: "Drinking 2-3 litres of water a day matters. Add what you've had below and see your daily total in the app.",
+    },
     exercise: (p, sq, s, extra) => ({ title: 'Morning workout time 💪', body: `Let's go: ${p} push-ups, ${sq} squats, ${s} sit-ups${extra}. Curious how you'll feel after.` }),
-    brain: { title: 'A small brain exercise 🧠', body: '' },
     home: {
       title: 'Wrapping up the day 🙏',
       body: "Thank goodness, we made it through today too. I hope everything's alright. Is there anything you'd like me to remind you of?",
@@ -86,8 +101,8 @@ const CONTENT = {
     },
     reading: (pages) => ({ title: 'Reading time 📖', body: `Did you read at least ${pages} pages today? Even a few pages is a nice moment for yourself.` }),
     teeth: {
-      title: 'Brush your teeth 🦷',
-      body: "Did you brush your teeth? Dental health matters — future you will thank you :)",
+      title: 'Dental health reminder 🦷',
+      body: 'Did you brush your teeth? Dental health matters.',
     },
     eveningExercise: (p, sq, s, extra) => ({
       title: 'A little evening movement 💪',
@@ -99,63 +114,6 @@ const CONTENT = {
     },
     reminder: { title: 'Reminder ⏰' },
   },
-};
-
-const BRAIN_TIPS = {
-  tr: [
-    'Bugün kullanmadığın elini biraz kullanmayı dene — dişini o elle fırçala mesela. Beynine farklı bir yoldan git.',
-    'İşe ya da okula bugün farklı bir yoldan gitmeyi dene — beynin yeni yollar sever.',
-    'Yeni bir kelime öğren ve bugün bir cümlede kullan.',
-    'Bir dakika gözlerini kapatıp sadece etraftaki sesleri dinle.',
-    'Bugün tanıdığın ama az konuştuğun biriyle kısa bir sohbet et.',
-    'Bugün gözlerini kapatıp sadece dokunarak evindeki 3 farklı nesneyi tanımaya çalış.',
-    'Az önce yediğin son 3 öğünü sırayla hatırlamaya çalış — hafızan için küçük bir egzersiz.',
-    'Bugün alfabeyi tersten söylemeyi dene, ne kadar hızlı yapabiliyorsun?',
-    '5 dakikalığına telefonunu bir kenara bırak ve sadece düşüncelerinle baş başa kal.',
-    'Bugün daha önce hiç dinlemediğin bir müzik türünü aç.',
-    'Bir arkadaşına bugün öğrendiğin ilginç bir bilgiyi anlat — öğretmek, öğrenmenin en iyi yolu.',
-    'Kısa bir yürüyüşe çık ve etraftaki 5 farklı rengi fark etmeye çalış.',
-    'Bugün kafanda basit bir çarpım işlemi yap, hesap makinesine dokunma.',
-    'Bir dakika boyunca sadece derin nefes al — 4 saniye al, 4 saniye tut, 4 saniye ver.',
-    'Bugün mutfağında gözlerini kapatıp sadece koku ile bir baharatı tanımaya çalış.',
-    'Yarım saatliğini ayır ve daha önce hiç denemediğin bir tarif dene.',
-    'Bugün oturduğun odayı gözlerini kapatıp hafızandan tarif etmeye çalış, sonra kontrol et.',
-    'Bir yakınına sürpriz bir teşekkür mesajı gönder — bu hem onun hem senin beynin için iyi.',
-    'Bugün 10 dakika kitap oku, telefon değil.',
-    'Bildiğin bir şarkının sözlerini baştan sona hatırlamaya çalış.',
-    'Bugün merdivenleri asansör yerine kullan — hareket, beyne kan akışını artırır.',
-    'Bir bulmaca ya da kelime oyunu çöz, sadece 5 dakika bile fark yaratır.',
-    'Bugün karşılaştığın birine gülümse ve göz teması kur — sosyal bağ beyin için besleyicidir.',
-    'Aklından geçenleri bir kağıda yaz, düzenli olmak zorunda değil, sadece akışına bırak.',
-    'Bugün eski bir anını detaylarıyla hatırlamaya çalış — nerede olduğunu, kimlerle olduğunu, ne hissettiğini.',
-  ],
-  en: [
-    "Try using your non-dominant hand for something today — like brushing your teeth. Give your brain a new path.",
-    'Take a different route to work or school today — your brain loves novelty.',
-    'Learn one new word today and use it in a sentence.',
-    'Spend one minute with your eyes closed just listening to the sounds around you.',
-    'Have a short conversation today with someone you know but rarely talk to.',
-    'Close your eyes today and try to identify 3 objects at home just by touch.',
-    'Try to recall, in order, the last 3 meals you ate — a small workout for your memory.',
-    'Try reciting the alphabet backwards today — how fast can you go?',
-    'Put your phone aside for 5 minutes and just sit with your own thoughts.',
-    "Put on a music genre you've never listened to before.",
-    'Tell a friend something interesting you learned today — teaching is one of the best ways to learn.',
-    'Take a short walk and try to notice 5 different colors around you.',
-    'Do a simple multiplication in your head today — no calculator.',
-    'Spend one minute just breathing deeply — 4 seconds in, 4 seconds hold, 4 seconds out.',
-    'In your kitchen, close your eyes and try to identify a spice by smell alone.',
-    "Set aside half an hour and try a recipe you've never made before.",
-    'Close your eyes and try to describe the room you\'re sitting in from memory, then check.',
-    "Send someone a surprise thank-you message — it's good for their brain and yours.",
-    "Read for 10 minutes today — a book, not your phone.",
-    'Try to recall the full lyrics of a song you know, start to finish.',
-    'Take the stairs instead of the elevator today — movement boosts blood flow to the brain.',
-    'Solve a puzzle or word game — even 5 minutes makes a difference.',
-    'Smile and make eye contact with someone you meet today — social connection nourishes the brain.',
-    "Write down whatever's on your mind — no structure, just free writing.",
-    'Try to recall an old memory in detail — where you were, who you were with, how you felt.',
-  ],
 };
 
 function contentFor(lang) {
@@ -173,9 +131,6 @@ function customExerciseSuffix(settings) {
     .map(function (ex) { return ex.count + ' ' + ex.name.trim(); });
   return parts.length ? ', ' + parts.join(', ') : '';
 }
-function brainTipsFor(lang) {
-  return BRAIN_TIPS[lang] || BRAIN_TIPS.en;
-}
 
 function toMinutes(hhmm) {
   if (!hhmm || typeof hhmm !== 'string' || hhmm.indexOf(':') === -1) return null;
@@ -184,6 +139,27 @@ function toMinutes(hhmm) {
   var m = parseInt(parts[1], 10);
   if (isNaN(h) || isNaN(m)) return null;
   return h * 60 + m;
+}
+
+// 0-1439 dakika aralığına sarar (gece yarısını aşan hedefler için).
+function at(min) {
+  return ((min % 1440) + 1440) % 1440;
+}
+
+// Su hatırlatması: bildirim üzerindeki düğmeler (varsa) uygulamayı açıp
+// seçilen miktarı ekler. Düğmeleri hiç göstermeyen tarayıcılarda bildirime
+// dokunmak yine su kartına götürür (bkz. service-worker.js).
+function waterPayload(c) {
+  return {
+    title: c.water.title,
+    body: c.water.body,
+    url: './asistan.html#su',
+    actions: [
+      { action: 'water-250', title: c.waterButtons.glass },
+      { action: 'water-500', title: c.waterButtons.ml500 },
+      { action: 'water-1000', title: c.waterButtons.l1 },
+    ],
+  };
 }
 
 function nowInTz(tz) {
@@ -210,12 +186,6 @@ function minutesSince(nowMin, targetMin) {
 function inWindow(nowMin, targetMin, windowMin) {
   var diff = minutesSince(nowMin, targetMin);
   return diff >= 0 && diff < windowMin;
-}
-
-function dayOfYear(dateStr) {
-  var d = new Date(dateStr + 'T00:00:00Z');
-  var start = new Date(Date.UTC(d.getUTCFullYear(), 0, 0));
-  return Math.floor((d - start) / 86400000);
 }
 
 // ayarlar.html'deki <input type="datetime-local"> alanından gelen
@@ -319,7 +289,7 @@ exports.handler = async (event) => {
 
     let state = record.state || { date: '' };
     if (state.date !== dateStr) {
-      state = { date: dateStr, sentWake: false, sentExercise: false, sentBrain: false, sentNoonCheck: false, sentSteps: false, sentHome: false, sentReading: false, sentTeeth: false, sentEveningExercise: false, sentBed: false };
+      state = { date: dateStr, sentWake: false, sentWakeEvening: false, sentExercise: false, sentWater: false, sentWater2: false, sentNoonCheck: false, sentSteps: false, sentHome: false, sentReading: false, sentTeeth: false, sentEveningExercise: false, sentBed: false };
     }
 
     const wakeMin = toMinutes(settings.wakeTime);
@@ -329,14 +299,23 @@ exports.handler = async (event) => {
 
     const toSend = [];
 
-    if (wakeMin !== null && !state.sentWake && inWindow(nowMin, wakeMin, WINDOW_MIN)) {
-      toSend.push(['sentWake', c.wake]);
-    } else if (wakeMin !== null && state.sentWake && !state.sentExercise && inWindow(nowMin, wakeMin + 15, WINDOW_MIN)) {
-      toSend.push(['sentExercise', c.exercise(settings.pushups || 10, settings.squat || 10, settings.situps || 20, customExerciseSuffix(settings))]);
-    } else if (wakeMin !== null && state.sentExercise && !state.sentBrain && inWindow(nowMin, wakeMin + 30, WINDOW_MIN)) {
-      const tips = brainTipsFor(lang);
-      const tip = tips[dayOfYear(dateStr) % tips.length];
-      toSend.push(['sentBrain', { title: c.brain.title, body: tip }]);
+    // Uyanma temelli bildirimler. Her biri kendi zamanında ve birbirinden
+    // bağımsız (eskiden zincirleme bağlıydı; beyin ipucu kalkınca ve minnettarlık
+    // mesajı uyanma + 60 dk'ya kayınca zincir anlamını yitirdi).
+    // `at()` gece yarısını aşan hedefleri (ör. 23:30 + 60 dk) 0-1439 aralığına sarar.
+    if (wakeMin !== null) {
+      if (!state.sentExercise && inWindow(nowMin, at(wakeMin + 15), WINDOW_MIN)) {
+        toSend.push(['sentExercise', c.exercise(settings.pushups || 10, settings.squat || 10, settings.situps || 20, customExerciseSuffix(settings))]);
+      }
+      if (!state.sentWake && inWindow(nowMin, at(wakeMin + 60), WINDOW_MIN)) {
+        toSend.push(['sentWake', c.wake]);
+      }
+      if (!state.sentWater && inWindow(nowMin, at(wakeMin + 120), WINDOW_MIN)) {
+        toSend.push(['sentWater', waterPayload(c)]);
+      }
+      if (!state.sentWater2 && inWindow(nowMin, at(wakeMin + 480), WINDOW_MIN)) {
+        toSend.push(['sentWater2', waterPayload(c)]);
+      }
     }
 
     // Öğlen 12:00 civarı: kullanıcı hiç hatırlatma eklemediyse nazikçe sor.
@@ -367,10 +346,19 @@ exports.handler = async (event) => {
       toSend.push(['sentSteps', c.steps]);
     }
 
-    if (homeMin !== null && !state.sentHome && inWindow(nowMin, homeMin, WINDOW_MIN)) {
-      toSend.push(['sentHome', c.home]);
-    } else if (homeMin !== null && state.sentHome && !state.sentReading && inWindow(nowMin, homeMin + 60, WINDOW_MIN)) {
-      toSend.push(['sentReading', c.reading(settings.pages || 5)]);
+    // "İş bitimi" için ayrı bir ayar yok; "eve geliş saati" onun yerini tutuyor.
+    // Minnettarlık mesajı eve geliş + 60 dk'da tekrarlanır; okuma hatırlatması
+    // aynı ana denk gelip iki bildirim üst üste binmesin diye + 90 dk'ya kaydı.
+    if (homeMin !== null) {
+      if (!state.sentHome && inWindow(nowMin, homeMin, WINDOW_MIN)) {
+        toSend.push(['sentHome', c.home]);
+      }
+      if (!state.sentWakeEvening && inWindow(nowMin, at(homeMin + 60), WINDOW_MIN)) {
+        toSend.push(['sentWakeEvening', c.wakeEvening]);
+      }
+      if (!state.sentReading && inWindow(nowMin, at(homeMin + 90), WINDOW_MIN)) {
+        toSend.push(['sentReading', c.reading(settings.pages || 5)]);
+      }
     }
 
     if (bedMin !== null && !state.sentTeeth && inWindow(nowMin, bedMin - 60, WINDOW_MIN)) {
