@@ -1,0 +1,14 @@
+GitHub'a yuklenecek dosyalar (yollari koruyarak):
+  i18n.js
+  netlify/functions/_rate-limit.js   (YENI)
+  netlify/functions/chat.js
+  netlify/functions/auth-request.js
+  netlify/functions/member-count.js
+
+GitHub'dan SILINMESI onerilen eski kopyalar (depo KOKUNDEKI .js dosyalari):
+  auth-request.js, auth-verify.js, chat.js, create-checkout-session.js,
+  good-news.js, member-count.js, send-notifications.js, stripe-webhook.js,
+  subscribe.js, unsubscribe.js
+Bunlar netlify/functions/ icindeki gercek dosyalarin eski kopyalari. Netlify
+bunlari calistirmiyor ama site kokunde herkese acik dosya olarak yayinlaniyor.
+Silmeden once netlify/functions/ klasorundeki dosyalarin durdugunu kontrol et.

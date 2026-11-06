@@ -1,5 +1,5 @@
-// ONE Global — üye sayacı uç noktası.
-// Ana ekranın en üstünde gösterilen "ONE Global ailesi" üye sayısını besler.
+// Hemcan — üye sayacı uç noktası.
+// Ana ekranın en üstünde gösterilen "Hemcan ailesi" üye sayısını besler.
 // Sayı GERÇEKtir: her yeni kişi onboarding ekranında "Ücretsiz Başla"ya
 // bastığında bir kez artırılır (aynı cihaz/tarayıcı ikinci kez saymaz —
 // benzersiz kimlik localStorage'da tutulur). Sahte/rastgele artan bir sayı
@@ -64,6 +64,8 @@ function getClientIp(event) {
   );
 }
 
+const { consume, increment } = require('./_rate-limit');
+
 exports.handler = async (event) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -72,7 +74,8 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: corsHeaders, body: '' };
 
-  const { getStore } = require('@netlify/blobs');
+  const { getStore, connectLambda } = require('@netlify/blobs');
+  connectLambda(event);
   const counterStore = getStore('one-member-counter');
   const membersStore = getStore('one-members');
   const rateLimitStore = getStore('one-member-ratelimit');
@@ -96,7 +99,7 @@ exports.handler = async (event) => {
       const count = await readCount();
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Sayı okunamadı: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Sayı okunamadı.' }) };
     }
   }
 
@@ -104,6 +107,7 @@ exports.handler = async (event) => {
     let payload;
     try {
       payload = JSON.parse(event.body || '{}');
+      if (!payload || typeof payload !== 'object') throw new Error('payload not an object');
     } catch (e) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Geçersiz istek gövdesi.' }) };
     }
@@ -123,30 +127,37 @@ exports.handler = async (event) => {
         // takılıp gereksiz yere 429 almamalı.
         const ip = getClientIp(event);
         const rlKey = 'ip_' + ip;
-        const rl = (await rateLimitStore.get(rlKey, { type: 'json' })) || { count: 0, windowStart: Date.now() };
-        const now = Date.now();
-        if (now - rl.windowStart > RATE_LIMIT_WINDOW_MS) {
-          rl.count = 0;
-          rl.windowStart = now;
-        }
-        if (rl.count >= RATE_LIMIT_MAX) {
+        const rl = await consume(rateLimitStore, rlKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+        if (!rl.allowed) {
           return {
             statusCode: 429,
             headers: corsHeaders,
             body: JSON.stringify({ error: 'Çok fazla istek — biraz sonra tekrar dene.' }),
           };
         }
-        rl.count += 1;
-        await rateLimitStore.setJSON(rlKey, rl);
 
-        await membersStore.set(memberKey, new Date().toISOString());
-        count += 1;
-        await counterStore.setJSON('total', { count });
+        // onlyIfNew: aynı kişi aynı anda iki istek gönderse bile yalnızca biri
+        // "yeni üye" sayılır, sayaç iki kez artmaz. (Çok eski bir SDK koşulu yok
+        // sayarsa `modified` alanı gelmez; o durumda eskisi gibi yeni sayıyoruz.)
+        const reg = await membersStore.set(memberKey, new Date().toISOString(), { onlyIfNew: true });
+        const isNew = !(reg && typeof reg === 'object' && 'modified' in reg) || reg.modified;
+        if (isNew) {
+          try {
+            count = await increment(counterStore, 'total');
+          } catch (e) {
+            // Sayaç çok yoğun bir çakışma yüzünden güncellenemedi. Üye kaydı yapıldı;
+            // kullanıcıya hata göstermeyelim. Sayaç bu üye için bir adım eksik
+            // kalabilir (nadir ve zararsız); mevcut değeri okuyup dönüyoruz.
+            count = await readCount();
+          }
+        } else {
+          count = await readCount();
+        }
       }
 
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Kaydedilemedi: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Kaydedilemedi.' }) };
     }
   }
 
@@ -159,7 +170,7 @@ exports.handler = async (event) => {
       await membersStore.delete('m_' + id);
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true }) };
     } catch (err) {
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi: ' + err.message }) };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Silinemedi.' }) };
     }
   }
 
