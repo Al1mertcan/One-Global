@@ -147,7 +147,27 @@
       </header>
 
       <main class="relative px-5 pt-5">
-        <section class="rounded-[24px] border border-primary/25 bg-primary/5 p-4">
+        <section id="su" class="scroll-mt-4 rounded-[24px] border border-accent/25 bg-accent/5 p-4">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:droplets" class="text-lg text-accent"></iconify-icon>
+            <h2 class="font-heading text-sm font-semibold text-accent" data-i18n="waterTitle">Su takibi</h2>
+          </div>
+          <p class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="waterExplain">Günde 2-3 litre su tüketmen önemli. İçtiğin suyu ekle, bugün ne kadar içtiğini gör.</p>
+          <p class="mt-3 text-[11px] font-semibold text-muted-foreground" data-i18n="waterTodayLabel">Bugün içtiğin</p>
+          <p id="water-total" class="font-heading text-3xl font-bold tracking-tight text-foreground">0 / 2 lt</p>
+          <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-card">
+            <div id="water-bar" class="h-full rounded-full bg-accent transition-[width] duration-500" style="width:0%"></div>
+          </div>
+          <div class="mt-3 grid grid-cols-3 gap-2">
+            <button type="button" data-water-ml="250" class="flex h-11 items-center justify-center rounded-theme border border-accent/30 bg-card text-xs font-bold text-card-foreground"><span data-i18n="waterAddGlass">+ Bir bardak</span></button>
+            <button type="button" data-water-ml="500" class="flex h-11 items-center justify-center rounded-theme border border-accent/30 bg-card text-xs font-bold text-card-foreground">+ 500 ml</button>
+            <button type="button" data-water-ml="1000" class="flex h-11 items-center justify-center rounded-theme border border-accent/30 bg-card text-xs font-bold text-card-foreground">+ 1 <span class="ml-1" data-i18n="waterUnitL">lt</span></button>
+          </div>
+          <p id="water-goal-msg" class="mt-3 hidden text-xs font-semibold leading-5 text-success" data-i18n="waterGoalReached">Tebrikler! Günlük sağlıklı su içme miktarına ulaştın 🎉</p>
+          <button type="button" id="water-undo" class="mt-2 hidden text-[11px] font-semibold text-muted-foreground underline" data-i18n="waterUndo">Son eklemeyi geri al</button>
+        </section>
+
+        <section class="mt-5 rounded-[24px] border border-primary/25 bg-primary/5 p-4">
           <div class="flex items-center gap-2.5">
             <iconify-icon icon="lucide:heart-handshake" class="text-lg text-primary"></iconify-icon>
             <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="memberCountTitle">Hemcan ailesi</h2>
@@ -156,9 +176,25 @@
           <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-card">
             <div id="member-count-bar" class="h-full rounded-full bg-primary transition-[width] duration-700" style="width:0%"></div>
           </div>
-          <p id="member-count-goal-text" class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="memberCountGoalText">1 milyona ulaştığımızda, her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılmaya başlayacak.</p>
-          <p id="member-count-active-text" class="mt-2 hidden text-[11px] font-semibold leading-5 text-success" data-i18n="memberCountActiveText">Şu an her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılıyor. Sıradaki hedefimiz: 1 milyar üye.</p>
-          <p class="mt-2 border-t border-primary/15 pt-2 text-[10px] italic leading-4 text-muted-foreground/80" data-i18n="donationDisclaimer">Not: Bu bir bağış toplama uygulaması değildir. Hedefe ulaşıldığında bağış, kullanıcılardan değil, uygulama sahibinin kendi gelirinden yapılacaktır.</p>
+          <p id="member-count-goal-text" class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="memberCountGoalText">100 bin üyeye ulaştığımızda, her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılmaya başlayacak.</p>
+          <p id="member-count-active-text" class="mt-2 hidden text-[11px] font-semibold leading-5 text-success" data-i18n="memberCountActiveText">Şu an her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılıyor.</p>
+          <div class="mt-3 space-y-2 border-t border-primary/15 pt-3">
+            <div>
+              <p class="text-[11px] font-semibold text-foreground" data-i18n="memberSubsLabel">Abone hedefi</p>
+              <div class="mt-1 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalSmall">Küçük hedef</span>: <b id="goal-subs-small" class="text-foreground">1 milyon</b></span>
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalBig">Büyük hedef</span>: <b id="goal-subs-big" class="text-foreground">2 milyar</b></span>
+              </div>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-foreground" data-i18n="memberJobsLabel">Sağlanacak istihdam (kişi)</p>
+              <div class="mt-1 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalSmall">Küçük hedef</span>: <b id="goal-jobs-small" class="text-foreground">1.000</b></span>
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalBig">Büyük hedef</span>: <b id="goal-jobs-big" class="text-foreground">1 milyon</b></span>
+              </div>
+            </div>
+          </div>
+          <p class="mt-3 border-t border-primary/15 pt-2 text-[10px] italic leading-4 text-muted-foreground/80" data-i18n="donationDisclaimer">Not: Bu bir bağış toplama uygulaması değildir. Hedefe ulaşıldığında bağış, kullanıcılardan değil, uygulama sahibinin kendi gelirinden yapılacaktır.</p>
         </section>
 
         <section class="mt-5 rounded-[24px] border border-border bg-card/60 p-4">
@@ -588,6 +624,23 @@
         try { return n.toLocaleString(lang); } catch (e) { return String(n); }
       }
 
+      // Hedef rakamları (1 milyon, 2 milyar...) kullanıcının diline göre yazılır.
+      var GOALS = { 'goal-subs-small': 1000000, 'goal-subs-big': 2000000000, 'goal-jobs-small': 1000, 'goal-jobs-big': 1000000 };
+      function formatGoal(n) {
+        var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+        try {
+          if (n >= 1000000) return new Intl.NumberFormat(lang, { notation: 'compact', compactDisplay: 'long' }).format(n);
+          return n.toLocaleString(lang);
+        } catch (e) { return String(n); }
+      }
+      function renderGoals() {
+        Object.keys(GOALS).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = formatGoal(GOALS[id]);
+        });
+      }
+      window.addEventListener('one-lang-changed', renderGoals);
+
       function render(data) {
         numberEl.textContent = formatNumber(data.count);
         if (data.donationActive) {
@@ -612,10 +665,120 @@
             numberEl.textContent = '—';
           });
       }
+      renderGoals();
       loadMemberCount();
     })();
   </script>
   <script src="i18n.js"></script>
+  <script>
+    // Su takibi: günlük içilen su cihazda (localStorage) tutulur, gece yarısı
+    // (yerel saate göre) sıfırlanır. 2 litreye ulaşınca tebrik edilir.
+    (function () {
+      'use strict';
+      var KEY = 'one-water';
+      var GOAL_ML = 2000;
+      var totalEl = document.getElementById('water-total');
+      var barEl = document.getElementById('water-bar');
+      var msgEl = document.getElementById('water-goal-msg');
+      var undoEl = document.getElementById('water-undo');
+      if (!totalEl) return;
+
+      function today() {
+        var d = new Date();
+        return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+      }
+      function fresh() { return { date: today(), log: [], congrats: false }; }
+      function load() {
+        var st = null;
+        try { st = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+        if (!st || st.date !== today() || !Array.isArray(st.log)) st = fresh();
+        return st;
+      }
+      function save(st) { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+      function sum(st) { return st.log.reduce(function (a, b) { return a + b; }, 0); }
+
+      function tr(key, fallback) {
+        return (window.ONE_I18N && window.ONE_I18N.t) ? window.ONE_I18N.t(key) : fallback;
+      }
+      function lang() { return (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en'; }
+      function fmtL(ml) {
+        var v = ml / 1000;
+        var txt;
+        try { txt = v.toLocaleString(lang(), { maximumFractionDigits: 2 }); } catch (e) { txt = String(v); }
+        return txt + ' ' + tr('waterUnitL', 'L');
+      }
+
+      function render() {
+        var st = load();
+        var ml = sum(st);
+        totalEl.textContent = fmtL(ml) + ' / ' + fmtL(GOAL_ML);
+        barEl.style.width = Math.min(100, (ml / GOAL_ML) * 100) + '%';
+        msgEl.classList.toggle('hidden', ml < GOAL_ML);
+        undoEl.classList.toggle('hidden', st.log.length === 0);
+      }
+
+      function notifyGoal() {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+        var title = tr('waterCongratsTitle', 'Tebrikler! 💧');
+        var opts = { body: tr('waterCongratsBody', ''), icon: './icons/icon-192.png', badge: './icons/icon-192.png', tag: 'water-goal', data: { url: './asistan.html#su' } };
+        function fallback() { try { new Notification(title, { body: opts.body }); } catch (e) {} }
+        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+          navigator.serviceWorker.ready.then(function (reg) { return reg.showNotification(title, opts); }).catch(fallback);
+        } else {
+          fallback();
+        }
+      }
+
+      function add(ml) {
+        ml = parseInt(ml, 10);
+        if (!(ml > 0 && ml <= 5000)) return;
+        var st = load();
+        var before = sum(st);
+        st.log.push(ml);
+        var after = before + ml;
+        var reached = before < GOAL_ML && after >= GOAL_ML && !st.congrats;
+        if (reached) st.congrats = true;
+        save(st);
+        render();
+        if (reached) notifyGoal();
+      }
+      function undo() {
+        var st = load();
+        if (!st.log.length) return;
+        st.log.pop();
+        save(st);
+        render();
+      }
+
+      Array.prototype.forEach.call(document.querySelectorAll('[data-water-ml]'), function (btn) {
+        btn.addEventListener('click', function () { add(btn.getAttribute('data-water-ml')); });
+      });
+      undoEl.addEventListener('click', undo);
+
+      // Bildirimdeki düğmeden gelen ekleme: açık uygulamaya service worker iletir,
+      // kapalıysa ?su=<ml> ile açılır (bir kez işlenir, sonra adresten silinir).
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.addEventListener('message', function (e) {
+          if (e.data && e.data.type === 'water-add') add(e.data.ml);
+        });
+      }
+      try {
+        var q = new URLSearchParams(location.search);
+        if (q.has('su')) {
+          var ml = q.get('su');
+          q.delete('su');
+          var rest = q.toString();
+          history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
+          add(ml);
+        }
+      } catch (e) {}
+
+      window.addEventListener('one-lang-changed', render);
+      // Uygulama gece yarısından sonra açık kalırsa yeni güne sıfırlansın.
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
+      render();
+    })();
+  </script>
   <script>
     // Üst başlıktaki selamlama, günün saatine göre değişir (kullanıcının
     // kendi cihaz saati) — 12'ye kadar günaydın, 17'ye kadar iyi günler,

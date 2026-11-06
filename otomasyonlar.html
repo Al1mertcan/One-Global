@@ -297,11 +297,12 @@
         }
 
         var items = [
-          ['lucide:sunrise', t('autoCard1Title'), s.wakeTime, t('autoCard1Desc')],
           ['lucide:dumbbell', t('autoCard2Title'), s.wakeTime + ' + 15' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s)],
-          ['lucide:brain', t('autoCard3Title'), s.wakeTime + ' + 30' + min, t('autoCard3Desc')],
+          ['lucide:sunrise', t('autoCard1Title'), s.wakeTime + ' + 60' + min, t('autoCard1Desc')],
+          ['lucide:droplets', t('autoCardWaterTitle'), s.wakeTime + ' + 120' + min + ', + 480' + min, t('autoCardWaterDesc')],
           ['lucide:door-open', t('autoCard4Title'), s.homeTime, t('autoCard4Desc')],
-          ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 60' + min, t('autoCard5Desc', { pages: s.pages })],
+          ['lucide:heart', t('autoCardEveGratTitle'), s.homeTime + ' + 60' + min, t('autoCardEveGratDesc')],
+          ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 90' + min, t('autoCard5Desc', { pages: s.pages })],
           ['lucide:smile', t('autoCard6Title'), s.bedTime + ' - 60' + min, t('autoCard6Desc')],
           ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 30' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s)],
           ['lucide:bed', t('autoCard8Title'), s.bedTime, t('autoCard8Desc')],

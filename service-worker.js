@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v7';
+const CACHE_NAME = 'one-shell-v8';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -79,18 +79,34 @@ self.addEventListener('push', (event) => {
     icon: './icons/icon-192.png',
     badge: './icons/icon-192.png',
     vibrate: [80, 40, 80],
+    // Bildirime dokunulunca açılacak adres (ör. su hatırlatması -> su kartı).
+    data: { url: typeof data.url === 'string' ? data.url : './asistan.html' },
   };
+  // Eylem düğmeleri (ör. su: bir bardak / 500 ml / 1 lt). Desteklemeyen
+  // tarayıcılar bunları sessizce yok sayar; bildirime dokunmak yine çalışır.
+  if (Array.isArray(data.actions) && data.actions.length) {
+    options.actions = data.actions.slice(0, 3).map((a) => ({ action: String(a.action), title: String(a.title) }));
+  }
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  const baseUrl = (event.notification.data && event.notification.data.url) || './asistan.html';
+  // "water-250" gibi bir eylem düğmesine basıldıysa miktarı (ml) çıkar.
+  const m = /^water-(\d{2,4})$/.exec(event.action || '');
+  const waterMl = m ? parseInt(m[1], 10) : 0;
+  const targetUrl = waterMl ? './asistan.html?su=' + waterMl + '#su' : baseUrl;
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.indexOf('asistan.html') !== -1 && 'focus' in client) return client.focus();
+        if (client.url.indexOf('asistan.html') !== -1 && 'focus' in client) {
+          // Açık uygulama varsa sayfayı yeniden yüklemeden miktarı ona ilet.
+          if (waterMl) client.postMessage({ type: 'water-add', ml: waterMl });
+          return client.focus();
+        }
       }
-      if (self.clients.openWindow) return self.clients.openWindow('./asistan.html');
+      if (self.clients.openWindow) return self.clients.openWindow(targetUrl);
     }),
   );
 });

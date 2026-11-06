@@ -134,14 +134,17 @@ kaydedilir. `send-notifications.js` adlı zamanlanmış fonksiyon (netlify.toml
 içinde `*/15 * * * *` — her 15 dakikada bir) her abonenin kendi saat
 diliminde şu anki saate bakıp sırası gelen bildirimi gönderir:
 
-- uyanma saati → minnettarlık mesajı (hayatta olmaya şükür, sevdiklerinle
-  vakit geçirme hatırlatması)
 - uyanma + 15 dk → spor (ayarlanabilir şınav/mekik sayısı)
-- uyanma + 30 dk → beyin sağlığı ipucu (dönen bir havuzdan — farklı el
-  kullanma, farklı yoldan gitme gibi)
+- uyanma + 60 dk → minnettarlık mesajı (hayatta olmaya şükür, sevdiklerinle
+  vakit geçirme hatırlatması)
+- uyanma + 2 saat ve + 8 saat → su içme hatırlatması (günde 2-3 litre);
+  bildirimdeki "bir bardak / 500 ml / 1 lt" düğmeleri uygulamayı açıp
+  miktarı ekler
 - eve geliş saati → günü kapatma / "her şey yolunda mı" kontrolü
-- eve geliş + 60 dk → okuma hatırlatması (ayarlanabilir sayfa hedefi)
-- yatmadan 60 dk önce → diş fırçalama hatırlatması
+- eve geliş + 60 dk → minnettarlık mesajının akşam tekrarı ("iş bitimi" için
+  ayrı bir ayar olmadığından eve geliş saati esas alınır)
+- eve geliş + 90 dk → okuma hatırlatması (ayarlanabilir sayfa hedefi)
+- yatmadan 60 dk önce → diş sağlığı hatırlatması
 - yatmadan 30 dk önce → küçük bir akşam sporu
 - yatma saati → günü bırakma / telefonu bırakma nudge'ı
 
@@ -162,8 +165,8 @@ mesajı vs.) bana durumu anlat, birlikte hata ayıklarız.
 **Kapsam notu — bildirim dili:** Bildirim içerikleri şu an sadece Türkçe ve
 İngilizce olarak yazıldı (uygulamanın kendi arayüzü 21 dil olsa da). Diğer
 diller otomatik olarak İngilizce'ye düşer. Genişletmek istersen aynı desen
-(`netlify/functions/send-notifications.js` içindeki `CONTENT`/`BRAIN_TIPS`
-nesneleri) diğer dillere de kolayca eklenebilir.
+(`netlify/functions/send-notifications.js` içindeki `CONTENT`
+nesnesi) diğer dillere de kolayca eklenebilir.
 
 ## Ana ekrandaki "Bugünün iyi haberleri"
 
@@ -295,12 +298,18 @@ kimlikle kontrol ediliyor). Bu sayı **gerçektir**; rastgele veya sahte
 artan bir animasyon değildir — sadece gerçekten "Ücretsiz Başla"ya basan
 insanlarla büyür.
 
-1 milyon üyeye ulaşana kadar ana ekranda şu mesaj görünür: "1 milyona
+100 bin üyeye ulaşana kadar ana ekranda şu mesaj görünür: "100 bin üyeye
 ulaştığımızda, her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılmaya
-başlayacak." 1 milyona ulaşıldığı an mesaj otomatik değişir: "%90 şu an
-paylaşılıyor, sıradaki hedef 1 milyar üye." Yani bu senin sözlerinle bire
-bir örtüşüyor: "gerçekten bu olduğunda da gerekli herşeyi yapıp devam
-ederiz."
+başlayacak." 100 bine ulaşıldığı an mesaj otomatik değişir: "Şu an her ay
+gelirin %90'ı ihtiyaç sahipleriyle paylaşılıyor." Kartın altında iki hedef
+satırı durur: abone hedefi (küçük hedef 1 milyon, büyük hedef 2 milyar) ve
+sağlanacak istihdam (küçük hedef 1.000 kişi, büyük hedef 1 milyon kişi).
+Rakamlar kullanıcının diline göre yazılır.
+
+Ana ekranın en üstünde "Su takibi" kartı vardır: günlük 2 litre hedefine
+karşı bir bardak (250 ml) / 500 ml / 1 lt ekleme düğmeleri, geri alma ve
+2 litreye ulaşınca tebrik mesajı + bildirim. İçilen su yalnızca cihazda
+(localStorage) tutulur, gece yarısı sıfırlanır.
 
 **Çok önemli bir netlik notu:** Bu sayaç 1 milyona ulaştığında ekran
 metni otomatik değişse de, **gerçek para dağıtımı otomatik başlamıyor** —
@@ -535,8 +544,8 @@ makul, uygun maliyetli bir koruma sağlar.
   günlük önbellekli, gerçek dünya haberleri bölümü (yukarı bakınız).
 - Karşılama ekranı (`hosgeldin.html`) — "ilk 1 hafta ücretsiz" mesajıyla
   yeni kullanıcıları karşılıyor (yukarı bakınız).
-- Ana ekranda gerçek "Hemcan ailesi" üye sayacı ve 1 milyon/1 milyar bağış
-  hedefi mesajları, bot/sahte-kayıt koruması (yukarı bakınız).
+- Ana ekranda gerçek "Hemcan ailesi" üye sayacı ve 100 bin bağış eşiği, 1 milyon/2 milyar abone ve istihdam
+  hedefleri, bot/sahte-kayıt koruması (yukarı bakınız).
 - `LICENSE.md` ile temel telif hakkı/mülkiyet kaydı eklendi.
 - Bellek sekmesi gerçek, kalıcı sohbet geçmişi gösteriyor; Otomasyonlar ve
   Cihazlar sekmeleri ile ana ekranın kendisi artık dürüst (sahte
