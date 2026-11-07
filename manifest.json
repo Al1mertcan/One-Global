@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Hemcan — Kişisel Asistan",
   "short_name": "Hemcan",
-  "description": "Hemcan — çoğu ülkede ayda yerel para biriminin sadece 1 birimi, Türkiye gibi yüksek enflasyonlu ülkelerde ise 10 birimi ile herkesin hayatını kolaylaştıran kişisel yapay zeka asistanı.",
+  "description": "Hemcan — çoğu ülkede ayda yerel para biriminin sadece 1 birimi, Türkiye gibi yüksek enflasyonlu ülkelerde ise 10 birimi ile günlük rutin hatırlatmaları, su takibi ve gelir/gider takibiyle herkesin hayatını kolaylaştıran kişisel yardımcı.",
   "start_url": "./hosgeldin.html",
   "scope": "./",
   "display": "standalone",

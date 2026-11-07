@@ -63,7 +63,7 @@
 
     <main class="relative px-5 pt-6 space-y-5 text-sm leading-6 text-card-foreground">
       <section class="rounded-[20px] border border-accent/25 bg-accent/5 p-4 text-xs leading-5 text-muted-foreground">
-        <strong class="text-accent">Not:</strong> Bu metin, Hemcan uygulamasının kurucusu tarafından (yapay zeka desteğiyle) hazırlanmıştır ve bir avukat tarafından incelenmemiştir. Gerçek kullanıcı verisi toplamaya ve/veya gerçek ödeme almaya başlamadan önce bir hukuk danışmanına gösterilmesi önerilir. Son güncelleme: Ağustos 2026.
+        <strong class="text-accent">Not:</strong> Bu metin, Hemcan uygulamasının kurucusu tarafından (yapay zeka desteğiyle) hazırlanmıştır ve bir avukat tarafından incelenmemiştir. Gerçek kullanıcı verisi toplamaya ve/veya gerçek ödeme almaya başlamadan önce bir hukuk danışmanına gösterilmesi önerilir. Son güncelleme: Kasım 2026.
       </section>
 
       <section>
@@ -73,7 +73,7 @@
           <li>Rutin ayarların (uyanma/eve geliş/yatma saatleri, spor ve okuma hedeflerin)</li>
           <li>Eklediğin kısa hatırlatma metinleri</li>
           <li>Bildirimler açıksa: tarayıcının/işletim sisteminin verdiği push bildirim adresi (subscription endpoint) ve saat dilimin</li>
-          <li>Hemcan ile yaptığın sohbetlerin metni (Bellek sekmesinde göstermek ve konuşmanın bağlamını hatırlamak için, en fazla son ~20 karşılıklı mesaj)</li>
+          <li>Daha önce Hemcan ile sohbet ettiysen o sohbetlerin metni (Bellek sekmesinde göstermek için, en fazla son ~20 karşılıklı mesaj). Yapay zekâ sohbeti şu an kapalıdır; yeni sohbet kaydedilmez.</li>
           <li>Seçtiğin dil ve para birimi tercihleri</li>
           <li>Cihazının IP adresi, sadece üye sayacının kötüye kullanılmasını önlemek için kısa süreliğine (bkz. aşağıdaki "Güvenlik" bölümü)</li>
         </ul>
@@ -83,11 +83,12 @@
       <section>
         <h2 class="font-heading text-base font-semibold text-foreground">Veriler nerede saklanıyor?</h2>
         <p class="mt-2">Tüm veriler, Hemcan'ın barındığı Netlify altyapısındaki Netlify Blobs adlı depolama hizmetinde tutulur. Ayrıca rutin ayarların, hatırlatmaların, dil tercihin gibi bazı bilgiler kolay erişim için tarayıcının kendi hafızasında (localStorage) da tutulur — bu, sadece senin cihazında kalır.</p>
+        <p class="mt-2"><strong>Cüzdan ve su takibi verilerin yalnızca cihazında durur.</strong> Girdiğin gelir/gider kayıtları, aylık limit ve içtiğin su miktarı tarayıcının kendi hafızasında (localStorage) saklanır; sunucuya gönderilmez, bizde bir kopyası yoktur. Bu yüzden telefon ya da tarayıcı verilerini silersen bu kayıtlar da silinir ve biz geri getiremeyiz — Cüzdan ayarlarındaki "Yedek al" düğmesini kullanabilirsin.</p>
       </section>
 
       <section>
         <h2 class="font-heading text-base font-semibold text-foreground">Üçüncü taraflarla paylaşım</h2>
-        <p class="mt-2">Sohbet mesajların ve (varsa) "iyi haberler" için yapılan aramalar, cevap üretmesi için Anthropic'in Claude yapay zeka servisine iletilir. Bunun dışında verilerin hiçbir üçüncü tarafla (reklam şirketleri, veri simsarları vb.) paylaşılmıyor veya satılmıyor.</p>
+        <p class="mt-2">Yapay zekâ sohbeti şu an kapalıdır; bu yüzden mesajların hiçbir yapay zekâ servisine gönderilmez. "İyi haberler" elle hazırlanır ve herhangi bir yapay zekâ servisi kullanılmaz. Sohbet ileride açılırsa, mesajların cevap üretmesi için bir yapay zekâ servisine iletilecek ve bu politika önceden güncellenecektir. Verilerin hiçbir zaman üçüncü taraflarla (reklam şirketleri, veri simsarları vb.) paylaşılmıyor veya satılmıyor.</p>
       </section>
 
       <section>
