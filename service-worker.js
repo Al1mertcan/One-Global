@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v9';
+const CACHE_NAME = 'one-shell-v10';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
