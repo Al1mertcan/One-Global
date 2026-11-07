@@ -226,6 +226,7 @@
           <div id="good-news-list" class="mt-3 space-y-3">
             <p id="good-news-loading" class="text-xs text-muted-foreground" data-i18n="goodNewsLoading">Yükleniyor…</p>
           </div>
+          <p id="good-news-empty" class="mt-1 hidden text-xs text-muted-foreground" data-i18n="goodNewsEmpty">Bugün için henüz haber eklenmedi. Yakında burada olacak.</p>
           <p id="good-news-error" class="mt-1 hidden text-xs text-muted-foreground" data-i18n="goodNewsError">Şu an iyi haberler yüklenemedi — az sonra tekrar dene.</p>
         </section>
 
@@ -252,7 +253,7 @@
             </div>
           </div>
           <div class="flex gap-3 overflow-x-auto pb-1">
-            <article id="quick-start-command" class="min-w-[218px] cursor-pointer rounded-[20px] border border-border bg-card p-4">
+            <article id="quick-start-command" hidden class="min-w-[218px] cursor-pointer rounded-[20px] border border-border bg-card p-4">
               <div class="flex items-center justify-between">
                 <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <iconify-icon icon="lucide:message-circle" class="text-lg"></iconify-icon>
@@ -275,7 +276,24 @@
           </div>
         </section>
 
-        <section class="mt-6">
+        <!-- Yapay zeka sohbeti şimdilik kapalı (maliyet kararı). Yeniden açmak için:
+             aşağıdaki #chat-section'dan "hidden" özniteliğini kaldır, bu "Yakında" kartını sil,
+             #quick-start-command'dan "hidden"ı kaldır, script içinde CHAT_ENABLED=true yap
+             ve Netlify'da CHAT_ENABLED=1 ortam değişkenini ekle. -->
+        <section id="chat-soon" class="mt-6">
+          <div class="rounded-[24px] border border-primary/25 bg-primary/5 p-4">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <iconify-icon icon="lucide:sparkles" class="text-lg text-primary"></iconify-icon>
+                <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="chatSoonTitle">Hemcan Yapay Zekâ</h2>
+              </div>
+              <span class="rounded-full border border-primary/30 px-2.5 py-0.5 text-[10px] font-bold text-primary" data-i18n="chatSoonBadge">Yakında</span>
+            </div>
+            <p class="mt-2 text-xs leading-5 text-muted-foreground" data-i18n="chatSoonDesc">Kendi yapay zekâ asistanımız ileride Pro üyelere özel olarak burada olacak. Şimdilik bu bölüm kapalı.</p>
+          </div>
+        </section>
+
+        <section id="chat-section" hidden class="mt-6">
           <div class="mb-3 flex items-center justify-between">
             <div>
               <h2 class="font-heading text-lg font-semibold" data-i18n="commandTitle">Komut ver</h2>
@@ -473,6 +491,9 @@
   <script>
     (function () {
       'use strict';
+      // Sohbet kapalı: hiçbir istek atılmaz (bkz. #chat-soon notu). Açmak için true yap.
+      var CHAT_ENABLED = false;
+      if (!CHAT_ENABLED) return;
       var form = document.getElementById('one-chat-form');
       var input = document.getElementById('komut');
       var log = document.getElementById('one-chat-log');
@@ -590,10 +611,13 @@
       function render(items) {
         listEl.innerHTML = '';
         items.forEach(function (item) {
-          var card = document.createElement('a');
-          card.href = item.url || '#';
-          card.target = '_blank';
-          card.rel = 'noopener noreferrer';
+          var href = safeUrl(item.url);
+          var card = document.createElement(href ? 'a' : 'div');
+          if (href) {
+            card.href = href;
+            card.target = '_blank';
+            card.rel = 'noopener noreferrer';
+          }
           card.className = 'block rounded-xl border border-border bg-card/60 p-3';
           var h = document.createElement('p');
           h.className = 'text-xs font-semibold text-card-foreground';
@@ -603,27 +627,49 @@
           s.textContent = item.summary || '';
           var src = document.createElement('p');
           src.className = 'mt-1 text-[10px] text-primary';
-          src.textContent = item.source || '';
+          src.textContent = [item.source || '', item.date || ''].filter(Boolean).join(' · ');
           card.appendChild(h);
           card.appendChild(s);
-          if (item.source) card.appendChild(src);
+          if (item.source || item.date) card.appendChild(src);
           listEl.appendChild(card);
         });
       }
 
-      function loadGoodNews() {
+      // Haberler elle düzenlenen iyi-haberler.json dosyasından okunur:
+      // { "tr": [ {headline, summary, source, url, date} ], "en": [ ... ] }
+      // Seçili dil yoksa önce İngilizce, sonra Türkçe gösterilir.
+      var newsData = null;
+      var emptyEl = document.getElementById('good-news-empty');
+      function safeUrl(u) { return typeof u === 'string' && /^https?:\/\//i.test(u) ? u : ''; }
+      function pickItems() {
         var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
-        fetch('/api/good-news?lang=' + encodeURIComponent(lang))
-          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
-          .then(function (result) {
-            if (!result.ok || !result.data || !Array.isArray(result.data.items)) throw new Error('bad response');
-            render(result.data.items);
+        var d = newsData || {};
+        var arr = [d[lang], d.en, d.tr].filter(function (x) { return Array.isArray(x) && x.length; })[0] || [];
+        return arr.filter(function (x) { return x && typeof x.headline === 'string' && x.headline.trim(); }).slice(0, 7);
+      }
+      function show() {
+        if (!newsData) return;
+        var items = pickItems();
+        loadingEl.classList.add('hidden');
+        errorEl.classList.add('hidden');
+        listEl.innerHTML = '';
+        emptyEl.classList.toggle('hidden', items.length > 0);
+        render(items);
+      }
+      function loadGoodNews() {
+        fetch('iyi-haberler.json', { cache: 'no-cache' })
+          .then(function (res) { if (!res.ok) throw new Error('bad response'); return res.json(); })
+          .then(function (data) {
+            if (!data || typeof data !== 'object') throw new Error('bad data');
+            newsData = data;
+            show();
           })
           .catch(function () {
             loadingEl.classList.add('hidden');
             errorEl.classList.remove('hidden');
           });
       }
+      window.addEventListener('one-lang-changed', show);
       loadGoodNews();
     })();
   </script>

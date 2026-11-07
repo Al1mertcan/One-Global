@@ -325,6 +325,44 @@ kayıtlar çevrilmez). Mantık `cuzdan.js` içindedir; metinler `i18n.js`
 içinde `wallet*` anahtarlarıyla 21 dildedir. Telefon/tarayıcı verisi
 silinirse kayıtlar da gider — bu yüzden ayarlarda yedek al düğmesi vardır.
 
+## Sohbet kapalı, iyi haberler elle (güncel durum)
+
+**Yapay zekâ sohbeti şimdilik kapalı.** Ana ekranda sohbet kutusu yerine
+"Hemcan Yapay Zekâ — Yakında" kartı görünür; kendi yapay zekâ asistanımız
+ileride Pro üyelere özel gelecek. Kapalıyken sunucu hiçbir yapay zekâ servisini
+çağırmaz (`netlify/functions/chat.js` yalnızca Netlify'da `CHAT_ENABLED=1`
+ortam değişkeni varsa çalışır). Yeniden açmak için bkz. `asistan.html`
+içindeki "#chat-soon" yorumu.
+
+**Bugünün iyi haberleri artık yapay zekâyla üretilmiyor**, `iyi-haberler.json`
+dosyasından okunuyor ve **elle** eklenir. Yapay zekâyla üretim yalnızca
+`GOOD_NEWS_AI=1` ortam değişkeniyle çalışır (varsayılan kapalı), yani faturası
+yoktur. Haber eklemek için GitHub'da `iyi-haberler.json` dosyasını açıp kalem
+simgesine bas, düzenle, "Commit changes" de; yaklaşık 1 dakikada yayına girer.
+Biçim (dil kodu → haber listesi; yukarıdaki haber en üstte görünür, en fazla 7
+tanesi gösterilir; seçili dilde haber yoksa önce İngilizce, sonra Türkçe
+gösterilir):
+
+```json
+{
+  "tr": [
+    {
+      "headline": "Haberin kısa başlığı",
+      "summary": "Bir iki cümlelik kendi cümlelerinle özet.",
+      "source": "Yayın organının adı",
+      "url": "https://haberin-adresi.example/yazi",
+      "date": "2026-11-07"
+    }
+  ],
+  "en": []
+}
+```
+
+`url` ve `date` isteğe bağlıdır; `url` yalnızca `http`/`https` ile başlıyorsa
+bağlantı olur. Haberin metnini kopyalama, kendi cümlelerinle kısa özetle ve
+kaynağı yaz (telif için). Dosyada virgül ya da tırnak hatası olursa kart
+"haberler yüklenemedi" der; bozulursa son çalışan hâline dön.
+
 **Çok önemli bir netlik notu:** Bu sayaç 1 milyona ulaştığında ekran
 metni otomatik değişse de, **gerçek para dağıtımı otomatik başlamıyor** —
 bunun için ayrı bir ödeme/bağış altyapısı (hangi kuruluşlara, hangi
