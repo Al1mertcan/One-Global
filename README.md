@@ -468,7 +468,7 @@ yanında üç yeni sayfa eklendi: `gizlilik.html` (Gizlilik Politikası),
 `sartlar.html` (Kullanım Şartları) ve `yardim.html` (Yardım/SSS). Üçü de
 avukat tarafından incelenmemiş taslaklardır — gerçek kullanıcı verisi
 toplamaya veya gerçek ödeme almaya başlamadan önce bir hukuk danışmanına
-göstermeni öneririm. Destek e-postası olarak `one.global.universal.1@gmail.com`
+göstermeni öneririm. Destek e-postası olarak `hemcan.global@gmail.com`
 adresi belirlendi ve üç sayfaya da (Gizlilik Politikası, Kullanım Şartları,
 Yardım) işlendi.
 
@@ -640,3 +640,12 @@ makul, uygun maliyetli bir koruma sağlar.
   açılışta internet bağlantısı gerekir; sonrasında service worker sayesinde
   çevrimdışı da açılabilir (yapay zeka sohbeti ve bildirimler hariç — onlar
   her zaman internet ister).
+
+## iPhone (App Store) uygulaması
+
+iPhone sürümü, bu sitenin aynı dosyalarını bir Capacitor kabuğuna (`native/`) koyar. Kurulum, Apple hesabı, Codemagic ile bulutta derleme, TestFlight ve mağaza gönderimi için **`IOS-REHBERI.md`** dosyasına bak. Kısaca:
+
+- Web sitesi (Netlify) bu klasörden etkilenmez; `native.js` yalnızca uygulama içinde çalışır.
+- Bildirimler iPhone'da telefonun kendi yerel bildirimleriyle planlanır (sunucuya abonelik gitmez).
+- Derleme sırasında `native/scripts/sync-web.js` site dosyalarını kopyalar ve Tailwind/simge/yazı tiplerini uygulamanın içine gömer (internetsiz de çalışsın diye).
+- Yeni bir iPhone sürümü için siteye yaptığın değişiklikler GitHub'a yüklendikten sonra yeni bir `ios-N` etiketi oluşturman yeterli.

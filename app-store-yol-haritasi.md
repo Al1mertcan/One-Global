@@ -34,7 +34,7 @@ Aşağıdakilerin çoğu bu oturumda tamamlandı:
 
 - Gizlilik Politikası → `gizlilik.html` (hazır, yayında bir URL'ye ihtiyaç var)
 - Kullanım Şartları → `sartlar.html` (hazır)
-- Destek sayfası/e-postası → `yardim.html` hazır, destek e-postası (`one.global.universal.1@gmail.com`) tanımlandı — mağaza başvurularında istenen destek URL'si olarak `yardim.html` kullanılabilir
+- Destek sayfası/e-postası → `yardim.html` hazır, destek e-postası (`hemcan.global@gmail.com`) tanımlandı — mağaza başvurularında istenen destek URL'si olarak `yardim.html` kullanılabilir
 - Uygulama ikonları → bu oturumda Hemcan'ın marka renkleriyle (camgöbeği/mor) yenilendi, maskable/any varyantlar dahil
 - Mağaza için ayrıca gerekecekler (henüz yok): gerçek cihaz ekran görüntüleri (Play Store ve App Store farklı boyutlar ister), kısa/uzun mağaza açıklama metinleri, yaş derecelendirmesi anketi (her iki mağazada da doldurulan bir form; Hemcan'ın kendisi bir hedef kitle sınırı koymuyor ama yapay zeka sohbeti içerdiği için bu formda dürüstçe belirtilmeli), bir "destek URL'si" (yardim.html buna hizmet edebilir).
 
