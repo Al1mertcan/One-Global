@@ -117,6 +117,18 @@ exports.handler = async (event) => {
     };
   }
 
+  // Sohbet şimdilik KAPALI (maliyet kararı): her mesaj gerçek yapay zeka
+  // faturası demek. Ücretli (Pro) üyelik ve ucuz bir model hazır olunca
+  // Netlify ortam değişkenlerine CHAT_ENABLED=1 eklenerek yeniden açılır.
+  // Kapalıyken yapay zeka servisine HİÇBİR çağrı yapılmaz.
+  if (process.env.CHAT_ENABLED !== '1') {
+    return {
+      statusCode: 503,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Yapay zeka asistanı şu an kapalı. Yakında Pro üyelere özel olarak geri gelecek.' }),
+    };
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return {

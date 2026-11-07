@@ -53,6 +53,13 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: corsHeaders, body: '' };
 
+  // İyi haberler artık elle düzenlenen iyi-haberler.json dosyasından okunuyor
+  // (bkz. README). Yapay zekâyla üretim yalnızca GOOD_NEWS_AI=1 ise çalışır;
+  // varsayılan kapalıdır, böylece bu uç nokta fatura üretmez.
+  if (process.env.GOOD_NEWS_AI !== '1') {
+    return { statusCode: 410, headers: corsHeaders, body: JSON.stringify({ error: 'Bu uç nokta kapalı; haberler iyi-haberler.json dosyasından okunuyor.' }) };
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return {

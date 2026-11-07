@@ -234,6 +234,9 @@ async function sendPush(subscription, payload) {
 // kendisi asla push bildirim gönderimini bloklamamalı ya da onu çökertmemeli
 // — bu yüzden süresi sınırlı (budget ms) ve tamamen kendi try/catch'i içinde.
 async function refreshOneGoodNewsLanguage(budgetMs) {
+  // Haberler artık elle (iyi-haberler.json) yönetiliyor; yapay zekâyla
+  // arka plan üretimi yalnızca GOOD_NEWS_AI=1 ise çalışır (varsayılan kapalı).
+  if (process.env.GOOD_NEWS_AI !== '1') return;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return; // AI hiç yapılandırılmamışsa sessizce atla
 
