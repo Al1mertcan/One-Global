@@ -100,6 +100,16 @@
      rozeti, fiyat notu, CTA butonu, iptal notu) gizle — ikon + slogan
      görünmeye devam etsin. */
   .returning-user .onboarding-only { display: none !important; }
+  .hemcan-logo {
+    background: linear-gradient(160deg, #17305A 0%, #0F2447 100%);
+    box-shadow: 0 0 0 6px rgba(57,215,255,0.07), 0 0 44px rgba(57,215,255,0.38), inset 0 1px 0 rgba(255,255,255,0.10);
+    animation: hemcanLogoGlow 3.2s ease-in-out infinite;
+  }
+  @keyframes hemcanLogoGlow {
+    0%, 100% { box-shadow: 0 0 0 6px rgba(57,215,255,0.07), 0 0 38px rgba(57,215,255,0.30), inset 0 1px 0 rgba(255,255,255,0.10); }
+    50% { box-shadow: 0 0 0 10px rgba(57,215,255,0.10), 0 0 56px rgba(57,215,255,0.50), inset 0 1px 0 rgba(255,255,255,0.10); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hemcan-logo { animation: none; } }
   </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#07111F">
@@ -120,9 +130,20 @@
     </header>
 
     <main class="relative flex min-h-[calc(100vh-72px)] flex-col items-center justify-center px-6 pb-10 text-center">
-      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary shadow-[0_0_28px_rgba(57,215,255,0.22)]">
-        <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
+      <!-- Hemcan logosu: keskin kalması için satır içi SVG (ağdan/CDN'den
+           yüklenmez, her ekran yoğunluğunda net çizilir). -->
+      <div class="hemcan-logo mx-auto flex h-28 w-28 items-center justify-center rounded-[32px] border-2 border-primary/50">
+        <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="url(#hemcan-logo-grad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Hemcan">
+          <defs>
+            <linearGradient id="hemcan-logo-grad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#7BE8FF"/>
+              <stop offset="1" stop-color="#39D7FF"/>
+            </linearGradient>
+          </defs>
+          <path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676a.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052a2.12 2.12 0 0 0-.004-3a2.124 2.124 0 1 0 3-3a2.124 2.124 0 0 0 3.004 0a2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0a2 2 0 0 1 0-2.828l2.823-2.762"/>
+        </svg>
       </div>
+      <p class="mt-4 font-heading text-lg font-bold uppercase tracking-[0.32em] text-foreground">Hemcan</p>
 
       <h1 class="mt-6 max-w-sm font-heading text-2xl font-semibold leading-tight tracking-tight" data-i18n="onboardHeadline">Şu anki ve gelecekteki seni düşünen, iyi hissettirecek tek uygulama</h1>
 
