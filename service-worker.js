@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v10';
+const CACHE_NAME = 'one-shell-v11';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -7,6 +7,8 @@ const APP_SHELL = [
   './bellek.html',
   './cihazlar.html',
   './hedefler.html',
+  './cuzdan.html',
+  './cuzdan.js',
   './abonelik.html',
   './ayarlar.html',
   './gizlilik.html',

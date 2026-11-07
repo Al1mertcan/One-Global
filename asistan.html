@@ -167,6 +167,18 @@
           <button type="button" id="water-undo" class="mt-2 hidden text-[11px] font-semibold text-muted-foreground underline" data-i18n="waterUndo">Son eklemeyi geri al</button>
         </section>
 
+        <a id="wallet-card" href="cuzdan.html" class="mt-4 flex items-center gap-3 rounded-[24px] border border-success/25 bg-success/5 p-4">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-theme bg-success/15 text-success">
+            <iconify-icon icon="lucide:wallet" class="text-2xl"></iconify-icon>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h2 class="font-heading text-sm font-semibold text-success" data-i18n="walletTitle">Cüzdan</h2>
+            <p id="wallet-card-line" class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="walletCardDesc">Gelir ve giderlerini takip et, aylık limit belirle, nereye harcadığını gör.</p>
+          </div>
+          <iconify-icon icon="lucide:chevron-right" class="text-lg text-muted-foreground"></iconify-icon>
+        </a>
+
+
         <section class="mt-5 rounded-[24px] border border-primary/25 bg-primary/5 p-4">
           <div class="flex items-center gap-2.5">
             <iconify-icon icon="lucide:heart-handshake" class="text-lg text-primary"></iconify-icon>
@@ -674,6 +686,37 @@
     })();
   </script>
   <script src="i18n.js"></script>
+  <script>
+    // Cüzdan kartı: bu ayki harcama varsa özetini gösterir (veri yalnızca cihazda).
+    (function () {
+      'use strict';
+      var line = document.getElementById('wallet-card-line');
+      if (!line) return;
+      function render() {
+        var st = null;
+        try { st = JSON.parse(localStorage.getItem('one-wallet') || 'null'); } catch (e) {}
+        var d = new Date();
+        var key = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
+        var sum = 0;
+        if (st && Array.isArray(st.tx)) {
+          for (var i = 0; i < st.tx.length; i++) {
+            var x = st.tx[i];
+            if (x && x.t === 'e' && typeof x.a === 'number' && typeof x.d === 'string' && x.d.slice(0, 7) === key) sum += x.a;
+          }
+        }
+        var I = window.ONE_I18N;
+        if (!I || !(sum > 0)) { line.setAttribute('data-i18n', 'walletCardDesc'); if (I) line.textContent = I.t('walletCardDesc'); return; }
+        var txt;
+        try { txt = new Intl.NumberFormat(I.getLang(), { style: 'currency', currency: (st && st.cur) || 'TRY' }).format(sum / 100); }
+        catch (e) { txt = (sum / 100).toFixed(2); }
+        line.removeAttribute('data-i18n');
+        line.textContent = I.t('walletCardMonth', { amount: txt });
+      }
+      window.addEventListener('one-lang-changed', render);
+      render();
+    })();
+  </script>
+
   <script>
     // Su takibi: günlük içilen su cihazda (localStorage) tutulur, gece yarısı
     // (yerel saate göre) sıfırlanır. 2 litreye ulaşınca tebrik edilir.

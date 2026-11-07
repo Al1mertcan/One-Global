@@ -311,6 +311,20 @@ karşı bir bardak (250 ml) / 500 ml / 1 lt ekleme düğmeleri, geri alma ve
 2 litreye ulaşınca tebrik mesajı + bildirim. İçilen su yalnızca cihazda
 (localStorage) tutulur, gece yarısı sıfırlanır.
 
+**Cüzdan (gider ve bütçe takibi):** Ana ekrandaki "Cüzdan" kartından
+`cuzdan.html` sayfası açılır. Gelir/gider ekleme (13 kategori), aylık
+bakiye, aylık harcama limiti (yeşil / sarı %80 / kırmızı aşım) ve limit
+varsa "ayın kalan günleri için günde en fazla şu kadar harcayabilirsin"
+payı, kategoriye göre halka grafik, geçen ayın aynı dönemiyle kıyas,
+kayıt düzenleme/silme (geri al ile), CSV (Excel) aktarımı ve JSON yedek
+alma/geri yükleme vardır. **Tüm veri yalnızca cihazda** (localStorage,
+anahtar `one-wallet`) tutulur; sunucuya hiçbir şey gönderilmez ve yapay
+zeka kullanılmaz, yani kullanıcı başına maliyet sıfırdır. Para birimi
+tarayıcı diline göre tahmin edilir, ayarlardan değiştirilebilir (mevcut
+kayıtlar çevrilmez). Mantık `cuzdan.js` içindedir; metinler `i18n.js`
+içinde `wallet*` anahtarlarıyla 21 dildedir. Telefon/tarayıcı verisi
+silinirse kayıtlar da gider — bu yüzden ayarlarda yedek al düğmesi vardır.
+
 **Çok önemli bir netlik notu:** Bu sayaç 1 milyona ulaştığında ekran
 metni otomatik değişse de, **gerçek para dağıtımı otomatik başlamıyor** —
 bunun için ayrı bir ödeme/bağış altyapısı (hangi kuruluşlara, hangi
