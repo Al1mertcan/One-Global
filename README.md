@@ -339,14 +339,16 @@ dosyasından okunuyor ve **elle** eklenir. Yapay zekâyla üretim yalnızca
 `GOOD_NEWS_AI=1` ortam değişkeniyle çalışır (varsayılan kapalı), yani faturası
 yoktur. Haber eklemek için GitHub'da `iyi-haberler.json` dosyasını açıp kalem
 simgesine bas, düzenle, "Commit changes" de; yaklaşık 1 dakikada yayına girer.
-Biçim (dil kodu → haber listesi; yukarıdaki haber en üstte görünür, en fazla 7
-tanesi gösterilir; seçili dilde haber yoksa önce İngilizce, sonra Türkçe
-gösterilir):
+Haberler ana ekranda **yana kaydırmalı kartlar** olarak görünür (altında nokta
+göstergesi ve "3 / 10" sayacı vardır). Biçim (dil kodu → haber listesi; yukarıdaki
+haber en solda görünür, en fazla 12 tanesi gösterilir; seçili dilde haber yoksa
+önce İngilizce, sonra Türkçe gösterilir):
 
 ```json
 {
   "tr": [
     {
+      "region": "tr",
       "headline": "Haberin kısa başlığı",
       "summary": "Bir iki cümlelik kendi cümlelerinle özet.",
       "source": "Yayın organının adı",
@@ -358,7 +360,9 @@ gösterilir):
 }
 ```
 
-`url` ve `date` isteğe bağlıdır; `url` yalnızca `http`/`https` ile başlıyorsa
+`region` isteğe bağlıdır: `"tr"` Türkiye bayrağı, `"world"` dünya simgesi koyar.
+`url` ve `date` isteğe bağlıdır (`date` `YYYY-AA-GG` biçiminde yazılır, kullanıcının
+diline göre görünür); `url` yalnızca `http`/`https` ile başlıyorsa
 bağlantı olur. Haberin metnini kopyalama, kendi cümlelerinle kısa özetle ve
 kaynağı yaz (telif için). Dosyada virgül ya da tırnak hatası olursa kart
 "haberler yüklenemedi" der; bozulursa son çalışan hâline dön.
