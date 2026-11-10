@@ -1,0 +1,32 @@
+{
+	"appId": "app.hemcan.mobile",
+	"appName": "Hemcan",
+	"webDir": "www",
+	"backgroundColor": "#07111F",
+	"ios": {
+		"contentInset": "always",
+		"backgroundColor": "#07111F",
+		"limitsNavigationsToAppBoundDomains": false
+	},
+	"plugins": {
+		"CapacitorHttp": {
+			"enabled": true
+		},
+		"SplashScreen": {
+			"launchShowDuration": 600,
+			"launchAutoHide": true,
+			"backgroundColor": "#07111F",
+			"showSpinner": false
+		},
+		"StatusBar": {
+			"style": "DARK",
+			"backgroundColor": "#07111F"
+		}
+	},
+	"packageClassList": [
+		"CAPBrowserPlugin",
+		"LocalNotificationsPlugin",
+		"SplashScreenPlugin",
+		"StatusBarPlugin"
+	]
+}
