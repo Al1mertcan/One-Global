@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="native.js"></script>
+  <title>Giriş — Hemcan</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+  </script>
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+  <style>
+  :root {
+    --color-background: #07111F; --color-foreground: #EFF7FF; --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C; --color-secondary: #162A46; --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA; --color-muted: #10213A; --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30; --color-card-foreground: #EFF7FF; --color-border: #28415F; --color-input: #102540;
+    --color-success: #3DDBA5; --font-heading: 'Space Grotesk', sans-serif; --font-body: 'Manrope', sans-serif; --radius: 16px;
+  }
+  body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
+  details > summary { cursor: pointer; list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .chev { transform: rotate(90deg); }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-16">
+    <div class="pointer-events-none absolute -top-32 -right-28 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-32 -left-28 h-80 w-80 rounded-full bg-accent/10 blur-3xl"></div>
+
+    <main class="relative mx-auto max-w-md px-5 pt-16">
+      <img src="icons/icon-192.png" alt="" width="72" height="72" class="mb-5 rounded-[20px] shadow-lg">
+      <h1 id="t-title" class="font-heading text-2xl font-semibold"></h1>
+      <p id="t-sub" class="mt-2 text-sm leading-6 text-muted-foreground"></p>
+
+      <form id="form-email" class="mt-8 space-y-3" novalidate>
+        <label id="t-email-label" for="email" class="block text-xs font-semibold text-muted-foreground"></label>
+        <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254"
+          class="h-12 w-full rounded-theme border border-border bg-input px-4 text-base text-foreground outline-none focus:border-primary">
+        <button id="btn-send" type="submit" class="flex h-12 w-full items-center justify-center rounded-theme bg-primary text-sm font-bold text-primary-foreground disabled:opacity-60"></button>
+      </form>
+
+      <form id="form-code" class="mt-8 hidden space-y-3" novalidate>
+        <p id="t-sent" class="text-sm leading-6 text-muted-foreground"></p>
+        <label id="t-code-label" for="code" class="block text-xs font-semibold text-muted-foreground"></label>
+        <input id="code" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6"
+          class="h-14 w-full rounded-theme border border-border bg-input px-4 text-center font-heading text-2xl tracking-[0.4em] text-foreground outline-none focus:border-primary">
+        <button id="btn-verify" type="submit" class="flex h-12 w-full items-center justify-center rounded-theme bg-primary text-sm font-bold text-primary-foreground disabled:opacity-60"></button>
+        <button id="btn-back" type="button" class="h-10 w-full text-xs font-semibold text-muted-foreground underline"></button>
+      </form>
+
+      <p id="msg" role="alert" class="mt-4 min-h-[1.25rem] text-sm text-destructive"></p>
+
+      <p class="mt-10 text-xs leading-5 text-muted-foreground">
+        <span id="t-legal"></span>
+        <a href="sartlar.html" id="l-terms" class="underline"></a> ·
+        <a href="gizlilik.html" id="l-privacy" class="underline"></a> ·
+        <a href="yardim.html" id="l-help" class="underline"></a>
+      </p>
+    </main>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+    var KEY_TOKEN = 'one-session', KEY_USER = 'one-session-user';
+    var API = ''; // uygulamada native.js '/api/...' isteklerini sunucuya yönlendirir
+    var lang = 'en';
+    try { lang = (window.ONE_I18N && window.ONE_I18N.getLang && window.ONE_I18N.getLang()) || localStorage.getItem('one-lang') || (navigator.language || 'en').slice(0, 2); } catch (e) {}
+    lang = lang === 'tr' ? 'tr' : 'en';
+    var T = {
+      tr: {
+        title: 'Hemcan’a giriş yap', sub: 'Şifre yok: e-postana 6 haneli bir kod göndeririz. İlk girişte 1 haftalık ücretsiz denemen başlar.',
+        emailLabel: 'E-posta adresin', send: 'Kod gönder', sent: 'Kodu şu adrese gönderdik: ', codeLabel: '6 haneli kod', verify: 'Giriş yap',
+        back: 'Başka e-posta kullan', legal: 'Devam ederek kabul edersin: ', terms: 'Şartlar', privacy: 'Gizlilik', help: 'Yardım',
+        badEmail: 'Geçerli bir e-posta adresi yaz.', badCode: '6 haneli kodu yaz.', wait: 'Bekle…',
+        e429: 'Çok fazla deneme — biraz sonra tekrar dene.', e400: 'Kod geçersiz veya süresi dolmuş.', e501: 'Giriş sistemi şu an hazır değil. Birazdan tekrar dene.',
+        e502: 'E-posta gönderilemedi. Birazdan tekrar dene.', net: 'Bağlantı kurulamadı. İnternetini kontrol et.'
+      },
+      en: {
+        title: 'Sign in to Hemcan', sub: 'No password: we email you a 6-digit code. Your 1-week free trial starts on first sign-in.',
+        emailLabel: 'Your email address', send: 'Send code', sent: 'We sent a code to ', codeLabel: '6-digit code', verify: 'Sign in',
+        back: 'Use a different email', legal: 'By continuing you accept the ', terms: 'Terms', privacy: 'Privacy', help: 'Help',
+        badEmail: 'Enter a valid email address.', badCode: 'Enter the 6-digit code.', wait: 'Please wait…',
+        e429: 'Too many attempts — try again shortly.', e400: 'The code is invalid or has expired.', e501: 'Sign-in is not available right now. Try again soon.',
+        e502: 'Could not send the email. Try again shortly.', net: 'Could not connect. Check your internet.'
+      }
+    }[lang];
+    document.documentElement.lang = lang;
+    var $ = function (id) { return document.getElementById(id); };
+    $('t-title').textContent = T.title; $('t-sub').textContent = T.sub; $('t-email-label').textContent = T.emailLabel;
+    $('btn-send').textContent = T.send; $('t-code-label').textContent = T.codeLabel; $('btn-verify').textContent = T.verify;
+    $('btn-back').textContent = T.back; $('t-legal').textContent = T.legal; $('l-terms').textContent = T.terms;
+    $('l-privacy').textContent = T.privacy; $('l-help').textContent = T.help;
+
+    var email = '';
+    function msg(t) { $('msg').textContent = t || ''; }
+    function busy(btn, on, label) { btn.disabled = on; btn.textContent = on ? T.wait : label; }
+    function errText(status) { return status === 429 ? T.e429 : status === 400 ? T.e400 : status === 501 ? T.e501 : status === 502 ? T.e502 : T.net; }
+    function post(path, body) {
+      return fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, ok: r.ok, json: j }; }); });
+    }
+    function nextUrl() {
+      var n = new URLSearchParams(location.search).get('next');
+      return (n && /^[a-z0-9-]+\.html(\?[a-z0-9=&_-]*)?(#[a-z]+)?$/i.test(n) && n.indexOf('giris') !== 0) ? n : 'asistan.html';
+    }
+
+    $('form-email').addEventListener('submit', function (e) {
+      e.preventDefault(); msg('');
+      var v = $('email').value.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg(T.badEmail); return; }
+      busy($('btn-send'), true, T.send);
+      post('/api/otp-request', { email: v, lang: lang }).then(function (r) {
+        busy($('btn-send'), false, T.send);
+        if (!r.ok) { msg(errText(r.status)); return; }
+        email = v;
+        $('t-sent').textContent = T.sent + v;
+        $('form-email').classList.add('hidden'); $('form-code').classList.remove('hidden');
+        $('code').value = ''; $('code').focus();
+      }).catch(function () { busy($('btn-send'), false, T.send); msg(T.net); });
+    });
+
+    $('form-code').addEventListener('submit', function (e) {
+      e.preventDefault(); msg('');
+      var c = $('code').value.replace(/\D/g, '');
+      if (c.length !== 6) { msg(T.badCode); return; }
+      busy($('btn-verify'), true, T.verify);
+      post('/api/otp-verify', { email: email, code: c }).then(function (r) {
+        busy($('btn-verify'), false, T.verify);
+        if (!r.ok || !r.json.token) { msg(errText(r.status)); return; }
+        try {
+          localStorage.setItem(KEY_TOKEN, r.json.token);
+          localStorage.setItem(KEY_USER, JSON.stringify(r.json.user || {}));
+        } catch (err) {}
+        location.replace(nextUrl());
+      }).catch(function () { busy($('btn-verify'), false, T.verify); msg(T.net); });
+    });
+    $('code').addEventListener('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
+    $('btn-back').addEventListener('click', function () {
+      msg(''); $('form-code').classList.add('hidden'); $('form-email').classList.remove('hidden'); $('email').focus();
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v13';
+const CACHE_NAME = 'one-shell-v15';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -14,7 +14,9 @@ const APP_SHELL = [
   './gizlilik.html',
   './sartlar.html',
   './yardim.html',
+  './giris.html',
   './i18n.js',
+  './native.js',
   './currencies.js',
   './manifest.json',
   './icons/icon-192.png',

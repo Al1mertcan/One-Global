@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="native.js"></script>
   <title>Bildirimler & Rutin — Hemcan</title>
 
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -197,7 +198,7 @@
       </button>
       <p id="save-confirm" class="mt-2 hidden text-center text-[11px] text-success" data-i18n="settingsSavedConfirm">Kaydedildi.</p>
 
-      <section class="mt-6 rounded-[22px] border border-border bg-card p-4">
+      <section data-web-only class="mt-6 rounded-[22px] border border-border bg-card p-4">
         <h2 class="font-heading text-sm font-semibold" data-i18n="settingsAccountTitle">Hesabın</h2>
         <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsAccountExplain">Şu an Hemcan'ı bu cihaza özel kullanıyorsun (şifre yok, hesap yok). E-postanla bir giriş bağlantısı alarak verilerini başka bir cihazdan da açabilirsin.</p>
         <div class="mt-3 flex gap-2">
@@ -481,6 +482,7 @@
         }
       }
       function syncToServer(settings) {
+        if (window.ONE_NATIVE && window.ONE_NATIVE.isNative) { window.ONE_NATIVE.reschedule(); return; }
         var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
         var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
         navigator.serviceWorker.ready.then(function (reg) {
@@ -551,6 +553,7 @@
         if (localStorage.getItem('one-notif-enabled') === '1') syncRemindersToServer();
       }
       function syncRemindersToServer() {
+        if (window.ONE_NATIVE && window.ONE_NATIVE.isNative) { window.ONE_NATIVE.reschedule(); return; }
         var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
         var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
         navigator.serviceWorker.ready.then(function (reg) {
@@ -586,6 +589,14 @@
       loadReminders();
 
       function refreshNotifStatus() {
+        if (window.ONE_NATIVE && window.ONE_NATIVE.isNative) {
+          var on = window.ONE_NATIVE.cachedPerm() === 'granted' && localStorage.getItem('one-notif-enabled') === '1';
+          els.status.textContent = on ? t('autoNotifOn') : t('settingsNotifOff');
+          els.toggleLabel.textContent = on ? t('settingsNotifDisableBtn') : t('settingsNotifEnableBtn');
+          els.toggleBtn.disabled = false;
+          els.toggleBtn.classList.remove('opacity-50');
+          return;
+        }
         if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
           els.status.textContent = t('settingsNotifUnsupported');
           els.toggleBtn.disabled = true;
@@ -603,6 +614,15 @@
 
       function enableNotifications() {
         clearError();
+        if (window.ONE_NATIVE && window.ONE_NATIVE.isNative) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(currentSettings()));
+          window.ONE_NATIVE.enableNotifications().then(function (res) {
+            if (res === 'granted') { refreshNotifStatus(); return; }
+            showError(t(res === 'denied' ? 'settingsNotifDenied' : 'settingsNotifError'));
+            refreshNotifStatus();
+          }).catch(function () { showError(t('settingsNotifError')); });
+          return;
+        }
         if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
           showError(t('settingsNotifUnsupported2'));
           return;
@@ -639,6 +659,10 @@
 
       function disableNotifications() {
         clearError();
+        if (window.ONE_NATIVE && window.ONE_NATIVE.isNative) {
+          window.ONE_NATIVE.disableNotifications().then(refreshNotifStatus).catch(function () { showError(t('settingsNotifDisableError')); });
+          return;
+        }
         navigator.serviceWorker.ready.then(function (reg) {
           return reg.pushManager.getSubscription();
         }).then(function (sub) {
@@ -734,9 +758,15 @@
               }).catch(function () {});
             }
             // Bu cihazdaki tüm Hemcan verilerini temizle.
-            ['one-sub-id', 'one-notif-settings', 'one-notif-enabled', 'one-reminders', 'one-lang', 'one-onboarded', 'one-trial-start'].forEach(function (k) {
-              try { localStorage.removeItem(k); } catch (e) {}
-            });
+            if (window.ONE_NATIVE && window.ONE_NATIVE.isNative) {
+              try { localStorage.setItem('one-notif-enabled', '0'); } catch (e) {}
+              window.ONE_NATIVE.reschedule(); // planlı yerel bildirimleri iptal eder
+            }
+            // Cüzdan, su kaydı dahil Hemcan'ın bu cihazda sakladığı her şey ("one-" ile başlayan anahtarlar).
+            try {
+              Object.keys(localStorage).filter(function (k) { return k.indexOf('one-') === 0 && k !== 'one-notif-enabled'; })
+                .forEach(function (k) { localStorage.removeItem(k); });
+            } catch (e) {}
             showDataStatus(t('settingsDeleted'));
             setTimeout(function () { window.location.href = 'hosgeldin.html'; }, 1200);
           });

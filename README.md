@@ -649,3 +649,7 @@ iPhone sürümü, bu sitenin aynı dosyalarını bir Capacitor kabuğuna (`nativ
 - Bildirimler iPhone'da telefonun kendi yerel bildirimleriyle planlanır (sunucuya abonelik gitmez).
 - Derleme sırasında `native/scripts/sync-web.js` site dosyalarını kopyalar ve Tailwind/simge/yazı tiplerini uygulamanın içine gömer (internetsiz de çalışsın diye).
 - Yeni bir iPhone sürümü için siteye yaptığın değişiklikler GitHub'a yüklendikten sonra yeni bir `ios-N` etiketi oluşturman yeterli.
+
+## Android uygulaması (yerel kabuk)
+
+Google Play sürümü Capacitor ile yerel bir kabuktur (`native/android/`). Aynı web dosyalarını kullanır, bildirimler telefonun yerel bildirimleridir. Derleme ve yayın: `ANDROID-REHBERI.md`. Paket kimliği ve imza anahtarı eski TWA ile aynıdır; bu yüzden mevcut Play uygulamasının güncellemesi olarak yüklenir.

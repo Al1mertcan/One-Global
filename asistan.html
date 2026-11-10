@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="native.js"></script>
   <title>Asistan — Hemcan</title>
 
   <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
@@ -138,7 +139,7 @@
             </a>
           </div>
         </div>
-        <a href="abonelik.html" class="mt-5 flex items-center justify-between rounded-theme border border-primary/25 bg-primary/5 px-3.5 py-2.5">
+        <a href="abonelik.html" data-web-only class="mt-5 flex items-center justify-between rounded-theme border border-primary/25 bg-primary/5 px-3.5 py-2.5">
           <div class="flex items-center gap-2.5">
             <iconify-icon icon="lucide:sparkles" class="text-base text-primary"></iconify-icon>
             <span class="text-xs font-semibold text-primary" data-i18n="planPill">Hemcan Plan · Ayda sadece 10 TL</span>
@@ -880,6 +881,7 @@
       }
 
       function notifyGoal() {
+        if (window.ONE_NATIVE && window.ONE_NATIVE.isNative) { window.ONE_NATIVE.notifyNow('waterDone'); return; }
         if (!('Notification' in window) || Notification.permission !== 'granted') return;
         var title = tr('waterCongratsTitle', 'Tebrikler! 💧');
         var opts = { body: tr('waterCongratsBody', ''), icon: './icons/icon-192.png', badge: './icons/icon-192.png', tag: 'water-goal', data: { url: './asistan.html#su' } };

@@ -1,0 +1,81 @@
+# Hemcan — bulut derlemeleri (Codemagic).
+#   * ios-testflight  : iPhone uygulaması (Mac). Kurulum: IOS-REHBERI.md
+#   * android-release : Android uygulaması (.aab). Kurulum: ANDROID-REHBERI.md
+# Bu dosya tek başına çalışmaz; önce Codemagic'e App Store Connect API anahtarı
+# eklenmelidir (rehberin 4. adımı). Anahtara verdiğin ad aşağıdaki
+# "integrations.app_store_connect" değeriyle birebir aynı olmalı: hemcan-appstore
+workflows:
+  ios-testflight:
+    name: Hemcan iOS (TestFlight)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: hemcan-appstore
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: app.hemcan.mobile
+      xcode: latest
+      node: latest
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'ios-*'
+          include: true
+    scripts:
+      - name: Web dosyalarını kopyala ve iOS projesini eşitle
+        script: |
+          cd native
+          npm ci
+          node scripts/sync-web.js
+          npx cap sync ios
+      - name: Xcode projesine imzalama ayarlarını uygula
+        script: xcode-project use-profiles
+      - name: Derleme numarasını artır
+        script: |
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $BUILD_NUMBER;/" native/ios/App/App.xcodeproj/project.pbxproj
+      - name: IPA oluştur
+        script: |
+          xcode-project build-ipa \
+            --project "native/ios/App/App.xcodeproj" \
+            --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  android-release:
+    name: Hemcan Android (.aab)
+    max_build_duration: 45
+    instance_type: linux_x2
+    environment:
+      # Codemagic > Teams > Personal Account > Code signing identities > Android keystores
+      # bölümüne yüklediğin anahtar dosyasına verdiğin ad BİREBİR bu olmalı: hemcan-upload
+      android_signing:
+        - hemcan-upload
+      node: latest
+      java: 21
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'android-*'
+          include: true
+    scripts:
+      - name: Web dosyalarını kopyala ve Android projesini eşitle
+        script: |
+          cd native
+          npm ci
+          node scripts/sync-web.js
+          npx cap sync android
+      - name: İmzalı .aab oluştur
+        script: |
+          cd native/android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+    artifacts:
+      - native/android/app/build/outputs/bundle/release/*.aab
