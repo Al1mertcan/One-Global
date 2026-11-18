@@ -179,13 +179,177 @@
     var cur = panel.querySelector('button[style*="rgba(57,215,255,.12)"]');
     if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'center' });
   }
+  // Tarih / saat seçici: WebView'in kendi penceresi de koyu zeminde siyah yazı gösteriyordu. Aynı yaklaşımla
+  // (time, date, datetime-local) için sayfa içinde, uygulamanın renkleriyle kaydırmalı sütunlar açıyoruz.
+  var PICK_TYPES = { 'time': 1, 'date': 1, 'datetime-local': 1 };
+  function pickLang() {
+    var l = '';
+    try { l = (window.ONE_I18N && window.ONE_I18N.getLang && window.ONE_I18N.getLang()) || localStorage.getItem('one-lang') || ''; } catch (e) {}
+    return l || navigator.language || 'tr';
+  }
+  function p2(n) { return (n < 10 ? '0' : '') + n; }
+  function ymd(d) { return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); }
+  function openPicker(inp) {
+    closeSheet();
+    var type = inp.type;
+    var lang = pickLang();
+    var isTr = /^tr/i.test(lang), isEn = /^en/i.test(lang);
+    var now = new Date();
+    var cur = inp.value || '';
+    var datePart = '', timePart = '';
+    if (type === 'datetime-local') { var sp = cur.split('T'); datePart = sp[0] || ''; timePart = sp[1] || ''; }
+    else if (type === 'date') datePart = cur;
+    else timePart = cur;
+    var st = {};
+    var dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+    var tm = /^(\d{1,2}):(\d{2})/.exec(timePart);
+    if (type === 'datetime-local' && !dm && !tm) {
+      var nx = new Date(now.getTime() + 3600000);
+      st.date = ymd(nx); st.h = nx.getHours(); st.mi = 0;
+    } else {
+      st.date = dm ? datePart : ymd(now);
+      st.h = tm ? +tm[1] : 9; st.mi = tm ? +tm[2] : 0;
+    }
+    var dy = +st.date.slice(0, 4), dmo = +st.date.slice(5, 7) - 1, dd = +st.date.slice(8, 10);
+    function loc(opts, d) { try { return d.toLocaleDateString(lang, opts); } catch (e) { return d.toLocaleDateString(undefined, opts); } }
+
+    var cols = [];
+    if (type === 'datetime-local') {
+      var items = [], start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var cd = new Date(dy, dmo, dd);
+      if (cd < start) start = cd;
+      for (var i = 0; i < 400; i++) {
+        var d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+        var lab = loc({ weekday: 'short', day: 'numeric', month: 'short' }, d);
+        if (ymd(d) === ymd(now) && (isTr || isEn)) lab = (isTr ? 'Bugün · ' : 'Today · ') + lab;
+        items.push({ l: lab, v: ymd(d) });
+      }
+      cols.push({ key: 'date', items: items, flex: 3 });
+    }
+    if (type === 'date') {
+      var dItems = [], mItems = [], yItems = [];
+      for (var a = 1; a <= 31; a++) dItems.push({ l: String(a), v: a });
+      for (var b = 0; b < 12; b++) mItems.push({ l: loc({ month: 'short' }, new Date(2000, b, 1)), v: b });
+      var y0 = Math.min(now.getFullYear() - 10, dy), y1 = Math.max(now.getFullYear() + 3, dy);
+      for (var c = y0; c <= y1; c++) yItems.push({ l: String(c), v: c });
+      cols.push({ key: 'day', items: dItems, flex: 1 }, { key: 'mon', items: mItems, flex: 1.3 }, { key: 'year', items: yItems, flex: 1.3 });
+    } else {
+      var hItems = [], miItems = [];
+      for (var h = 0; h < 24; h++) hItems.push({ l: p2(h), v: h });
+      for (var m = 0; m < 60; m++) miItems.push({ l: p2(m), v: m });
+      cols.push({ key: 'h', items: hItems, flex: 1 }, { key: 'mi', items: miItems, flex: 1 });
+    }
+
+    var back = document.createElement('div');
+    back.setAttribute('role', 'dialog');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:rgba(3,10,20,.62);display:flex;align-items:flex-end;justify-content:center;';
+    var panel = document.createElement('div');
+    panel.style.cssText = 'width:100%;max-width:520px;background:#0C1B30;border:1px solid #28415F;border-bottom:0;border-radius:22px 22px 0 0;padding:8px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.45);';
+    var title = inp.getAttribute('aria-label') || '';
+    var h1 = document.createElement('div');
+    h1.textContent = title ? title.split('/')[0].trim() : (type === 'time' ? (isTr ? 'Saat seç' : 'Select time') : (isTr ? 'Tarih seç' : 'Select date'));
+    h1.style.cssText = 'padding:12px 6px 8px;font:600 13px system-ui,sans-serif;color:#A8BCD3;';
+    panel.appendChild(h1);
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;';
+    var btnsByCol = {};
+    function curVal(key) {
+      if (key === 'date') return st.date;
+      if (key === 'h') return st.h;
+      if (key === 'mi') return st.mi;
+      if (key === 'day') return dd;
+      if (key === 'mon') return dmo;
+      if (key === 'year') return dy;
+    }
+    function setVal(key, v) {
+      if (key === 'date') st.date = v;
+      else if (key === 'h') st.h = v;
+      else if (key === 'mi') st.mi = v;
+      else if (key === 'day') dd = v;
+      else if (key === 'mon') dmo = v;
+      else if (key === 'year') dy = v;
+    }
+    function paint(key) {
+      var cv = curVal(key);
+      btnsByCol[key].forEach(function (x) {
+        var on = x.v === cv;
+        x.el.style.background = on ? 'rgba(57,215,255,.16)' : 'transparent';
+        x.el.style.color = on ? '#39D7FF' : '#EFF7FF';
+        x.el.style.fontWeight = on ? '700' : '500';
+      });
+    }
+    cols.forEach(function (col) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'position:relative;flex:' + col.flex + ';height:228px;overflow-y:auto;border:1px solid #28415F;border-radius:14px;background:#08162A;-webkit-overflow-scrolling:touch;';
+      btnsByCol[col.key] = [];
+      col.items.forEach(function (it) {
+        var bt = document.createElement('button');
+        bt.type = 'button';
+        bt.textContent = it.l;
+        bt.style.cssText = 'display:block;width:100%;height:44px;border:0;text-align:center;font:500 16px system-ui,sans-serif;white-space:nowrap;';
+        bt.addEventListener('click', function () { setVal(col.key, it.v); paint(col.key); });
+        wrap.appendChild(bt);
+        btnsByCol[col.key].push({ v: it.v, el: bt });
+      });
+      row.appendChild(wrap);
+      col._wrap = wrap;
+    });
+    panel.appendChild(row);
+    var actions = document.createElement('div');
+    actions.style.cssText = 'display:flex;gap:10px;margin-top:12px;';
+    function mk(txt, primary) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = txt;
+      b.style.cssText = 'flex:1;height:46px;border-radius:14px;font:700 15px system-ui,sans-serif;' +
+        (primary ? 'border:0;background:#39D7FF;color:#04101F;' : 'border:1px solid #28415F;background:transparent;color:#EFF7FF;');
+      return b;
+    }
+    var cancel = mk(isTr ? 'İptal' : 'Cancel', false), ok = mk(isTr ? 'Tamam' : 'OK', true);
+    cancel.addEventListener('click', closeSheet);
+    ok.addEventListener('click', function () {
+      var val;
+      if (type === 'time') val = p2(st.h) + ':' + p2(st.mi);
+      else if (type === 'datetime-local') val = st.date + 'T' + p2(st.h) + ':' + p2(st.mi);
+      else {
+        var dim = new Date(dy, dmo + 1, 0).getDate();
+        val = dy + '-' + p2(dmo + 1) + '-' + p2(Math.min(dd, dim));
+      }
+      inp.value = val;
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+      inp.dispatchEvent(new Event('change', { bubbles: true }));
+      closeSheet();
+    });
+    actions.appendChild(cancel); actions.appendChild(ok);
+    panel.appendChild(actions);
+    back.addEventListener('click', function (e) { if (e.target === back) closeSheet(); });
+    back.appendChild(panel);
+    document.body.appendChild(back);
+    sheetEl = back;
+    cols.forEach(function (col) {
+      paint(col.key);
+      var cv = curVal(col.key), sel = btnsByCol[col.key].filter(function (x) { return x.v === cv; })[0];
+      if (sel) col._wrap.scrollTop = Math.max(0, sel.el.offsetTop - 92);
+    });
+  }
+  function isPick(t) { return t && t.tagName === 'INPUT' && PICK_TYPES[t.type] && !t.disabled; }
   if (platform === 'android') {
     var intercept = function (e) {
       var t = e.target;
-      if (t && t.tagName === 'SELECT' && !t.disabled && !t.multiple) { e.preventDefault(); e.stopPropagation(); if (t.blur) t.blur(); if (e.type === 'click') openSheet(t); }
+      if (t && t.tagName === 'SELECT' && !t.disabled && !t.multiple) { e.preventDefault(); e.stopPropagation(); if (t.blur) t.blur(); if (e.type === 'click') openSheet(t); return; }
+      if (isPick(t)) {
+        // readOnly: WebView'in kendi tarih/saat penceresini hiç açmasın
+        t.readOnly = true;
+        e.preventDefault(); e.stopPropagation(); if (t.blur) t.blur();
+        if (e.type === 'click') openPicker(t);
+      }
     };
     document.addEventListener('mousedown', intercept, true);
     document.addEventListener('click', intercept, true);
+    var lockPick = function () {
+      Array.prototype.forEach.call(document.querySelectorAll('input[type=time],input[type=date],input[type=datetime-local]'), function (x) { x.readOnly = true; });
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', lockPick); else lockPick();
   }
 
   // Geri tuşu: açık liste varsa onu kapatır; ana ekranda uygulamayı kapatır; başka sayfadaysa bir önceki sayfaya
