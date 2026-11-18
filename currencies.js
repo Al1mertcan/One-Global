@@ -198,7 +198,7 @@
   // tahsilat orada yapılır) — burası sadece kullanıcıya ödeme öncesi doğru
   // fiyatı göstermek için var.
   var PRICE_OVERRIDES = {
-    TRY: 10, VES: 10, SDG: 10, IRR: 10, ARS: 10, YER: 10,
+    TRY: 20, VES: 10, SDG: 10, IRR: 10, ARS: 10, YER: 10,
     MWK: 10, HTG: 10, BOB: 10, MMK: 10, NGN: 10,
   };
 

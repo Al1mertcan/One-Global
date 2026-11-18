@@ -41,7 +41,7 @@
 // farklı kişileri de nadiren yanlışlıkla geçici olarak engelleyebilir —
 // bu bilinen ve kabul edilen bir ödünleşim.
 
-const GOAL = 100000; // 100 bin: bu sayıya ulaşınca bağış mekanizması "aktif" gösterilir
+const GOAL = 10000; // 10 bin: bu sayıya ulaşınca bağış mekanizması "aktif" gösterilir
 const NEXT_GOAL = 1000000; // küçük hedef: 1 milyon abone (bağış aktifken ilerleme çubuğu buna göre dolar)
 const BIG_GOAL = 2000000000; // büyük hedef: 2 milyar abone
 

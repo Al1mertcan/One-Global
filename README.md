@@ -265,10 +265,10 @@ Bu ekran **gerçek bir ödeme almaz** — bunun için ayrı bir ödeme altyapıs
 (Stripe gibi, ülkeye göre yerel ödeme sağlayıcıları) ve her ülkede yasal/
 vergisel uyum gerekir. Şu an sadece vizyonu göstermek için tasarlanmıştır.
 
-### Türkiye'ye özel fiyat: 10 TL/ay
+### Türkiye'ye özel fiyat: 20 TL/ay
 
 Bilinçli bir karar olarak, Türkiye'deki (TRY) kullanıcılar için aylık ücret
-1 birim yerine **10 TL** olarak ayarlandı; dünyanın geri kalanı hâlâ "yerel
+1 birim yerine **20 TL** olarak ayarlandı; dünyanın geri kalanı hâlâ "yerel
 para biriminin 1 birimi/ay" modelinde kalıyor. Bu istisna, iki dosyada
 `PRICE_OVERRIDES` adında bir eşleme olarak tutuluyor ve ikisi de senkron
 tutulmalı:
@@ -285,7 +285,7 @@ gerçekte tahsil edilen tutar birbirini tutmaz. Türkçe (`tr`) arayüz
 metinleri (`i18n.js`, `planPill`/`planHeadline`/`planSub`/`onboardTrial`
 anahtarları ve `abonelik.html`/`asistan.html`/`hosgeldin.html`'deki eşleşen
 sabit metinler) bu değişiklikle birlikte "her yerde 1 birim" yerine
-"Türkiye'de 10 TL, diğer ülkelerde 1 birim" şeklinde güncellendi — diğer 20
+"Türkiye'de 20 TL, diğer ülkelerde 1 birim" şeklinde güncellendi — diğer 20
 dil değişmedi, çünkü onlar için fiyat hâlâ doğru.
 
 ## İhtiyaç sahipleriyle paylaşım — canlı üye sayacı ve 1 milyon hedefi
@@ -298,9 +298,9 @@ kimlikle kontrol ediliyor). Bu sayı **gerçektir**; rastgele veya sahte
 artan bir animasyon değildir — sadece gerçekten "Ücretsiz Başla"ya basan
 insanlarla büyür.
 
-100 bin üyeye ulaşana kadar ana ekranda şu mesaj görünür: "100 bin üyeye
+10 bin üyeye ulaşana kadar ana ekranda şu mesaj görünür: "10 bin üyeye
 ulaştığımızda, her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılmaya
-başlayacak." 100 bine ulaşıldığı an mesaj otomatik değişir: "Şu an her ay
+başlayacak." 10 bine ulaşıldığı an mesaj otomatik değişir: "Şu an her ay
 gelirin %90'ı ihtiyaç sahipleriyle paylaşılıyor." Kartın altında iki hedef
 satırı durur: abone hedefi (küçük hedef 1 milyon, büyük hedef 2 milyar) ve
 sağlanacak istihdam (küçük hedef 1.000 kişi, büyük hedef 1 milyon kişi).
@@ -600,7 +600,7 @@ makul, uygun maliyetli bir koruma sağlar.
   günlük önbellekli, gerçek dünya haberleri bölümü (yukarı bakınız).
 - Karşılama ekranı (`hosgeldin.html`) — "ilk 1 hafta ücretsiz" mesajıyla
   yeni kullanıcıları karşılıyor (yukarı bakınız).
-- Ana ekranda gerçek "Hemcan ailesi" üye sayacı ve 100 bin bağış eşiği, 1 milyon/2 milyar abone ve istihdam
+- Ana ekranda gerçek "Hemcan ailesi" üye sayacı ve 10 bin bağış eşiği, 1 milyon/2 milyar abone ve istihdam
   hedefleri, bot/sahte-kayıt koruması (yukarı bakınız).
 - `LICENSE.md` ile temel telif hakkı/mülkiyet kaydı eklendi.
 - Bellek sekmesi gerçek, kalıcı sohbet geçmişi gösteriyor; Otomasyonlar ve

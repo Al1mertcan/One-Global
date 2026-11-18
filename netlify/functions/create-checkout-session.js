@@ -48,7 +48,7 @@ const ZERO_DECIMAL_CURRENCIES = new Set([
 // taraftır — currencies.js'teki eşleme sadece istemcide önizleme göstermek
 // içindir ve bununla senkron tutulmalıdır.
 const PRICE_OVERRIDES = {
-  TRY: 10, VES: 10, SDG: 10, IRR: 10, ARS: 10, YER: 10,
+  TRY: 20, VES: 10, SDG: 10, IRR: 10, ARS: 10, YER: 10,
   MWK: 10, HTG: 10, BOB: 10, MMK: 10, NGN: 10,
 };
 

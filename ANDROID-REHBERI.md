@@ -13,7 +13,7 @@
 | Bildirimler | Web push (Chrome ve sunucuya bağlı) | Telefonun kendi yerel bildirimleri: günlük rutin, su, hatırlatmalarım internetsiz de gelir; açılışta ve telefon yeniden başlayınca yeniden kurulur |
 | Veriler | Chrome'un site deposunda (Chrome verisi silinirse gider) | Uygulamanın kendi deposunda |
 | "Bugünün iyi haberleri" bildirimi | Var (sunucudan) | Yok (iPhone'daki gibi); haberler uygulama içinde görünür |
-| Hemcan Plan (10 TL) sayfası | Var | Gizli (ödeme altyapısı yok) |
+| Hemcan Plan (20 TL) sayfası | Var | Gizli (ödeme altyapısı yok) |
 
 Paket kimliği (`app.netlify.cheery_rolypoly_540555.twa`) ve imza anahtarı **aynı** kaldığı için bu, Play'deki mevcut uygulamanın **güncellemesi** olarak yüklenir.
 
@@ -72,7 +72,7 @@ Bilgisayarında **Android Studio** kurulu ise: `native` klasöründe `npm ci`, `
 
 ## Mağaza sayfasıyla ilgili not
 
-Play mağaza metninde "Hemcan Plan: 1 hafta ücretsiz, sonra ayda 10 TL" yazıyor, ama bu sürümde plan sayfası gizli ve ödeme yok. İncelemeci metinle uygulamayı karşılaştırır; ödeme çalışana kadar bu cümleyi çıkarman ya da ödeme hazır olunca tekrar eklemen en güvenlisi. Dijital abonelik için Play'in kendi faturalandırması (Google Play Faturalandırma) gerekebilir; Stripe yalnızca web için serbesttir.
+Play mağaza metninde "Hemcan Plan: 1 hafta ücretsiz, sonra ayda 20 TL" yazıyor, ama bu sürümde plan sayfası gizli ve ödeme yok. İncelemeci metinle uygulamayı karşılaştırır; ödeme çalışana kadar bu cümleyi çıkarman ya da ödeme hazır olunca tekrar eklemen en güvenlisi. Dijital abonelik için Play'in kendi faturalandırması (Google Play Faturalandırma) gerekebilir; Stripe yalnızca web için serbesttir.
 
 ## Dosyalar ne işe yarar (teknik özet)
 

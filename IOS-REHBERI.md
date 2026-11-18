@@ -18,7 +18,7 @@
 | Bildirimler | Telefonun kendi yerel bildirimleri. Sunucuya abonelik gönderilmez. Günlük rutin, su, hatırlatmalarım çalışır. |
 | "Bugünün iyi haberleri" bildirimi | Yok (zaten sunucudan gelen bir bildirimdi, iPhone'da ilk sürümde yok). Haberler uygulama içinde görünür. |
 | Su bildirimindeki düğmeler (bardak, 500 ml, 1 lt) | Bildirime uzun basınca/çekince görünür. |
-| Hemcan Plan (10 TL) sayfası | Gizli. Ödeme altyapısı yok; Apple'ın dijital ürün kuralları ayrı bir konu. |
+| Hemcan Plan (20 TL) sayfası | Gizli. Ödeme altyapısı yok; Apple'ın dijital ürün kuralları ayrı bir konu. |
 | E-postayla giriş bağlantısı | Gizli (iPhone uygulaması için gereksiz). |
 | İnternet yokken | Ekranlar, simgeler ve yazı tipleri uygulamanın içinde; internetsiz açılır. Haberler ve üye sayacı için internet gerekir. |
 | Bildirim dilleri | Türkçe ve İngilizce (web'dekiyle aynı); diğer diller İngilizceye düşer. |
