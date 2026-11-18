@@ -33,6 +33,17 @@
   var root = document.documentElement;
   root.classList.add('is-native');
 
+  // Yerel eklentiler (bildirim, tarayıcı, uygulama) paketleyicisiz sayfada kendiliğinden
+  // C.Plugins altında görünmez: Capacitor eklentiyi ancak registerPlugin() çağrılınca
+  // JS tarafına bağlar. Bu yüzden önce hazır olana bakar, yoksa kaydeder.
+  function plug(name) {
+    try {
+      if (C.Plugins && C.Plugins[name]) return C.Plugins[name];
+      if (typeof C.registerPlugin === 'function') return C.registerPlugin(name);
+    } catch (e) {}
+    return null;
+  }
+
   // ---- 5. Web'e özgü kısımları gizle -------------------------------------
   var st = document.createElement('style');
   st.textContent = '.is-native [data-web-only], .is-native #install-banner { display: none !important; }' +
@@ -119,14 +130,79 @@
     var href = a.getAttribute('href') || '';
     if (!/^https?:\/\//i.test(href)) return;
     if (href.indexOf(API_BASE) === 0) return;
-    var Browser = C.Plugins && C.Plugins.Browser;
+    var Browser = plug('Browser');
     if (!Browser) return;
     e.preventDefault();
     Browser.open({ url: href }).catch(function () {});
   }, true);
 
+  // ---- 7. Android: seçim listeleri ve geri tuşu --------------------------------
+  // WebView'in kendi açılır listesi (select) Android temasıyla uyumsuz görünüyordu (koyu zemin üstünde
+  // siyah yazı, dev satırlar). Android'de listeyi sayfa içinde, uygulamanın renkleriyle açıyoruz.
+  var sheetEl = null;
+  function closeSheet() { if (sheetEl && sheetEl.parentNode) sheetEl.parentNode.removeChild(sheetEl); sheetEl = null; }
+  N.closeSheet = closeSheet;
+  function openSheet(sel) {
+    closeSheet();
+    var back = document.createElement('div');
+    back.setAttribute('role', 'dialog');
+    back.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:rgba(3,10,20,.62);display:flex;align-items:flex-end;justify-content:center;';
+    var panel = document.createElement('div');
+    panel.style.cssText = 'width:100%;max-width:520px;max-height:72vh;overflow-y:auto;background:#0C1B30;border:1px solid #28415F;border-bottom:0;border-radius:22px 22px 0 0;padding:8px 0 calc(12px + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.45);';
+    var title = sel.getAttribute('aria-label');
+    if (title) {
+      var h = document.createElement('div');
+      h.textContent = title.split('/')[0].trim();
+      h.style.cssText = 'padding:12px 20px 8px;font:600 13px system-ui,sans-serif;color:#A8BCD3;';
+      panel.appendChild(h);
+    }
+    Array.prototype.forEach.call(sel.options, function (o) {
+      if (o.disabled || o.hidden) return;
+      var on = o.value === sel.value;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = o.textContent;
+      btn.style.cssText = 'display:block;width:100%;text-align:start;padding:14px 20px;border:0;background:' + (on ? 'rgba(57,215,255,.12)' : 'transparent') +
+        ';color:' + (on ? '#39D7FF' : '#EFF7FF') + ';font:' + (on ? '700' : '500') + ' 16px system-ui,sans-serif;';
+      btn.addEventListener('click', function () {
+        sel.value = o.value;
+        sel.dispatchEvent(new Event('input', { bubbles: true }));
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        closeSheet();
+      });
+      panel.appendChild(btn);
+    });
+    back.addEventListener('click', function (e) { if (e.target === back) closeSheet(); });
+    back.appendChild(panel);
+    document.body.appendChild(back);
+    sheetEl = back;
+    var cur = panel.querySelector('button[style*="rgba(57,215,255,.12)"]');
+    if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'center' });
+  }
+  if (platform === 'android') {
+    var intercept = function (e) {
+      var t = e.target;
+      if (t && t.tagName === 'SELECT' && !t.disabled && !t.multiple) { e.preventDefault(); e.stopPropagation(); if (t.blur) t.blur(); if (e.type === 'click') openSheet(t); }
+    };
+    document.addEventListener('mousedown', intercept, true);
+    document.addEventListener('click', intercept, true);
+  }
+
+  // Geri tuşu: açık liste varsa onu kapatır; ana ekranda uygulamayı kapatır; başka sayfadaysa bir önceki sayfaya
+  // (geçmiş yoksa ana ekrana) döner.
+  var AppPlugin = plug('App');
+  if (AppPlugin && AppPlugin.addListener) {
+    AppPlugin.addListener('backButton', function () {
+      if (sheetEl) { closeSheet(); return; }
+      var page = (location.pathname.split('/').pop() || '').replace(/\.html$/, '');
+      var isHome = page === '' || page === 'index' || page === 'asistan' || page === 'hosgeldin' || page === 'giris';
+      if (isHome) { if (AppPlugin.exitApp) AppPlugin.exitApp(); return; }
+      if (window.history.length > 1) window.history.back(); else location.href = 'asistan.html';
+    });
+  }
+
   // ---- 3. Yerel bildirimler ------------------------------------------------
-  var LN = C.Plugins && C.Plugins.LocalNotifications;
+  var LN = plug('LocalNotifications');
   var KEY_SETTINGS = 'one-notif-settings';
   var KEY_ENABLED = 'one-notif-enabled';
   var KEY_REMINDERS = 'one-reminders';

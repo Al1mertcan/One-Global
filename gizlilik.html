@@ -69,19 +69,25 @@
 
       <section>
         <h2 class="font-heading text-base font-semibold text-foreground">Hangi veriler toplanıyor?</h2>
-        <p class="mt-2">Hemcan, hesap oluşturmanı istemez — isim, e-posta veya şifre sormaz. Bunun yerine tarayıcında rastgele üretilen, kimliğini içermeyen benzersiz bir teknik kimlik (ör. <code class="rounded bg-input px-1">a1b2c3d4-...</code>) kullanılır. Bu kimliğe bağlı olarak şunlar saklanabilir:</p>
+        <p class="mt-2">Hemcan'ın hesap gerektiren sürümlerinde giriş yalnızca e-posta adresinle ve e-postana gelen tek kullanımlık kodla yapılır; şifre yoktur, ad ya da soyad sorulmaz. Eski sürümlerde ve hesap açmadan kullandığın yerlerde ise tarayıcında/cihazında rastgele üretilen, kimliğini içermeyen benzersiz bir teknik kimlik (ör. <code class="rounded bg-input px-1">a1b2c3d4-...</code>) kullanılır. Bunlara bağlı olarak şunlar saklanabilir:</p>
         <ul class="mt-2 list-disc space-y-1.5 pl-5">
-          <li>Rutin ayarların (uyanma/eve geliş/yatma saatleri, spor ve okuma hedeflerin)</li>
+          <li>Hesap açtıysan: e-posta adresin, hesabın oluşturulma ve ücretsiz deneme başlangıç tarihi, abonelik durumun (etkin / süresi doldu) ve rastgele bir hesap kimliği</li>
+        <li>Rutin ayarların (uyanma/eve geliş/yatma saatleri, spor ve okuma hedeflerin)</li>
           <li>Eklediğin kısa hatırlatma metinleri</li>
           <li>Bildirimler açıksa: tarayıcının/işletim sisteminin verdiği push bildirim adresi (subscription endpoint) ve saat dilimin</li>
           <li>Daha önce Hemcan ile sohbet ettiysen o sohbetlerin metni (Bellek sekmesinde göstermek için, en fazla son ~20 karşılıklı mesaj). Yapay zekâ sohbeti şu an kapalıdır; yeni sohbet kaydedilmez.</li>
           <li>Seçtiğin dil ve para birimi tercihleri</li>
           <li>Cihazının IP adresi, sadece üye sayacının kötüye kullanılmasını önlemek için kısa süreliğine (bkz. aşağıdaki "Güvenlik" bölümü)</li>
         </ul>
-        <p class="mt-2">Ödeme bilgisi (kart numarası vb.) toplanmıyor — çünkü Hemcan şu an gerçek bir ödeme almıyor (bkz. Kullanım Şartları).</p>
+        <p class="mt-2">Ödeme bilgisi (kart numarası vb.) bizde tutulmaz. Abonelik ödemeleri başladığında Google Play veya App Store üzerinden alınır; kart bilgilerini biz görmeyiz ve saklamayız (bkz. Kullanım Şartları).</p>
       </section>
 
       <section>
+      <h2 class="font-heading text-base font-semibold text-foreground">Hesap ve giriş (e-posta kodu)</h2>
+      <p class="mt-2">Giriş yaparken e-posta adresini yazarsın; sana 6 haneli bir kod göndeririz. Kod 10 dakika geçerlidir, yalnızca bir kez kullanılabilir ve sunucuda düz metin olarak değil, geri döndürülemez bir özet (HMAC) olarak tutulur. Yanlış kodla art arda deneme yapılırsa kod iptal edilir. E-posta adresin, depolamada anahtar olarak düz yazı biçiminde değil özetlenmiş biçimde kullanılır. Giriş sonrası cihazında bir oturum belirteci saklanır (en fazla 90 gün geçerlidir) ve "Çıkış yap" ile silinir.</p>
+      <p class="mt-2">Kodu e-postana ulaştırmak için bir e-posta gönderim hizmeti (Resend) kullanırız; bu hizmete yalnızca e-posta adresin ve kodu içeren ileti iletilir. Hesabını silene kadar e-posta adresin, deneme başlangıç tarihin ve abonelik durumun saklanır; hesabını sildiğinde sunucudaki bu kayıtlar silinir. Hesabın silinse de Google Play veya App Store'daki aboneliğin kendiliğinden iptal olmaz; onu ilgili mağazanın ayarlarından iptal etmelisin.</p>
+    </section>
+    <section>
         <h2 class="font-heading text-base font-semibold text-foreground">Veriler nerede saklanıyor?</h2>
         <p class="mt-2">Tüm veriler, Hemcan'ın barındığı Netlify altyapısındaki Netlify Blobs adlı depolama hizmetinde tutulur. Ayrıca rutin ayarların, hatırlatmaların, dil tercihin gibi bazı bilgiler kolay erişim için tarayıcının kendi hafızasında (localStorage) da tutulur — bu, sadece senin cihazında kalır.</p>
         <p class="mt-2"><strong>Cüzdan ve su takibi verilerin yalnızca cihazında durur.</strong> Girdiğin gelir/gider kayıtları, aylık limit ve içtiğin su miktarı tarayıcının kendi hafızasında (localStorage) saklanır; sunucuya gönderilmez, bizde bir kopyası yoktur. Bu yüzden telefon ya da tarayıcı verilerini silersen bu kayıtlar da silinir ve biz geri getiremeyiz — Cüzdan ayarlarındaki "Yedek al" düğmesini kullanabilirsin.</p>
@@ -109,7 +115,8 @@
 
       <section>
         <h2 class="font-heading text-base font-semibold text-foreground">Haklarının — verilerine erişim ve silme</h2>
-        <p class="mt-2">Ayarlar ekranındaki "Verilerin" bölümünden istediğin zaman: (1) Hemcan'ın senin hakkında sakladığı verilerin bir kopyasını indirebilir, (2) tüm verilerini kalıcı olarak silebilirsin. Silme işlemi geri alınamaz.</p>
+        <p class="mt-2">Ayarlar ekranındaki "Verilerin" bölümünden istediğin zaman: (1) Hemcan'ın senin hakkında sakladığı verilerin bir kopyasını indirebilir, (2) hesabını ve sunucudaki tüm verilerini kalıcı olarak silebilirsin ("Verilerimi ve hesabımı sil"). Silme işlemi geri alınamaz. Uygulamaya erişemiyorsan silme talebini <a href="mailto:hemcan.global@gmail.com" class="rounded bg-input px-1.5 py-0.5 text-primary">hemcan.global@gmail.com</a> adresine e-postayla da iletebilirsin; kayıtlı e-posta adresinden yazman yeterlidir.</p>
+      <p class="mt-2"><strong>KVKK (6698 sayılı Kanun) kapsamında:</strong> Veri sorumlusu Hemcan'ın kurucusudur. Kanun'un 11. maddesi uyarınca kişisel verilerinin işlenip işlenmediğini öğrenme, işlenmişse bilgi isteme, düzeltilmesini veya silinmesini isteme ve bu işlemlerin paylaşıldığı üçüncü kişilere bildirilmesini isteme haklarına sahipsin. Başvurularını yukarıdaki e-posta adresine iletebilirsin. Verilerin, hesap ve abonelik hizmetini sunmak (sözleşmenin ifası) ve kötüye kullanımı önlemek (meşru menfaat) amacıyla işlenir; yurt dışındaki hizmet sağlayıcılar (barındırma ve e-posta gönderimi) nedeniyle verilerin yurt dışına aktarılabilir.</p>
       </section>
 
       <section>

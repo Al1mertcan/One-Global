@@ -209,6 +209,16 @@
         <p id="auth-status" class="mt-2 hidden text-[11px] text-muted-foreground"></p>
       </section>
 
+      <section id="session-section" class="mt-5 hidden rounded-[22px] border border-border bg-card p-4">
+        <h2 id="session-title" class="font-heading text-sm font-semibold">Hesabın</h2>
+        <p id="session-email" class="mt-1 break-all text-xs text-muted-foreground"></p>
+        <button id="btn-sign-out" type="button" class="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-theme border border-border bg-input text-xs font-bold text-foreground">
+          <iconify-icon icon="lucide:log-out" class="text-base"></iconify-icon>
+          <span id="btn-sign-out-label">Çıkış yap</span>
+        </button>
+        <p id="session-note" class="mt-2 text-[11px] leading-5 text-muted-foreground"></p>
+      </section>
+
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
         <h2 class="font-heading text-sm font-semibold" data-i18n="settingsDataTitle">Verilerin</h2>
         <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsDataExplain">Hemcan hakkında sakladığı verileri (rutin ayarların, hatırlatmaların ve sohbet geçmişin) buradan indirebilir veya tamamen silebilirsin. Ayrıntılar için <a href="gizlilik.html" class="font-semibold text-primary">Gizlilik Politikası</a>'na bakabilirsin.</p>
@@ -737,6 +747,8 @@
           deleteBtn.disabled = true;
           showDataStatus(t('settingsDeleting'));
           var id = getSubId();
+          var sessionToken = null;
+          try { sessionToken = localStorage.getItem('one-session'); } catch (e) {}
 
           var tasks = [
             fetch('/api/chat?id=' + encodeURIComponent(id), { method: 'DELETE' }).catch(function () {}),
@@ -747,6 +759,10 @@
               body: JSON.stringify({ id: id }),
             }).catch(function () {}),
           ];
+          // Hesap açıksa sunucudaki hesabı da sil (mağaza kuralı: uygulama içinden hesap silme).
+          if (sessionToken) {
+            tasks.push(fetch('/api/account-delete', { method: 'POST', headers: { Authorization: 'Bearer ' + sessionToken } }).catch(function () {}));
+          }
 
           Promise.all(tasks).then(function () {
             // Bu cihazdaki push aboneliğini de iptal et (varsa).
@@ -768,7 +784,7 @@
                 .forEach(function (k) { localStorage.removeItem(k); });
             } catch (e) {}
             showDataStatus(t('settingsDeleted'));
-            setTimeout(function () { window.location.href = 'hosgeldin.html'; }, 1200);
+            setTimeout(function () { window.location.href = sessionToken ? 'giris.html' : 'hosgeldin.html'; }, 1200);
           });
         });
       }
@@ -853,6 +869,29 @@
       window.addEventListener('one-lang-changed', function () {
         refreshNotifStatus();
         renderSleepSuggestions();
+      });
+    })();
+  </script>
+  <script>
+    // Hesap bölümü: yalnızca giriş yapılmışsa görünür (giris.html oturumu saklar).
+    (function () {
+      var token = null, user = null;
+      try { token = localStorage.getItem('one-session'); user = JSON.parse(localStorage.getItem('one-session-user') || 'null'); } catch (e) {}
+      if (!token) return;
+      var lang = 'en';
+      try { lang = (window.ONE_I18N && window.ONE_I18N.getLang && window.ONE_I18N.getLang()) || localStorage.getItem('one-lang') || 'en'; } catch (e) {}
+      var tr = lang === 'tr';
+      var $ = function (id) { return document.getElementById(id); };
+      $('session-title').textContent = tr ? 'Hesabın' : 'Your account';
+      $('session-email').textContent = (user && user.email) ? user.email : '';
+      $('btn-sign-out-label').textContent = tr ? 'Çıkış yap' : 'Sign out';
+      $('session-note').textContent = tr
+        ? 'Çıkış yapınca bu cihazdaki kayıtların silinmez. Hesabını ve sunucudaki verini silmek için aşağıdaki "Verilerimi ve hesabımı sil" düğmesini kullan. Mağaza aboneliğin ayrıdır; App Store veya Google Play ayarlarından iptal edilir.'
+        : 'Signing out does not delete the data on this device. To delete your account and server data, use "Delete my data and account" below. Your store subscription is separate; cancel it in App Store or Google Play settings.';
+      $('session-section').classList.remove('hidden');
+      $('btn-sign-out').addEventListener('click', function () {
+        try { localStorage.removeItem('one-session'); localStorage.removeItem('one-session-user'); } catch (e) {}
+        location.replace('giris.html');
       });
     })();
   </script>
