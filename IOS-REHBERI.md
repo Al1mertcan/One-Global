@@ -95,8 +95,8 @@ Deneme listesi:
 
 Bunlar kodla çözülmeyen, Apple incelemesini etkileyebilecek konular. Hiçbirini senin adına değiştirmedim.
 
-1. **"Yakında" içerikleri.** Ana ekrandaki "Hemcan Yapay Zekâ — Yakında" kartı ve "Cihazlar" sekmesi ("henüz yok, yol haritası") bitmemiş içerik gibi okunabilir. Apple tamamlanmamış/"yakında" içeriği sık sık reddeder (App Review 2.1). Öneri: iPhone sürümünde bu ikisini gizle. İstersen ayarlarım.
-2. **Hedefler sayfası.** Gerçek bir doktorun adı ve "ilaçsız tedavi" gibi tıbbi iddialar içeren bir hedef var. Tıbbi iddia ve gerçek kişi adı inceleme için riskli. Öneri: iPhone sürümünde bu sayfayı gizle ya da o hedefi kaldır/yumuşat. Mağaza ekran görüntülerinde bu sayfayı kullanmadım.
+1. **"Yakında" içerikleri — çözüldü.** iPhone uygulamasında "Hemcan Yapay Zekâ — Yakında" kartı ve "Cihazlar" sekmesi (kartı ve sayfası) gizli (`native.js`, yalnızca iPhone). Web ve Android aynı kaldı. Alt çubukta 4 sekme görünür.
+2. **Hedefler sayfası — çözüldü.** Gerçek doktorun adı 21 dilin hepsinden çıkarıldı; "ilaçsız Neurofeedback tedavisi" ifadesi kaldı. Yine de "ilaçsız ve yüksek başarı oranına sahip olduğuna inandığımız" gibi bir ifade tıbbi iddia sayılabilir; Apple bunu sorarsa inceleme notunda "bir tedavi yöntemini finanse etme hedefi, tıbbi tavsiye değildir" diye açıkla.
 3. **Bağış/paylaşım cümleleri.** Ana ekrandaki "Hemcan ailesi" kartında gelirin bir kısmının paylaşılacağı yazıyor. Bu, kendi kazancından yapacağın bir söz olarak kalabilir; yalnızca dilin "otomatik dağıtılıyor" gibi olmamasına dikkat et. Kart zaten uygulamanın bağış toplamadığını belirtiyor.
 4. **Gizlilik politikası** avukat incelemesinden geçmedi ve yalnızca Türkçe. iPhone için kısa bir bölüm ekledim. Apple, politika metninin App Privacy cevaplarınla tutarlı olmasını bekler. IP adresinin "kısa süre kaydedilmesi" cümlesini netleştirmek gerekebilir (ne kadar, nerede).
 5. **Gelecekte ücretli plan.** iPhone uygulamasında dijital abonelik satarsan Apple'ın kendi ödeme sistemi (In-App Purchase) ve komisyonu devreye girer. Bu sürümde plan sayfası gizli, yani bu konu şimdilik yok.

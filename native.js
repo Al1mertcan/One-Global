@@ -40,6 +40,16 @@
     '.is-native input, .is-native textarea { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }';
   (document.head || root).appendChild(st);
 
+  // ---- iPhone'a özel: bitmemiş görünen içerik gizlenir ----------------------
+  // Apple "yakında / tamamlanmamış" içeriği (App Review 2.1) sık reddeder. iPhone uygulamasında
+  // "Hemcan Yapay Zekâ — Yakında" kartı ile "Cihazlar" sekmesi (kartı ve sayfası) görünmez.
+  // Web ve Android aynı kalır. Yapay zekâ gerçekten açıldığında bu satırlar kaldırılır.
+  if (platform === 'ios') {
+    root.classList.add('is-ios');
+    st.textContent += '.is-ios #chat-soon, .is-ios a[href="cihazlar.html"] { display: none !important; }';
+    if (/cihazlar\.html$/.test(location.pathname)) location.replace('asistan.html');
+  }
+
   // Ücretli plan sayfası uygulamada yok (ödeme altyapısı yok); açılırsa ana sayfaya dön.
   if (/abonelik\.html$/.test(location.pathname)) location.replace('asistan.html');
 
