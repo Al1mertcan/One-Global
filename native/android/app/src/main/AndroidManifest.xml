@@ -37,6 +37,9 @@
         </provider>
     </application>
 
+    <!-- Uygulama dikey çalışır; ama "dikey ekran zorunlu" demiyoruz, böylece Play'de daha fazla cihaza (tablet, Chromebook vb.) yüklenebilir. -->
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
+
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
