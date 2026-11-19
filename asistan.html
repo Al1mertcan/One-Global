@@ -149,7 +149,24 @@
       </header>
 
       <main class="relative px-5 pt-5">
-        <section id="su" class="scroll-mt-4 rounded-[24px] border border-accent/25 bg-accent/5 p-4">
+        <section id="good-news-section" class="rounded-[24px] border border-accent/25 bg-accent/5 p-4">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:sparkle" class="text-lg text-accent"></iconify-icon>
+            <h2 class="font-heading text-sm font-semibold text-accent" data-i18n="goodNewsTitle">Bugünün iyi haberleri</h2>
+          </div>
+          <p class="mt-1 text-[11px] text-muted-foreground" data-i18n="goodNewsSubtitle">Dünyadan gerçek, güzel gelişmeler — yüzün gülsün diye.</p>
+          <div id="good-news-list" class="news-scroll mt-3 flex gap-3 overflow-x-auto" tabindex="0">
+            <p id="good-news-loading" class="text-xs text-muted-foreground" data-i18n="goodNewsLoading">Yükleniyor…</p>
+          </div>
+          <div id="good-news-nav" class="mt-3 hidden items-center justify-between gap-3">
+            <div id="good-news-dots" class="news-dots flex flex-wrap items-center gap-1.5 text-accent"></div>
+            <span id="good-news-count" class="text-[10px] tabular-nums text-muted-foreground" dir="ltr"></span>
+          </div>
+          <p id="good-news-empty" class="mt-1 hidden text-xs text-muted-foreground" data-i18n="goodNewsEmpty">Bugün için henüz haber eklenmedi. Yakında burada olacak.</p>
+          <p id="good-news-error" class="mt-1 hidden text-xs text-muted-foreground" data-i18n="goodNewsError">Şu an iyi haberler yüklenemedi — az sonra tekrar dene.</p>
+        </section>
+
+        <section id="su" class="mt-5 scroll-mt-4 rounded-[24px] border border-accent/25 bg-accent/5 p-4">
           <div class="flex items-center gap-2.5">
             <iconify-icon icon="lucide:droplets" class="text-lg text-accent"></iconify-icon>
             <h2 class="font-heading text-sm font-semibold text-accent" data-i18n="waterTitle">Su takibi</h2>
@@ -217,23 +234,6 @@
             <h2 class="font-heading text-sm font-semibold text-foreground" data-i18n="brandMeaningTitle">"Hemcan" ne demek?</h2>
           </div>
           <p class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="brandMeaningBody">Hemcan, "hem" (birlikte, beraber) ile "can" (sevilen kişi, can dostu) kelimelerinin birleşiminden oluşur. Senden hiç ayrılmayan, her an yanında olan bir can dostunu anlatır — adımızın özünde birlik, beraberlik ve içten bir dostluk var.</p>
-        </section>
-
-        <section class="mt-5 rounded-[24px] border border-accent/25 bg-accent/5 p-4">
-          <div class="flex items-center gap-2.5">
-            <iconify-icon icon="lucide:sparkle" class="text-lg text-accent"></iconify-icon>
-            <h2 class="font-heading text-sm font-semibold text-accent" data-i18n="goodNewsTitle">Bugünün iyi haberleri</h2>
-          </div>
-          <p class="mt-1 text-[11px] text-muted-foreground" data-i18n="goodNewsSubtitle">Dünyadan gerçek, güzel gelişmeler — yüzün gülsün diye.</p>
-          <div id="good-news-list" class="news-scroll mt-3 flex gap-3 overflow-x-auto" tabindex="0">
-            <p id="good-news-loading" class="text-xs text-muted-foreground" data-i18n="goodNewsLoading">Yükleniyor…</p>
-          </div>
-          <div id="good-news-nav" class="mt-3 hidden items-center justify-between gap-3">
-            <div id="good-news-dots" class="news-dots flex flex-wrap items-center gap-1.5 text-accent"></div>
-            <span id="good-news-count" class="text-[10px] tabular-nums text-muted-foreground" dir="ltr"></span>
-          </div>
-          <p id="good-news-empty" class="mt-1 hidden text-xs text-muted-foreground" data-i18n="goodNewsEmpty">Bugün için henüz haber eklenmedi. Yakında burada olacak.</p>
-          <p id="good-news-error" class="mt-1 hidden text-xs text-muted-foreground" data-i18n="goodNewsError">Şu an iyi haberler yüklenemedi — az sonra tekrar dene.</p>
         </section>
 
         <section class="mt-6">
