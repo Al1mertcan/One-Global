@@ -489,7 +489,11 @@
   }
   // Android'e özgü alanlar: kanal, küçük simge, kesin alarm istemeden (ayar ekranı açmadan) planla.
   function droid(n) {
-    if (platform === 'android') { n.channelId = CHANNEL; n.smallIcon = 'ic_stat_hemcan'; n.isExactNotification = false; }
+    if (platform === 'android') {
+      n.channelId = CHANNEL; n.smallIcon = 'ic_stat_hemcan'; n.isExactNotification = false;
+      // Uzun metin Android'de tek satıra kesiliyordu ("...yolunda.."). largeBody ile bildirim açılınca metnin tamamı görünür.
+      if (n.body && !n.largeBody) n.largeBody = n.body;
+    }
     return n;
   }
 
