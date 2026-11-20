@@ -11,8 +11,8 @@
 - **Tekrarlayan hatırlatmalar:** tek sefer, her gün, haftada bir, ayda bir, N saatte bir (1/2/3/4/6/8/12). "Saatte bir" 23:00–07:00 arası susar; önümüzdeki saatler önceden kurulur, uygulama açıldıkça yenilenir (Android ~2 gün, iPhone ~6 bildirim). Ayın 29–31'inde başlayan aylık hatırlatma kısa aylarda o ayın son gününe kayar (sunucu bildirimi) ya da atlanır (telefon bildirimi).
 - **Nazik uyanış alarmı:** uyanma saatinde yumuşak bildirim (yüksek sesli alarm değil), varsayılan KAPALI.
 - **Spor / kitap bildirimleri:** günlük / aylık / yıllık toplamlar.
-- **Hemcan sekmesi (`hemcan.html`):** "Hemcan ne demek?" ve "Hemcan ailesi".
-- **Düzeltmeler:** hatırlatmalar artık silinmiyor (zamanı geçenler "Gönderildi" olur, yedeği tutulur); üye sayacı kaydı beklenip doğrulanıyor, kaydı hiç ulaşmamış cihazlar bir kez daha deniyor.
+- **Hemcan sekmesi (`hemcan.html`):** "Hemcan ailesi" (üye sayacı, hedefler) ve "Hemcan ne demek?" yalnızca burada; ana sayfadan kaldırıldı.
+- **Düzeltmeler:** hatırlatmalar artık silinmiyor (zamanı geçenler "Gönderildi" olur, yedeği tutulur); üye sayacı kaydı beklenip doğrulanıyor, kaydı hiç ulaşmamış cihazlar uygulama açılınca bir kez daha deniyor; sunucu sayacı üye listesinden kendini düzeltiyor (5 dk'da bir), hız sınırı hata verirse kayıt engellenmiyor, sayaç önbelleğe alınmıyor. Sunucu düzeltmesi için GitHub'a yükleme şart.
 - Açılış ekranı 6 sn → 3 sn.
 
 ## Yayın öncesi yapılacaklar
@@ -28,4 +28,4 @@
 - Günün sözü bildirimleri önceden planlanır: Android 14 gün, iPhone 7 gün; uygulama bu süre içinde açılmazsa durur.
 - Alarm bildirimi dakikalarca kayabilir (pil tasarrufu); gerçek çalar saat yerine geçmez.
 - Yeni metinler yalnızca Türkçe ve İngilizce; diğer 19 dilde İngilizce görünür.
-- "Hemcan ne demek?" metni taslaktır; düzeltmen için bekliyor.
+- Üye sayacı canlı sitede sandbox'tan denenemedi: yayından sonra sayıyı gerçekte uygulamayı açan kişi sayısıyla karşılaştır.

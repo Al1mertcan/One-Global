@@ -53,7 +53,7 @@ const ID_PATTERN = /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{1
 
 // Aynı IP'den bir zaman penceresi içinde izin verilen en fazla yeni kayıt.
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 saat
-const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_MAX = 30; // mobil operatör ağlarında (CGNAT) birçok kişi aynı IP'yi paylaşır; çok düşük sınır gerçek kişileri engelliyordu
 
 function getClientIp(event) {
   const headers = event.headers || {};
@@ -96,10 +96,28 @@ exports.handler = async (event) => {
     return rec && typeof rec.count === 'number' ? rec.count : 0;
   }
 
+  // Gerçek kaynak: kayıtlı üyelerin kendisi (one-members deposundaki 'm_<id>' kayıtları).
+  // Sayaç kaydı herhangi bir sebeple geride kalırsa (ör. artırma çakışması/hatası) burada düzeltilir.
+  // Listeleme pahalı olabileceği için en fazla 5 dakikada bir yapılır.
+  async function reconcile(current) {
+    try {
+      const meta = await counterStore.get('reconcile', { type: 'json' });
+      if (meta && typeof meta.at === 'number' && Date.now() - meta.at < 5 * 60 * 1000) return current;
+      const listed = await membersStore.list({ prefix: 'm_' });
+      const n = listed && Array.isArray(listed.blobs) ? listed.blobs.length : 0;
+      await counterStore.setJSON('reconcile', { at: Date.now(), listed: n });
+      if (n > current) {
+        await counterStore.setJSON('total', { count: n });
+        return n;
+      }
+    } catch (e) { /* düzeltme başarısız olsa da sayı gösterilmeye devam eder */ }
+    return current;
+  }
+
   if (event.httpMethod === 'GET') {
     try {
-      const count = await readCount();
-      return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };
+      const count = await reconcile(await readCount());
+      return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(shape(count)) };
     } catch (err) {
       return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Sayı okunamadı.' }) };
     }
@@ -129,7 +147,12 @@ exports.handler = async (event) => {
         // takılıp gereksiz yere 429 almamalı.
         const ip = getClientIp(event);
         const rlKey = 'ip_' + ip;
-        const rl = await consume(rateLimitStore, rlKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+        let rl = { allowed: true };
+        try {
+          rl = await consume(rateLimitStore, rlKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+        } catch (e) {
+          rl = { allowed: true }; // hız sınırı deposu sorun çıkarırsa kaydı engelleme (fail-open)
+        }
         if (!rl.allowed) {
           return {
             statusCode: 429,
@@ -141,7 +164,14 @@ exports.handler = async (event) => {
         // onlyIfNew: aynı kişi aynı anda iki istek gönderse bile yalnızca biri
         // "yeni üye" sayılır, sayaç iki kez artmaz. (Çok eski bir SDK koşulu yok
         // sayarsa `modified` alanı gelmez; o durumda eskisi gibi yeni sayıyoruz.)
-        const reg = await membersStore.set(memberKey, new Date().toISOString(), { onlyIfNew: true });
+        let reg;
+        try {
+          reg = await membersStore.set(memberKey, new Date().toISOString(), { onlyIfNew: true });
+        } catch (e) {
+          // koşullu yazma desteklenmiyorsa düz yazmaya düş (üstte zaten 'already' kontrolü yapıldı)
+          await membersStore.set(memberKey, new Date().toISOString());
+          reg = { modified: true };
+        }
         const isNew = !(reg && typeof reg === 'object' && 'modified' in reg) || reg.modified;
         if (isNew) {
           try {
@@ -152,9 +182,14 @@ exports.handler = async (event) => {
             // kalabilir (nadir ve zararsız); mevcut değeri okuyup dönüyoruz.
             count = await readCount();
           }
+          // Artırma sessizce başarısız olsa bile kayıtlı üye sayısıyla eşitle.
+          try { await counterStore.setJSON('reconcile', { at: 0, listed: 0 }); } catch (e) {}
+          count = await reconcile(count);
         } else {
-          count = await readCount();
+          count = await reconcile(await readCount());
         }
+      } else {
+        count = await reconcile(count);
       }
 
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };

@@ -112,26 +112,35 @@
     </header>
 
     <main class="relative px-5 pt-5">
-      <section class="rounded-[24px] border border-primary/25 bg-card p-5">
-        <div class="flex items-center gap-2.5">
-          <iconify-icon icon="lucide:sparkles" class="text-lg text-primary"></iconify-icon>
-          <h2 class="font-heading text-base font-semibold text-primary" data-i18n="hemcanMeaningTitle">Hemcan ne demek?</h2>
-        </div>
-        <p class="mt-3 text-sm leading-6 text-card-foreground" data-i18n="hemcanMeaningP1">Türkçede “hem-” öneki “aynı, birlikte, ortak” anlamı taşır (hemşehri, hemfikir, hemdert gibi). “Can” ise hayat, ruh ve candan dost demektir.</p>
-        <p class="mt-3 text-sm font-semibold leading-6 text-foreground" data-i18n="hemcanMeaningP2">Hemcan: aynı canı paylaşanlar; birbirine can olanlar.</p>
-        <p class="mt-3 text-sm leading-6 text-muted-foreground" data-i18n="hemcanMeaningP3">Uygulamanın adı da bu yüzden: şimdiki ve gelecekteki sana, sevdiklerine ve yanındakilere iyi gelmek için buradayız.</p>
-      </section>
-
-      <section class="mt-5 rounded-[24px] border border-accent/25 bg-accent/5 p-5">
-        <div class="flex items-center gap-2.5">
-          <iconify-icon icon="lucide:users" class="text-lg text-accent"></iconify-icon>
-          <h2 class="font-heading text-base font-semibold text-accent" data-i18n="hemcanFamilyTitle">Hemcan ailesi</h2>
-        </div>
-        <p class="mt-3 text-sm leading-6 text-card-foreground" data-i18n="hemcanFamilyP1">Hemcan’ı kullanan herkes bu ailenin bir üyesidir. Burada kimse yalnız değil; sağlığımıza, sevdiklerimize ve iyi işlere birlikte zaman ayırıyoruz.</p>
-        <p class="mt-4 text-[11px] font-semibold text-muted-foreground" data-i18n="hemcanMembersLabel">Şu an ailemizin üye sayısı</p>
-        <p id="family-count" class="font-heading text-3xl font-bold tracking-tight">—</p>
-        <p class="mt-3 text-sm leading-6 text-card-foreground" data-i18n="memberCountGoalText">10 bin üyeye ulaştığımızda, her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılmaya başlayacak.</p>
-        <p class="mt-3 text-sm font-semibold leading-6 text-primary" data-i18n="onboardSlogan">BİRLİKTE GÜÇLÜYÜZ 💪💪💪</p>
+        <section class="rounded-[24px] border border-primary/25 bg-primary/5 p-4">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:heart-handshake" class="text-lg text-primary"></iconify-icon>
+            <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="memberCountTitle">Hemcan ailesi</h2>
+          </div>
+          <p id="member-count-number" class="mt-2 font-heading text-3xl font-bold tracking-tight text-foreground" data-i18n="memberCountLoading">Yükleniyor…</p>
+          <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-card">
+            <div id="member-count-bar" class="h-full rounded-full bg-primary transition-[width] duration-700" style="width:0%"></div>
+          </div>
+          <p id="member-count-goal-text" class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="memberCountGoalText">10 bin üyeye ulaştığımızda, her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılmaya başlayacak.</p>
+          <p id="member-count-active-text" class="mt-2 hidden text-[11px] font-semibold leading-5 text-success" data-i18n="memberCountActiveText">Şu an her ay gelirin %90'ı ihtiyaç sahipleriyle paylaşılıyor.</p>
+          <div class="mt-3 space-y-2 border-t border-primary/15 pt-3">
+            <div>
+              <p class="text-[11px] font-semibold text-foreground" data-i18n="memberSubsLabel">Abone hedefi</p>
+              <div class="mt-1 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalSmall">Küçük hedef</span>: <b id="goal-subs-small" class="text-foreground">1 milyon</b></span>
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalBig">Büyük hedef</span>: <b id="goal-subs-big" class="text-foreground">2 milyar</b></span>
+              </div>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-foreground" data-i18n="memberJobsLabel">Sağlanacak istihdam (kişi)</p>
+              <div class="mt-1 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalSmall">Küçük hedef</span>: <b id="goal-jobs-small" class="text-foreground">1.000</b></span>
+                <span class="rounded-full border border-primary/25 bg-card px-2.5 py-1"><span data-i18n="memberGoalBig">Büyük hedef</span>: <b id="goal-jobs-big" class="text-foreground">1 milyon</b></span>
+              </div>
+            </div>
+          </div>
+          <p class="mt-3 border-t border-primary/15 pt-2 text-[10px] italic leading-4 text-muted-foreground/80" data-i18n="donationDisclaimer">Not: Bu bir bağış toplama uygulaması değildir. Hedefe ulaşıldığında bağış, doğrudan uygulama sahibinin kendi gelirinden yapılacaktır.</p>
+        </section>
         <div class="mt-4 grid grid-cols-1 gap-2">
           <a href="hedefler.html" class="flex h-11 items-center justify-center gap-2 rounded-theme border border-primary/40 bg-primary/10 text-xs font-bold text-primary">
             <iconify-icon icon="lucide:target" class="text-base"></iconify-icon>
@@ -142,7 +151,16 @@
             <span data-i18n="hemcanContactBtn">Yardıma muhtaç birini bize bildir</span>
           </a>
         </div>
-      </section>
+
+
+        <section class="mt-5 rounded-[24px] border border-border bg-card/60 p-4">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:sparkles" class="text-lg text-foreground"></iconify-icon>
+            <h2 class="font-heading text-sm font-semibold text-foreground" data-i18n="brandMeaningTitle">"Hemcan" ne demek?</h2>
+          </div>
+          <p class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="brandMeaningBody">Hemcan, "hem" (birlikte, beraber) ile "can" (sevilen kişi, can dostu) kelimelerinin birleşiminden oluşur. Senden hiç ayrılmayan, her an yanında olan bir can dostunu anlatır — adımızın özünde birlik, beraberlik ve içten bir dostluk var.</p>
+        </section>
+
     </main>
 
       <nav data-fv-tabbar class="fixed bottom-5 left-3 right-3 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-1 shadow-2xl backdrop-blur-2xl">
@@ -188,14 +206,60 @@
   </script>
   <script>
     (function () {
-      fetch('/api/member-count').then(function (r) { return r.json(); }).then(function (d) {
-        if (d && typeof d.count === 'number') {
-          var lang = 'tr';
-          try { lang = window.ONE_I18N.getLang(); } catch (e) {}
-          var el = document.getElementById('family-count');
-          try { el.textContent = new Intl.NumberFormat(lang).format(d.count); } catch (e) { el.textContent = String(d.count); }
+      'use strict';
+      var numberEl = document.getElementById('member-count-number');
+      var barEl = document.getElementById('member-count-bar');
+      var goalTextEl = document.getElementById('member-count-goal-text');
+      var activeTextEl = document.getElementById('member-count-active-text');
+
+      function formatNumber(n) {
+        var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+        try { return n.toLocaleString(lang); } catch (e) { return String(n); }
+      }
+
+      // Hedef rakamları (1 milyon, 2 milyar...) kullanıcının diline göre yazılır.
+      var GOALS = { 'goal-subs-small': 1000000, 'goal-subs-big': 2000000000, 'goal-jobs-small': 1000, 'goal-jobs-big': 1000000 };
+      function formatGoal(n) {
+        var lang = (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en';
+        try {
+          if (n >= 1000000) return new Intl.NumberFormat(lang, { notation: 'compact', compactDisplay: 'long' }).format(n);
+          return n.toLocaleString(lang);
+        } catch (e) { return String(n); }
+      }
+      function renderGoals() {
+        Object.keys(GOALS).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = formatGoal(GOALS[id]);
+        });
+      }
+      window.addEventListener('one-lang-changed', renderGoals);
+
+      function render(data) {
+        numberEl.textContent = formatNumber(data.count);
+        if (data.donationActive) {
+          goalTextEl.classList.add('hidden');
+          activeTextEl.classList.remove('hidden');
+          barEl.style.width = Math.min(100, (data.count / data.nextGoal) * 100) + '%';
+        } else {
+          goalTextEl.classList.remove('hidden');
+          activeTextEl.classList.add('hidden');
+          barEl.style.width = Math.min(100, (data.count / data.goal) * 100) + '%';
         }
-      }).catch(function () {});
+      }
+
+      function loadMemberCount() {
+        fetch('/api/member-count')
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+          .then(function (result) {
+            if (!result.ok || typeof result.data.count !== 'number') throw new Error('bad response');
+            render(result.data);
+          })
+          .catch(function () {
+            numberEl.textContent = '—';
+          });
+      }
+      renderGoals();
+      loadMemberCount();
     })();
   </script>
   <script src="i18n.js"></script>
