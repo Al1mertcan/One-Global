@@ -61,7 +61,7 @@ const CONTENT = {
     reading: (pages) => ({ title: 'Kitap vakti 📖', body: `Bugün en az ${pages} sayfa okudun mu? Günde ${pages} sayfa kitap, ayda ${pages * 30}, senede ${pages * 360} sayfa demek! Birkaç sayfa bile kendine güzel bir ara.` }),
     teeth: {
       title: 'Diş sağlığı hatırlatması 🦷',
-      body: 'Dişlerini fırçaladın mı? Diş sağlığı çok önemli.',
+      body: 'Dişlerini fırçaladın mı?',
     },
     eveningExercise: (p, sq, s, extra) => ({
       title: 'Küçük bir akşam hareketi 💪',
@@ -103,7 +103,7 @@ const CONTENT = {
     reading: (pages) => ({ title: 'Reading time 📖', body: `Did you read at least ${pages} pages today? ${pages} pages a day is ${pages * 30} a month and ${pages * 360} a year! Even a few pages is a nice moment for yourself.` }),
     teeth: {
       title: 'Dental health reminder 🦷',
-      body: 'Did you brush your teeth? Dental health matters.',
+      body: 'Did you brush your teeth?',
     },
     eveningExercise: (p, sq, s, extra) => ({
       title: 'A little evening movement 💪',
