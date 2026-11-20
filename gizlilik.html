@@ -72,6 +72,8 @@
         <p class="mt-2">Hemcan'ın hesap gerektiren sürümlerinde giriş yalnızca e-posta adresinle ve e-postana gelen tek kullanımlık kodla yapılır; şifre yoktur, ad ya da soyad sorulmaz. Eski sürümlerde ve hesap açmadan kullandığın yerlerde ise tarayıcında/cihazında rastgele üretilen, kimliğini içermeyen benzersiz bir teknik kimlik (ör. <code class="rounded bg-input px-1">a1b2c3d4-...</code>) kullanılır. Bunlara bağlı olarak şunlar saklanabilir:</p>
         <ul class="mt-2 list-disc space-y-1.5 pl-5">
           <li>Hesap açtıysan: e-posta adresin, hesabın oluşturulma ve ücretsiz deneme başlangıç tarihi, abonelik durumun (etkin / süresi doldu) ve rastgele bir hesap kimliği</li>
+        <li>Ad, soyad ve e-posta (açılışta girdiğin profil): yalnızca bu cihazda saklanır, sunucuya gönderilmez; selamlamada adını göstermek için kullanılır. Ayarlar'dan düzenleyebilir veya verilerini silerek kaldırabilirsin.</li>
+        <li>Kalori günlüğün (yazdığın yiyecekler ve günlük sınırın) ve adım verilerin: yalnızca bu cihazda tutulur. Adım sayar, telefonun hareket/adım sensörünü kullanır (Android: fiziksel aktivite izni, iPhone: Hareket ve Fitness izni); bu veri hiçbir yere gönderilmez.</li>
         <li>Rutin ayarların (uyanma/eve geliş/yatma saatleri, spor ve okuma hedeflerin)</li>
           <li>Eklediğin kısa hatırlatma metinleri</li>
           <li>Bildirimler açıksa: tarayıcının/işletim sisteminin verdiği push bildirim adresi (subscription endpoint) ve saat dilimin</li>
@@ -90,7 +92,7 @@
     <section>
         <h2 class="font-heading text-base font-semibold text-foreground">Veriler nerede saklanıyor?</h2>
         <p class="mt-2">Tüm veriler, Hemcan'ın barındığı Netlify altyapısındaki Netlify Blobs adlı depolama hizmetinde tutulur. Ayrıca rutin ayarların, hatırlatmaların, dil tercihin gibi bazı bilgiler kolay erişim için tarayıcının kendi hafızasında (localStorage) da tutulur — bu, sadece senin cihazında kalır.</p>
-        <p class="mt-2"><strong>Cüzdan ve su takibi verilerin yalnızca cihazında durur.</strong> Girdiğin gelir/gider kayıtları, aylık limit ve içtiğin su miktarı tarayıcının kendi hafızasında (localStorage) saklanır; sunucuya gönderilmez, bizde bir kopyası yoktur. Bu yüzden telefon ya da tarayıcı verilerini silersen bu kayıtlar da silinir ve biz geri getiremeyiz — Cüzdan ayarlarındaki "Yedek al" düğmesini kullanabilirsin.</p>
+        <p class="mt-2"><strong>Cüzdan, su, kalori ve adım verilerin ile profilin yalnızca cihazında durur.</strong> Girdiğin gelir/gider kayıtları, aylık limit, içtiğin su miktarı, yediklerin, adım sayın, adın ve e-postan tarayıcının kendi hafızasında (localStorage) saklanır; sunucuya gönderilmez, bizde bir kopyası yoktur. Bu yüzden telefon ya da tarayıcı verilerini silersen bu kayıtlar da silinir ve biz geri getiremeyiz — Cüzdan ayarlarındaki "Yedek al" düğmesini kullanabilirsin.</p>
       </section>
 
       <section>

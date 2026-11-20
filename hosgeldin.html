@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="native.js"></script>
+  <script src="profile.js"></script>
   <title>Hoş geldin — Hemcan</title>
 
   <!-- Uygulama her açılışta ~2 saniyeliğine bu ekranı (marka + slogan)
@@ -16,8 +17,14 @@
        gizliyor.  -->
   <script>
     try {
+      var hasProfile = false;
+      try {
+        var pr = JSON.parse(localStorage.getItem('one-profile') || 'null');
+        hasProfile = !!(pr && pr.first && pr.last && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(pr.email || ''));
+      } catch (e) {}
       if (localStorage.getItem('one-onboarded') === '1') {
-        document.documentElement.classList.add('returning-user');
+        // Daha önce giriş yapmış ama adı kayıtlı değilse (eski sürümden gelenler): sadece formu göster.
+        document.documentElement.classList.add(hasProfile ? 'returning-user' : 'need-profile');
       }
     } catch (e) {}
   </script>
@@ -101,6 +108,11 @@
      rozeti, fiyat notu, CTA butonu, iptal notu) gizle — ikon + slogan
      görünmeye devam etsin. */
   .returning-user .onboarding-only { display: none !important; }
+  .need-profile .trial-only { display: none !important; }
+  .profile-form input { width: 100%; height: 48px; border-radius: 14px; border: 1px solid #28415F; background: #0C1B30; color: #EFF7FF; padding: 0 14px; font-size: 15px; outline: none; }
+  .profile-form input:focus { border-color: #39D7FF; box-shadow: 0 0 0 3px rgba(57,215,255,0.18); }
+  .profile-form input::placeholder { color: #7F95AE; }
+  .profile-form .err { color: #FF8A8A; font-size: 12px; min-height: 16px; text-align: left; }
   .hemcan-logo {
     background: linear-gradient(160deg, #17305A 0%, #0F2447 100%);
     box-shadow: 0 0 0 6px rgba(57,215,255,0.07), 0 0 44px rgba(57,215,255,0.38), inset 0 1px 0 rgba(255,255,255,0.10);
@@ -126,7 +138,7 @@
     <div class="pointer-events-none absolute -top-32 -right-28 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
     <div class="pointer-events-none absolute top-[430px] -left-36 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
 
-    <header class="onboarding-only relative flex items-center justify-end px-5 pt-6">
+    <header class="onboarding-only trial-only relative flex items-center justify-end px-5 pt-6">
       <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-theme border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
     </header>
 
@@ -150,18 +162,27 @@
 
       <p class="mt-6 max-w-sm font-heading text-xl font-bold leading-snug tracking-wide text-primary" data-i18n="onboardSlogan">BİRLİKTE GÜÇLÜYÜZ 💪💪💪</p>
 
-      <div class="onboarding-only mt-5 flex items-center gap-2 rounded-full border border-success/25 bg-success/10 px-4 py-2">
+      <div class="onboarding-only trial-only mt-5 flex items-center gap-2 rounded-full border border-success/25 bg-success/10 px-4 py-2">
         <iconify-icon icon="lucide:gift" class="text-base text-success"></iconify-icon>
         <span class="text-xs font-bold text-success" data-i18n="planTrialBadge">İlk 1 hafta ücretsiz</span>
       </div>
 
-      <p class="onboarding-only mt-4 max-w-xs text-sm leading-6 text-muted-foreground" data-i18n="onboardTrial">İlk 1 hafta ücretsiz, sonrasında ayda sadece 20 TL.</p>
+      <p class="onboarding-only trial-only mt-4 max-w-xs text-sm leading-6 text-muted-foreground" data-i18n="onboardTrial">İlk 1 hafta ücretsiz, sonrasında ayda sadece 20 TL.</p>
 
-      <button id="btn-start" class="onboarding-only mt-8 flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-theme bg-primary text-sm font-bold text-primary-foreground shadow-[0_0_24px_rgba(57,215,255,0.3)]">
+
+      <form id="profile-form" class="onboarding-only profile-form mt-6 flex w-full max-w-xs flex-col gap-2" novalidate autocomplete="on">
+        <p class="text-sm font-bold text-foreground" data-i18n="profileTitle">Seni tanıyalım</p>
+        <input id="pf-first" name="given-name" type="text" autocomplete="given-name" maxlength="40" data-i18n-placeholder="profileFirst" placeholder="Ad">
+        <input id="pf-last" name="family-name" type="text" autocomplete="family-name" maxlength="40" data-i18n-placeholder="profileLast" placeholder="Soyad">
+        <input id="pf-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" data-i18n-placeholder="profileEmail" placeholder="E-posta">
+        <p id="pf-err" class="err" role="alert"></p>
+        <p class="text-[11px] leading-4 text-muted-foreground" data-i18n="profilePrivacy">Bilgilerin yalnızca bu telefonda kalır; sunucuya gönderilmez.</p>
+      </form>
+      <button id="btn-start" class="onboarding-only mt-4 flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-theme bg-primary text-sm font-bold text-primary-foreground shadow-[0_0_24px_rgba(57,215,255,0.3)]">
         <span data-i18n="onboardCta">Ücretsiz Başla</span>
         <iconify-icon icon="lucide:arrow-right" class="text-lg"></iconify-icon>
       </button>
-      <p class="onboarding-only mt-3 text-[11px] text-muted-foreground" data-i18n="onboardNote">İstediğin zaman iptal edebilirsin.</p>
+      <p class="onboarding-only trial-only mt-3 text-[11px] text-muted-foreground" data-i18n="onboardNote">İstediğin zaman iptal edebilirsin.</p>
     </main>
   </div>
 
@@ -170,12 +191,11 @@
       'use strict';
 
       // Dönen (zaten onboarding'i tamamlamış) kullanıcı: bu ekranı marka/slogan
-      // ekranı ("splash") olarak ~6 saniye göster, sonra otomatik olarak
+      // ekranı ("splash") olarak ~3 saniye göster, sonra otomatik olarak
       // anasayfaya geç. Ekrana dokunan beklemeden geçebilir. Onboarding akışının
       // geri kalanı (üyelik, deneme süresi vb.) bu durumda hiç çalıştırılmaz.
-      var SPLASH_MS = 6000;
-      var isReturningUser = false;
-      try { isReturningUser = localStorage.getItem('one-onboarded') === '1'; } catch (e) {}
+      var SPLASH_MS = 3000;
+      var isReturningUser = document.documentElement.classList.contains('returning-user');
       if (isReturningUser) {
         var splashTimer = setTimeout(goHome, SPLASH_MS);
         function goHome() { clearTimeout(splashTimer); location.replace('asistan.html'); }
@@ -198,27 +218,55 @@
           localStorage.setItem('one-onboarded', '1');
           localStorage.setItem('one-trial-start', new Date().toISOString().slice(0, 10));
         } catch (e) {}
-        location.href = 'asistan.html';
+        location.href = 'rutin.html';
       }
 
-      document.getElementById('btn-start').addEventListener('click', function () {
-        var id = getSubId();
-        // Sunucuya yeni üye kaydını bildir (ana ekrandaki gerçek üye
-        // sayacı için). `keepalive: true` önemli: bunsuz, hemen ardından
-        // yaptığımız sayfa yönlendirmesi tarayıcının bu isteği yarıda kesip
-        // iptal etmesine (net::ERR_ABORTED) yol açabilir — test sırasında
-        // tam da bunu tespit ettim. keepalive, istek arka planda devam
-        // ederken sayfadan hemen çıkabilmemizi sağlıyor; kullanıcıyı ağ
-        // isteğinin bitmesini bekletmemize gerek kalmıyor.
-        try {
-          fetch('/api/member-count', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id }),
-            keepalive: true,
-          }).catch(function () {});
-        } catch (e) {}
-        goToApp();
+      var needProfile = document.documentElement.classList.contains('need-profile');
+      var btn = document.getElementById('btn-start');
+      var errEl = document.getElementById('pf-err');
+      var busy = false;
+      function tr(key, fb) { try { var v = window.ONE_I18N && window.ONE_I18N.t(key); return v && v !== key ? v : fb; } catch (e) { return fb; } }
+      try {
+        var old = window.ONE_PROFILE && window.ONE_PROFILE.get();
+        if (old) {
+          document.getElementById('pf-first').value = old.first || '';
+          document.getElementById('pf-last').value = old.last || '';
+          document.getElementById('pf-email').value = old.email || '';
+        }
+      } catch (e) {}
+
+      // Üye sayacına kayıt: en çok ~3 sn beklenir, başarılıysa bir daha denenmez.
+      function registerMember(id) {
+        var done = false;
+        try { done = localStorage.getItem('one-member-ok') === '1'; } catch (e) {}
+        if (done || typeof fetch !== 'function') return Promise.resolve();
+        var timeout = new Promise(function (res) { setTimeout(res, 3000); });
+        var req = fetch('/api/member-count', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id }),
+          keepalive: true,
+        }).then(function (r) {
+          if (r && r.ok) { try { localStorage.setItem('one-member-ok', '1'); } catch (e) {} }
+        }).catch(function () {});
+        return Promise.race([req, timeout]);
+      }
+
+      document.getElementById('profile-form').addEventListener('submit', function (e) { e.preventDefault(); btn.click(); });
+      btn.addEventListener('click', function () {
+        if (busy) return;
+        var p = {
+          first: document.getElementById('pf-first').value,
+          last: document.getElementById('pf-last').value,
+          email: document.getElementById('pf-email').value,
+        };
+        if (!String(p.first).trim() || !String(p.last).trim()) { errEl.textContent = tr('profileErrName', 'Lütfen adını ve soyadını yaz.'); return; }
+        if (!window.ONE_PROFILE.emailOk(p.email)) { errEl.textContent = tr('profileErrEmail', 'Geçerli bir e-posta adresi yaz.'); return; }
+        errEl.textContent = '';
+        window.ONE_PROFILE.set(p);   // yalnızca bu cihazda saklanır
+        busy = true;
+        if (needProfile) { location.href = 'asistan.html'; return; }
+        registerMember(getSubId()).then(goToApp, goToApp);
       });
     })();
   </script>

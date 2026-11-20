@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Hemcan Steps</string>
+    <string name="widget_description">Daily steps, distance and calories on your home screen.</string>
+    <string name="widget_steps_unit">steps</string>
+    <string name="widget_hint">Open Hemcan and allow activity access</string>
+</resources>

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="native.js"></script>
+  <script src="profile.js"></script>
   <title>Otomasyonlar — Hemcan</title>
 
   <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
@@ -147,25 +148,29 @@
       </main>
 
       <nav data-fv-tabbar class="fixed bottom-5 left-3 right-3 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-1 shadow-2xl backdrop-blur-2xl">
-        <a data-fv-tab="Asistan" href="asistan.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 rounded-[17px] px-1 text-muted-foreground">
+        <a data-fv-tab="Asistan" href="asistan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabAssistant">Asistan</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabAssistant">Asistan</span>
         </a>
-        <a data-fv-tab="Otomasyonlar" data-fv-tab-active="true" href="otomasyonlar.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-3 text-primary ring-1 ring-primary/35">
+        <a data-fv-tab="Otomasyonlar" data-fv-tab-active="true" href="otomasyonlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-0.5 text-primary ring-1 ring-primary/35">
           <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-bold" data-i18n="tabAutomations">Otomasyonlar</span>
+          <span class="max-w-full truncate text-[9px] font-bold" data-i18n="navAutomations">Otomasyonlar</span>
         </a>
-        <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 px-1 text-muted-foreground">
+        <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:brain-circuit" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabMemory">Bellek</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabMemory">Bellek</span>
         </a>
-        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 px-1 text-muted-foreground">
+        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
         </a>
-        <a data-fv-tab="Hedefler" href="hedefler.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 px-1 text-muted-foreground">
+        <a data-fv-tab="Hedefler" href="hedefler.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:target" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabGoals">Hedeflerimiz</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="navGoals">Hedeflerimiz</span>
+        </a>
+        <a data-fv-tab="Hemcan" href="hemcan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
+          <iconify-icon icon="lucide:heart-handshake" class="text-xl"></iconify-icon>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabHemcan">Hemcan</span>
         </a>
       </nav>
     </div>
@@ -257,9 +262,15 @@
         return (typeof Notification !== 'undefined') ? Notification.permission : 'default';
       }
 
-      function card(icon, title, timeLabel, desc) {
+      function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+      function isOff(s, key) {
+        if (key === 'alarm') return s.alarmOn !== true || (Array.isArray(s.off) && s.off.indexOf('alarm') !== -1);
+        return Array.isArray(s.off) && s.off.indexOf(key) !== -1;
+      }
+
+      function card(icon, title, timeLabel, desc, off) {
         return (
-          '<article class="rounded-[22px] border border-border bg-card p-4 shadow-lg">' +
+          '<article class="rounded-[22px] border border-border bg-card p-4 shadow-lg' + (off ? ' opacity-50' : '') + '">' +
             '<div class="flex items-start gap-3">' +
               '<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-theme bg-primary/12 text-primary">' +
                 '<iconify-icon icon="' + icon + '" class="text-xl"></iconify-icon>' +
@@ -267,7 +278,7 @@
               '<div class="min-w-0 flex-1">' +
                 '<div class="flex items-center justify-between gap-2">' +
                   '<h3 class="font-heading text-sm font-semibold leading-5">' + title + '</h3>' +
-                  '<span class="shrink-0 text-xs font-bold text-primary">' + timeLabel + '</span>' +
+                  '<span class="shrink-0 text-xs font-bold ' + (off ? 'text-muted-foreground' : 'text-primary') + '">' + (off ? t('autoDisabled') : timeLabel) + '</span>' +
                 '</div>' +
                 '<p class="mt-1 text-xs leading-5 text-muted-foreground">' + desc + '</p>' +
               '</div>' +
@@ -303,30 +314,47 @@
         }
 
         var items = [
-          ['lucide:dumbbell', t('autoCard2Title'), s.wakeTime + ' + 15' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s)],
-          ['lucide:sunrise', t('autoCard1Title'), s.wakeTime + ' + 60' + min, t('autoCard1Desc')],
-          ['lucide:droplets', t('autoCardWaterTitle'), s.wakeTime + ' + 120' + min + ', + 480' + min, t('autoCardWaterDesc')],
-          ['lucide:door-open', t('autoCard4Title'), s.homeTime, t('autoCard4Desc')],
-          ['lucide:heart', t('autoCardEveGratTitle'), s.homeTime + ' + 60' + min, t('autoCardEveGratDesc')],
-          ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 90' + min, t('autoCard5Desc', { pages: s.pages })],
-          ['lucide:smile', t('autoCard6Title'), s.bedTime + ' - 60' + min, t('autoCard6Desc')],
-          ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 30' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s)],
-          ['lucide:bed', t('autoCard8Title'), s.bedTime, t('autoCard8Desc')],
+          ['lucide:dumbbell', t('autoCard2Title'), s.wakeTime + ' + 15' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s), 'exercise'],
+          ['lucide:sunrise', t('autoCard1Title'), s.wakeTime + ' + 60' + min, t('autoCard1Desc'), 'wake'],
+          ['lucide:droplets', t('autoCardWaterTitle'), s.wakeTime + ' + 120' + min + ', + 480' + min, t('autoCardWaterDesc'), 'water'],
+          ['lucide:door-open', t('autoCard4Title'), s.homeTime, t('autoCard4Desc'), 'home'],
+          ['lucide:heart', t('autoCardEveGratTitle'), s.homeTime + ' + 60' + min, t('autoCardEveGratDesc'), 'gratitude'],
+          ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 90' + min, t('autoCard5Desc', { pages: s.pages }), 'reading'],
+          ['lucide:smile', t('autoCard6Title'), s.bedTime + ' - 60' + min, t('autoCard6Desc'), 'teeth'],
+          ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 30' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s), 'exerciseEvening'],
+          ['lucide:bed', t('autoCard8Title'), s.bedTime, t('autoCard8Desc'), 'bed'],
+          ['lucide:sparkles', t('autoCardQuoteTitle'), '10:00', t('autoCardQuoteDesc'), 'quote'],
+          ['lucide:alarm-clock', t('autoCardAlarmTitle'), s.wakeTime, t('autoCardAlarmDesc'), 'alarm'],
         ];
-        container.innerHTML = items.map(function (it) { return card(it[0], it[1], it[2], it[3]); }).join('');
-        countEl.textContent = t('autoCountLabel', { n: items.length });
+        container.innerHTML = items.map(function (it) { return card(it[0], it[1], it[2], it[3], isOff(s, it[4])); }).join('');
+        countEl.textContent = t('autoCountLabel', { n: items.filter(function (it) { return !isOff(s, it[4]); }).length });
 
         var remSection = document.getElementById('reminders-section');
         var remList = document.getElementById('reminders-list');
         if (reminders.length > 0) {
           remSection.classList.remove('hidden');
           remList.innerHTML = reminders.map(function (r) {
-            var text = typeof r === 'string' ? r : (r.text || '');
+            var text = esc(typeof r === 'string' ? r : (r.text || ''));
+            var rr = (r && typeof r === 'object') ? r : {};
+            var pastAt = rr.at ? new Date(rr.at) : null;
+            var done = !rr.repeat && !!(rr.done || (pastAt && !isNaN(pastAt.getTime()) && pastAt.getTime() <= Date.now()));
             var at = (r && typeof r === 'object' && r.at) ? r.at : null;
-            var timeHtml = at ? '<div class="mt-0.5 flex items-center gap-1 text-xs font-semibold text-primary"><iconify-icon icon="lucide:bell" class="text-xs"></iconify-icon>' + formatReminderAt(at) + '</div>' : '';
-            return '<div class="p-4 text-sm text-card-foreground">' + text + timeHtml + '</div>';
+            var timeHtml = at ? '<div class="mt-0.5 flex items-center gap-1 text-xs font-semibold text-primary"><iconify-icon icon="lucide:bell" class="text-xs"></iconify-icon>' + (rr.repeat ? repeatLabel(rr) : formatReminderAt(at)) + (done ? ' · ✓ ' + esc(t('reminderDone')) : '') + '</div>' : '';
+            return '<div class="p-4 text-sm text-card-foreground' + (done ? ' opacity-60' : '') + '">' + text + timeHtml + '</div>';
           }).join('');
         }
+      }
+      function repeatLabel(r) {
+        var d = new Date(r.at);
+        if (isNaN(d.getTime())) return '';
+        var p2 = function (n) { return ('0' + n).slice(-2); };
+        var hm = p2(d.getHours()) + ':' + p2(d.getMinutes());
+        var days = t('weekdayNames').split(',');
+        if (r.repeat === 'daily') return esc(t('reminderRepDaily', { t: hm }));
+        if (r.repeat === 'weekly') return esc(t('reminderRepWeekly', { d: days[d.getDay()] || '', t: hm }));
+        if (r.repeat === 'monthly') return esc(t('reminderRepMonthly', { n: d.getDate(), t: hm }));
+        if (r.repeat === 'hours') return esc(t('reminderRepHours', { n: r.every || 3 }));
+        return '';
       }
       function formatReminderAt(at) {
         var d = new Date(at);

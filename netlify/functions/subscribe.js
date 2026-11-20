@@ -53,6 +53,7 @@ exports.handler = async (event) => {
       // mevcut liste korunur; boş dizi [] gönderilirse tamamen temizlenir.
       reminders: Array.isArray(reminders) ? reminders : (existing.reminders || []),
       state: existing.state || { date: '' },
+      remSent: existing.remSent || {},
       updatedAt: new Date().toISOString(),
     };
 

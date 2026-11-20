@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="native.js"></script>
+  <script src="profile.js"></script>
   <title>Asistan — Hemcan</title>
 
   <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
@@ -149,6 +150,17 @@
       </header>
 
       <main class="relative px-5 pt-5">
+        <a id="routine-card" href="rutin.html" class="mb-4 hidden items-center gap-3 rounded-[24px] border border-primary/30 bg-primary/5 p-4">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-theme bg-primary/15 text-primary">
+            <iconify-icon icon="lucide:clock" class="text-2xl"></iconify-icon>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="routineCardTitle">Günlük rutinini ayarla</h2>
+            <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="routineCardDesc">Uyanış, eve geliş ve yatış saatini söyle; bildirimler sana göre gelsin.</p>
+          </div>
+          <iconify-icon icon="lucide:chevron-right" class="text-lg text-muted-foreground"></iconify-icon>
+        </a>
+
         <section id="good-news-section" class="rounded-[24px] border border-accent/25 bg-accent/5 p-4">
           <div class="flex items-center gap-2.5">
             <iconify-icon icon="lucide:sparkle" class="text-lg text-accent"></iconify-icon>
@@ -196,6 +208,36 @@
           </div>
           <iconify-icon icon="lucide:chevron-right" class="text-lg text-muted-foreground"></iconify-icon>
         </a>
+
+        <section id="adim" class="mt-4 hidden rounded-[24px] border border-primary/25 bg-primary/5 p-4">
+          <div class="flex items-center gap-2.5">
+            <iconify-icon icon="lucide:footprints" class="text-lg text-primary"></iconify-icon>
+            <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="stepsTitle">Adım sayar</h2>
+          </div>
+          <div class="mt-3 flex items-end justify-between gap-3">
+            <p class="font-heading text-3xl font-bold tracking-tight text-foreground"><span id="steps-count">0</span> <span class="text-sm font-semibold text-muted-foreground" data-i18n="stepsUnit">adım</span></p>
+            <p id="steps-meta" class="text-[11px] text-muted-foreground" dir="ltr">0.00 km · 0 kcal</p>
+          </div>
+          <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-card">
+            <div id="steps-bar" class="h-full rounded-full bg-primary transition-[width] duration-500" style="width:0%"></div>
+          </div>
+          <p id="steps-goal" class="mt-2 text-[11px] text-muted-foreground" data-i18n="stepsGoalLine">Hedef: 10.000 adım</p>
+          <p id="steps-done" class="mt-2 hidden text-xs font-semibold leading-5 text-success" data-i18n="stepsGoalReached">Tebrikler! Günlük 10 bin adım hedefine ulaştın 🎉</p>
+          <button type="button" id="steps-allow" class="mt-3 hidden h-11 w-full rounded-theme bg-primary text-xs font-bold text-primary-foreground" data-i18n="stepsAllow">Adım sayar için izin ver</button>
+          <p id="steps-denied" class="mt-2 hidden text-[11px] leading-5 text-muted-foreground" data-i18n="stepsDenied">İzin kapalı. Telefon ayarlarından Hemcan için fiziksel aktivite iznini aç.</p>
+        </section>
+
+        <a id="kalori-card" href="kalori.html" class="mt-4 flex items-center gap-3 rounded-[24px] border border-chart5/25 bg-chart5/5 p-4">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-theme bg-chart5/15 text-chart5">
+            <iconify-icon icon="lucide:flame" class="text-2xl"></iconify-icon>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h2 class="font-heading text-sm font-semibold text-chart5" data-i18n="kcalCardTitle">Kalori takibi</h2>
+            <p id="kalori-card-line" class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="kcalCardDesc">Yediklerini yaz, kalorisini otomatik hesaplayalım.</p>
+          </div>
+          <iconify-icon icon="lucide:chevron-right" class="text-lg text-muted-foreground"></iconify-icon>
+        </a>
+
 
 
         <section class="mt-5 rounded-[24px] border border-primary/25 bg-primary/5 p-4">
@@ -337,25 +379,29 @@
       </main>
 
       <nav data-fv-tabbar class="fixed bottom-5 left-3 right-3 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-1 shadow-2xl backdrop-blur-2xl">
-        <a data-fv-tab="Asistan" data-fv-tab-active="true" href="asistan.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-3 text-primary ring-1 ring-primary/35">
+        <a data-fv-tab="Asistan" data-fv-tab-active="true" href="asistan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-0.5 text-primary ring-1 ring-primary/35">
           <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-bold" data-i18n="tabAssistant">Asistan</span>
+          <span class="max-w-full truncate text-[9px] font-bold" data-i18n="tabAssistant">Asistan</span>
         </a>
-        <a data-fv-tab="Otomasyonlar" href="otomasyonlar.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 rounded-[17px] px-1 text-muted-foreground">
+        <a data-fv-tab="Otomasyonlar" href="otomasyonlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabAutomations">Otomasyonlar</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="navAutomations">Otomasyonlar</span>
         </a>
-        <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 px-1 text-muted-foreground">
+        <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:brain-circuit" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabMemory">Bellek</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabMemory">Bellek</span>
         </a>
-        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 px-1 text-muted-foreground">
+        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
         </a>
-        <a data-fv-tab="Hedefler" href="hedefler.html" class="flex h-12 min-w-[56px] flex-col items-center justify-center gap-1 px-1 text-muted-foreground">
+        <a data-fv-tab="Hedefler" href="hedefler.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:target" class="text-xl"></iconify-icon>
-          <span class="text-[10px] font-semibold" data-i18n="tabGoals">Hedeflerimiz</span>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="navGoals">Hedeflerimiz</span>
+        </a>
+        <a data-fv-tab="Hemcan" href="hemcan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
+          <iconify-icon icon="lucide:heart-handshake" class="text-xl"></iconify-icon>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabHemcan">Hemcan</span>
         </a>
       </nav>
     </div>
@@ -977,7 +1023,8 @@
       function applyGreeting() {
         var el = document.getElementById('greeting-text');
         if (!el || !window.ONE_I18N || !window.ONE_I18N.t) return;
-        el.textContent = window.ONE_I18N.t(currentGreetingKey());
+        var nm = (window.ONE_PROFILE && window.ONE_PROFILE.firstName()) || '';
+        el.textContent = window.ONE_I18N.t(currentGreetingKey()) + (nm ? ' ' + nm : '');
       }
       window.addEventListener('one-lang-changed', applyGreeting);
       // Kullanıcı uygulamayı arka planda bırakıp saatler sonra geri
@@ -986,6 +1033,78 @@
         if (!document.hidden) applyGreeting();
       });
       applyGreeting();
+    })();
+  </script>
+  <script>
+    // Adım sayar + kalori kartı + üye sayacı kendini onarma.
+    (function () {
+      'use strict';
+      var GOAL = 10000;
+      function T(k, fb, v) { try { var x = window.ONE_I18N.t(k, v); return x && x !== k ? x : fb; } catch (e) { return fb; } }
+      function fmt(n) { try { return n.toLocaleString(window.ONE_I18N.getLang()); } catch (e) { return String(n); } }
+      var N = window.ONE_NATIVE;
+
+      // --- Adım kartı (yalnızca uygulamada) ---
+      var card = document.getElementById('adim');
+      function paintSteps(n) {
+        document.getElementById('steps-count').textContent = fmt(n);
+        document.getElementById('steps-meta').textContent = (n * 0.00075).toFixed(2) + ' km · ' + Math.round(n * 0.03) + ' kcal';
+        document.getElementById('steps-bar').style.width = Math.min(100, n / GOAL * 100) + '%';
+        document.getElementById('steps-done').classList.toggle('hidden', n < GOAL);
+      }
+      function loadSteps() {
+        if (!N || !N.stepsSupported || !N.stepsSupported()) return;
+        card.classList.remove('hidden');
+        N.stepsToday().then(function (r) {
+          var allow = document.getElementById('steps-allow'), denied = document.getElementById('steps-denied');
+          if (r.perm === 'granted') { allow.classList.add('hidden'); denied.classList.add('hidden'); paintSteps(r.steps || 0); }
+          else if (r.perm === 'denied') { allow.classList.add('hidden'); denied.classList.remove('hidden'); paintSteps(0); }
+          else { allow.classList.remove('hidden'); denied.classList.add('hidden'); paintSteps(0); }
+        }).catch(function () {});
+      }
+      var allowBtn = document.getElementById('steps-allow');
+      if (allowBtn) allowBtn.addEventListener('click', function () {
+        N.stepsRequest().then(function () { loadSteps(); });
+      });
+      loadSteps();
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) loadSteps(); });
+      setInterval(function () { if (!document.hidden) loadSteps(); }, 60000);
+
+      // --- Rutin kartı: uyanış / eve geliş / yatış saati hiç ayarlanmadıysa yönlendir ---
+      try {
+        var rs = JSON.parse(localStorage.getItem('one-notif-settings') || '{}') || {};
+        var routineSet = localStorage.getItem('one-routine-set') === '1' || !!rs.wakeTime;
+        if (!routineSet && localStorage.getItem('one-onboarded') === '1') {
+          var rc = document.getElementById('routine-card'); rc.classList.remove('hidden'); rc.classList.add('flex');
+        }
+      } catch (e) {}
+
+      // --- Kalori kartı ---
+      function loadKcal() {
+        var line = document.getElementById('kalori-card-line');
+        var st = null;
+        try { st = JSON.parse(localStorage.getItem('one-kcal') || 'null'); } catch (e) {}
+        if (!st || !st.days) return;
+        var d = new Date();
+        var key = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+        var list = st.days[key] || [];
+        var sum = 0; list.forEach(function (e) { sum += Number(e.k) || 0; });
+        if (!list.length) return;
+        line.removeAttribute('data-i18n');
+        line.textContent = T('kcalCardLine', '{k} / {l} kcal', { k: fmt(Math.round(sum)), l: fmt(st.limit || 2000) });
+      }
+      loadKcal();
+      window.addEventListener('one-lang-changed', function () { loadKcal(); loadSteps(); });
+
+      // --- Üye sayacı: kaydı hiç ulaşmamış cihazlar için bir kez daha dene ---
+      try {
+        if (localStorage.getItem('one-onboarded') === '1' && localStorage.getItem('one-member-ok') !== '1' && typeof fetch === 'function') {
+          var id = localStorage.getItem('one-sub-id');
+          if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : 'one-' + Date.now() + '-' + Math.random().toString(36).slice(2)); localStorage.setItem('one-sub-id', id); }
+          fetch('/api/member-count', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) })
+            .then(function (r) { if (r && r.ok) localStorage.setItem('one-member-ok', '1'); }).catch(function () {});
+        }
+      } catch (e) {}
     })();
   </script>
 </body>

@@ -55,6 +55,8 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSMotionUsageDescription</key>
+	<string>Hemcan, günlük adım sayını göstermek için hareket ve adım verilerine erişir. Veri yalnızca bu cihazda kalır.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>

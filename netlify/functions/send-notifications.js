@@ -21,6 +21,7 @@
 const webpush = require('web-push');
 const { getStore, connectLambda } = require('@netlify/blobs');
 const { LANG_NAMES, getCached, generateAndCache } = require('./_good-news-core');
+const QUOTES = require('./_quotes');
 
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
@@ -44,7 +45,7 @@ const CONTENT = {
       title: 'Su vakti 💧',
       body: 'Günde 2-3 litre su tüketmen önemli. Ne kadar içtiysen aşağıdan ekle, günlük toplamını uygulamada gör.',
     },
-    exercise: (p, sq, s, extra) => ({ title: 'Sabah sporu zamanı 💪', body: `Hadi başlayalım: ${p} şınav, ${sq} squat, ${s} mekik${extra}. Kendini nasıl hissettiğini merak ediyorum.` }),
+    exercise: (p, sq, s, extra) => ({ title: 'Sabah sporu zamanı 💪', body: `Hadi başlayalım: ${p} şınav, ${sq} squat, ${s} mekik${extra}. Kendini nasıl hissettiğini merak ediyorum. Unutma: günde ${p} şınav, ayda ${p * 30}, yılda ${p * 360} şınav demek!` }),
     home: {
       title: 'Günü kapatıyoruz 🙏',
       body: 'Çok şükür, bugünü de bitirdik. Umarım her şey yolundadır. Hatırlatmamı istediğin bir şey var mı?',
@@ -57,7 +58,7 @@ const CONTENT = {
       title: 'Günlük 10 bin adım 🚶',
       body: 'Günde 10 bin adım atmak sağlığın için çok önemli — iş bitimine kadar tamamlayabilecek misin? Değilsen, akşam işten sonra ya da eve varınca biraz yürüyüş yapmayı unutma :)',
     },
-    reading: (pages) => ({ title: 'Kitap vakti 📖', body: `Bugün en az ${pages} sayfa okudun mu? Birkaç sayfa bile kendine güzel bir ara.` }),
+    reading: (pages) => ({ title: 'Kitap vakti 📖', body: `Bugün en az ${pages} sayfa okudun mu? Günde ${pages} sayfa kitap, ayda ${pages * 30}, senede ${pages * 360} sayfa demek! Birkaç sayfa bile kendine güzel bir ara.` }),
     teeth: {
       title: 'Diş sağlığı hatırlatması 🦷',
       body: 'Dişlerini fırçaladın mı? Diş sağlığı çok önemli.',
@@ -86,7 +87,7 @@ const CONTENT = {
       title: 'Water time 💧',
       body: "Drinking 2-3 litres of water a day matters. Add what you've had below and see your daily total in the app.",
     },
-    exercise: (p, sq, s, extra) => ({ title: 'Morning workout time 💪', body: `Let's go: ${p} push-ups, ${sq} squats, ${s} sit-ups${extra}. Curious how you'll feel after.` }),
+    exercise: (p, sq, s, extra) => ({ title: 'Morning workout time 💪', body: `Let's go: ${p} push-ups, ${sq} squats, ${s} sit-ups${extra}. Curious how you'll feel after. Remember: ${p} push-ups a day is ${p * 30} a month and ${p * 360} a year!` }),
     home: {
       title: 'Wrapping up the day 🙏',
       body: "Thank goodness, we made it through today too. I hope everything's alright. Is there anything you'd like me to remind you of?",
@@ -99,7 +100,7 @@ const CONTENT = {
       title: '10,000 steps a day 🚶',
       body: "Walking 10,000 steps a day matters a lot for your health — can you finish by end of work? If not, don't forget a walk this evening after work or once you're home :)",
     },
-    reading: (pages) => ({ title: 'Reading time 📖', body: `Did you read at least ${pages} pages today? Even a few pages is a nice moment for yourself.` }),
+    reading: (pages) => ({ title: 'Reading time 📖', body: `Did you read at least ${pages} pages today? ${pages} pages a day is ${pages * 30} a month and ${pages * 360} a year! Even a few pages is a nice moment for yourself.` }),
     teeth: {
       title: 'Dental health reminder 🦷',
       body: 'Did you brush your teeth? Dental health matters.',
@@ -213,6 +214,51 @@ function isDue(target, nowDateStr, nowMin) {
   if (target.dateStr > nowDateStr) return false;
   return target.minutes <= nowMin;
 }
+
+
+// ---- Tekrarlayan hatırlatmalar (her gün / haftada bir / ayda bir / N saatte bir) ----
+function dayNumber(dateStr) {
+  const p = dateStr.split('-').map(Number);
+  return Math.floor(Date.UTC(p[0], p[1] - 1, p[2]) / 86400000);
+}
+function daysInMonth(y, m) { return new Date(Date.UTC(y, m, 0)).getUTCDate(); }
+// Bir hatırlatmanın şu ana kadarki en son oluşumu (dakika cinsinden "mutlak" zaman) ya da null.
+function latestOccurrence(rem, nowDateStr, nowMin) {
+  const a = parseAt(rem.at);
+  if (!a) return null;
+  const nowDay = dayNumber(nowDateStr), aDay = dayNumber(a.dateStr);
+  const nowTotal = nowDay * 1440 + nowMin, aTotal = aDay * 1440 + a.minutes;
+  if (nowTotal < aTotal) return null;
+  let day = nowDay;
+  if (nowMin < a.minutes) day -= 1;
+  if (rem.repeat === 'daily') {
+    if (day < aDay) return null;
+    return day * 1440 + a.minutes;
+  }
+  if (rem.repeat === 'weekly') {
+    day -= (((day - aDay) % 7) + 7) % 7;
+    if (day < aDay) return null;
+    return day * 1440 + a.minutes;
+  }
+  if (rem.repeat === 'monthly') {
+    const dom = parseInt(a.dateStr.slice(8, 10), 10);
+    const ny = parseInt(nowDateStr.slice(0, 4), 10), nm = parseInt(nowDateStr.slice(5, 7), 10);
+    for (let back = 0; back < 3; back++) {
+      let y = ny, m = nm - back;
+      while (m < 1) { m += 12; y -= 1; }
+      const cand = Math.floor(Date.UTC(y, m - 1, Math.min(dom, daysInMonth(y, m))) / 86400000) * 1440 + a.minutes;
+      if (cand <= nowTotal && cand >= aTotal) return cand;
+    }
+    return null;
+  }
+  if (rem.repeat === 'hours') {
+    const step = Math.max(1, parseInt(rem.every, 10) || 3) * 60;
+    const k = Math.floor((nowTotal - aTotal) / step);
+    return aTotal + k * step;
+  }
+  return null;
+}
+function remKey(r) { return String(r.createdAt || '') + '|' + String(r.text || '').slice(0, 40); }
 
 async function sendPush(subscription, payload) {
   try {
@@ -333,14 +379,26 @@ exports.handler = async (event) => {
     // gönderildikten (ya da başarısız da olsa denendikten) sonra listeden
     // düşecekler; "at" alanı boş olanlar (eski, zamansız notlar) hiç
     // dokunulmadan listede kalmaya devam eder.
+    // Tek seferlikler gönderildikten sonra listeden SİLİNMEZ (kalıcılık); hangilerinin gönderildiği
+    // record.remSent içinde tutulur. Tekrarlayanlarda en son gönderilen oluşum zamanı saklanır.
+    const remSent = (record.remSent && typeof record.remSent === 'object') ? record.remSent : {};
     const dueReminders = [];
-    const remainingReminders = [];
+    const nowTotal = dayNumber(dateStr) * 1440 + nowMin;
+    let remStateTouched = false;
     for (const rem of reminders) {
-      const target = rem && parseAt(rem.at);
-      if (target && isDue(target, dateStr, nowMin)) {
-        dueReminders.push(rem);
+      if (!rem || !rem.at) continue;
+      const key = remKey(rem);
+      if (rem.repeat) {
+        const occ = latestOccurrence(rem, dateStr, nowMin);
+        if (occ === null || (remSent[key] !== undefined && remSent[key] >= occ)) continue;
+        const hh = Math.floor((occ % 1440) / 60);
+        const recent = nowTotal - occ <= 120;
+        const quiet = rem.repeat === 'hours' && (hh < 7 || hh >= 23);
+        if (recent && !quiet) { dueReminders.push({ rem, key, occ }); }
+        else { remSent[key] = occ; remStateTouched = true; }
       } else {
-        remainingReminders.push(rem);
+        const target = parseAt(rem.at);
+        if (target && isDue(target, dateStr, nowMin) && remSent[key] === undefined) dueReminders.push({ rem, key, occ: 1 });
       }
     }
 
@@ -372,6 +430,26 @@ exports.handler = async (event) => {
       toSend.push(['sentBed', c.bed]);
     }
 
+    // Günün sözü (her gün 10:00) ve nazik uyanış bildirimi (yalnızca kullanıcı açtıysa).
+    const dayNum = Math.floor(Date.UTC(+dateStr.slice(0, 4), +dateStr.slice(5, 7) - 1, +dateStr.slice(8, 10)) / 86400000);
+    const qlist = QUOTES[lang === 'tr' ? 'tr' : 'en'] || QUOTES.en;
+    if (!state.sentQuote && inWindow(nowMin, 10 * 60, WINDOW_MIN)) {
+      toSend.push(['sentQuote', { title: lang === 'tr' ? 'Günün sözü ✨' : 'Quote of the day ✨', body: qlist[dayNum % qlist.length] }]);
+    }
+    if (settings.alarmOn === true && wakeMin !== null && !state.sentAlarm && inWindow(nowMin, wakeMin, WINDOW_MIN)) {
+      toSend.push(['sentAlarm', lang === 'tr'
+        ? { title: 'Günaydın ☀️', body: 'Yeni güne nazikçe uyanma vakti. Önce bir derin nefes al, sonra yavaşça kalk.' }
+        : { title: 'Good morning ☀️', body: 'Time to wake up gently. Take one deep breath first, then rise slowly.' }]);
+    }
+
+    // Kullanıcının kapattığı bildirim türleri gönderilmez (bayrak "gönderildi" sayılır: zincirler bozulmasın).
+    const OFF_KEY = { sentExercise: 'exercise', sentWake: 'wake', sentWater: 'water', sentWater2: 'water', sentNoonCheck: 'noon', sentSteps: 'steps', sentHome: 'home', sentWakeEvening: 'gratitude', sentReading: 'reading', sentTeeth: 'teeth', sentEveningExercise: 'exerciseEvening', sentBed: 'bed', sentQuote: 'quote', sentAlarm: 'alarm' };
+    const offList = Array.isArray(settings.off) ? settings.off : [];
+    let stateTouched = false;
+    for (let i = toSend.length - 1; i >= 0; i--) {
+      if (offList.indexOf(OFF_KEY[toSend[i][0]]) !== -1) { state[toSend[i][0]] = true; toSend.splice(i, 1); stateTouched = true; }
+    }
+
     let expired = false;
     for (const [flag, notif] of toSend) {
       const result = await sendPush(record.subscription, notif);
@@ -384,10 +462,11 @@ exports.handler = async (event) => {
     // değilse) bir sonraki çalıştırmada tekrar denenmek üzere listede kalır
     // — zamanı zaten geçtiği için isDue() true dönmeye devam edecektir.
     if (!expired) {
-      for (const rem of dueReminders) {
-        const result = await sendPush(record.subscription, { title: c.reminder.title, body: rem.text });
+      for (const due of dueReminders) {
+        const result = await sendPush(record.subscription, { title: c.reminder.title, body: due.rem.text });
         if (result === 'expired') { expired = true; break; }
-        if (result === true) { sent++; } else { remainingReminders.push(rem); }
+        if (result === true) { sent++; remSent[due.key] = due.occ; remStateTouched = true; }
+        // geçici hata: işaretlenmez, bir sonraki çalıştırmada yeniden denenir
       }
     }
 
@@ -397,10 +476,9 @@ exports.handler = async (event) => {
       continue;
     }
 
-    const remindersChanged = remainingReminders.length !== reminders.length;
-    if (toSend.length > 0 || remindersChanged) {
+    if (toSend.length > 0 || remStateTouched || stateTouched) {
       record.state = state;
-      if (remindersChanged) record.reminders = remainingReminders;
+      record.remSent = remSent;
       await store.setJSON(key, record);
     }
   }

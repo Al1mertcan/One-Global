@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Hemcan Adım</string>
+    <string name="widget_description">Günlük adım, mesafe ve kaloriyi ana ekranında göster.</string>
+    <string name="widget_steps_unit">adım</string>
+    <string name="widget_hint">Hemcan\'ı açıp hareket iznini ver</string>
+</resources>
