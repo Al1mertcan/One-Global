@@ -1,5 +1,8 @@
 package app.hemcan.mobile;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -39,5 +42,38 @@ public class StepsPlugin extends Plugin {
                 }
             }
         );
+    }
+
+    /**
+     * Bildirimler bazı telefonlarda (Xiaomi, Oppo, Vivo, Huawei, Samsung ...) pil tasarrufu yüzünden
+     * gelmeyebilir. İlgili sistem ayarını açar: kind = "notifications" | "battery" | "app".
+     */
+    @PluginMethod
+    public void openSettings(PluginCall call) {
+        String kind = call.getString("kind", "app");
+        String pkg = getContext().getPackageName();
+        try {
+            Intent i;
+            if ("notifications".equals(kind)) {
+                i = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                i.putExtra(Settings.EXTRA_APP_PACKAGE, pkg);
+            } else if ("battery".equals(kind)) {
+                i = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+            } else {
+                i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkg));
+            }
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(i);
+            call.resolve();
+        } catch (Exception e) {
+            try {
+                Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkg));
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(i);
+                call.resolve();
+            } catch (Exception e2) {
+                call.reject("Ayar ekranı açılamadı");
+            }
+        }
     }
 }

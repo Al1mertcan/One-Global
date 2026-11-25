@@ -2,6 +2,17 @@
   publish = "."
   functions = "netlify/functions"
 
+# Kaldırılan sekmeler: eski bağlantılar ana sayfaya gitsin.
+[[redirects]]
+  from = "/bellek.html"
+  to = "/asistan.html"
+  status = 302
+
+[[redirects]]
+  from = "/cihazlar.html"
+  to = "/asistan.html"
+  status = 302
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"

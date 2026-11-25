@@ -7,9 +7,14 @@
 - **Adım sayar:** otomatik (elle giriş yok). Android: telefonun donanım adım sayacı, iPhone: Core Motion. Hedef 10.000 adım; hedefe ulaşınca tebrik bildirimi.
 - **Android ana ekran widget'ı:** halka + adım, km, kcal (`StepsWidget`).
 - **Bildirim seçimi (Ayarlar → "Hangi bildirimleri alayım?"):** her bildirim ayrı açılıp kapanır.
-- **Günün sözü:** her gün 10:00, 211 özgün söz (tr + en); aynı söz ~7 ay sonra başa sararak tekrar eder.
+- **Günün sözü:** her gün 10:00, daha vurucu 100 özgün söz (tr + en); aynı söz ~3,5 ay sonra başa sarar.
 - **Tekrarlayan hatırlatmalar:** tek sefer, her gün, haftada bir, ayda bir, N saatte bir (1/2/3/4/6/8/12). "Saatte bir" 23:00–07:00 arası susar; önümüzdeki saatler önceden kurulur, uygulama açıldıkça yenilenir (Android ~2 gün, iPhone ~6 bildirim). Ayın 29–31'inde başlayan aylık hatırlatma kısa aylarda o ayın son gününe kayar (sunucu bildirimi) ya da atlanır (telefon bildirimi).
-- **Nazik uyanış alarmı:** uyanma saatinde yumuşak bildirim (yüksek sesli alarm değil), varsayılan KAPALI.
+- **Güne karşılama:** uyanma saatinde "Günaydın, Ali ☀️" bildirimi (alarm değil), varsayılan AÇIK; Ayarlar'dan kapatılır. Selamlama: 05:00'e kadar "İyi geceler", sonra Günaydın / İyi günler / İyi akşamlar, adın önünde virgül.
+- **Yeni bildirim saatleri:** okuma = eve geliş + 2 saat, akşam sporu = yatmadan 1 saat önce, diş fırçalama = yatmadan yarım saat önce.
+- **Sekmeler:** Bellek ve Cihazlar kaldırıldı; alt menü: Asistan, Hemcan, Hedefler, Otomasyon.
+- **Kalori:** birden çok yiyecek virgül / "ve" / "ile" / "+" / alt satır ile ayrılır; ayırıcı yazılmasa da yeni miktar ("3 yumurta 400 gr tavuk") yeni yiyecek sayılır. Giriş ipucuna uyarı eklendi.
+- **Bildirimler gelmiyor mu? (Android):** Ayarlar'da bildirim ve pil ayarlarını açan düğmeler. Manifestte sensör/donanım özellikleri "zorunlu değil" yapıldı (Play'de daha çok cihaz).
+- **Günlük haber hazırlığı:** her sabah ~09:33'te (10:00'a hazır) yeni 4 haberle güncellenmiş iyi-haberler.json sohbete gelir; sen GitHub'a yüklersin.
 - **Spor / kitap bildirimleri:** günlük / aylık / yıllık toplamlar.
 - **Hemcan sekmesi (`hemcan.html`):** "Hemcan ailesi" (üye sayacı, hedefler) ve "Hemcan ne demek?" yalnızca burada; ana sayfadan kaldırıldı.
 - **Düzeltmeler:** hatırlatmalar artık silinmiyor (zamanı geçenler "Gönderildi" olur, yedeği tutulur); üye sayacı kaydı beklenip doğrulanıyor, kaydı hiç ulaşmamış cihazlar uygulama açılınca bir kez daha deniyor; sunucu sayacı üye listesinden kendini düzeltiyor (5 dk'da bir), hız sınırı hata verirse kayıt engellenmiyor, sayaç önbelleğe alınmıyor. Sunucu düzeltmesi için GitHub'a yükleme şart.

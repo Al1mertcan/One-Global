@@ -32,7 +32,7 @@ const WINDOW_MIN = 15;
 const CONTENT = {
   tr: {
     wake: {
-      title: 'Günaydın 🌅',
+      title: 'Şükür vakti 🌅',
       body: "Bugün yine hayattasın — bunun için şükretmeyi unutma. Sevdiklerinle güzel vakit geçir, çünkü yarın sen ya da sevdiğin biri burada olmayabilir. O yüzden sonra değil, şimdi ve bugün. Hatırlatmamı istediğin bir şey var mı? Unutma, ben her gün buradayım.",
     },
     // wake mesajının akşam tekrarı (eve geliş + 60 dk): aynı metin, "günaydın" başlığı yok.
@@ -75,7 +75,7 @@ const CONTENT = {
   },
   en: {
     wake: {
-      title: 'Good morning 🌅',
+      title: 'Gratitude time 🌅',
       body: "You're alive again today — don't forget to be grateful for that. Spend real time with the people you love, because tomorrow you or someone you love might not be here. So not later — now, today. Anything you'd like me to remind you of? I'm here every day.",
     },
     wakeEvening: {
@@ -417,15 +417,15 @@ exports.handler = async (event) => {
       if (!state.sentWakeEvening && inWindow(nowMin, at(homeMin + 60), WINDOW_MIN)) {
         toSend.push(['sentWakeEvening', c.wakeEvening]);
       }
-      if (!state.sentReading && inWindow(nowMin, at(homeMin + 90), WINDOW_MIN)) {
+      if (!state.sentReading && inWindow(nowMin, at(homeMin + 120), WINDOW_MIN)) {
         toSend.push(['sentReading', c.reading(settings.pages || 5)]);
       }
     }
 
-    if (bedMin !== null && !state.sentTeeth && inWindow(nowMin, bedMin - 60, WINDOW_MIN)) {
-      toSend.push(['sentTeeth', c.teeth]);
-    } else if (bedMin !== null && state.sentTeeth && !state.sentEveningExercise && inWindow(nowMin, bedMin - 30, WINDOW_MIN)) {
+    if (bedMin !== null && !state.sentEveningExercise && inWindow(nowMin, bedMin - 60, WINDOW_MIN)) {
       toSend.push(['sentEveningExercise', c.eveningExercise(settings.pushups || 10, settings.squat || 10, settings.situps || 20, customExerciseSuffix(settings))]);
+    } else if (bedMin !== null && state.sentEveningExercise && !state.sentTeeth && inWindow(nowMin, bedMin - 30, WINDOW_MIN)) {
+      toSend.push(['sentTeeth', c.teeth]);
     } else if (bedMin !== null && settings.notifyBedtime !== false && !state.sentBed && inWindow(nowMin, bedMin, WINDOW_MIN)) {
       toSend.push(['sentBed', c.bed]);
     }
@@ -436,10 +436,10 @@ exports.handler = async (event) => {
     if (!state.sentQuote && inWindow(nowMin, 10 * 60, WINDOW_MIN)) {
       toSend.push(['sentQuote', { title: lang === 'tr' ? 'Günün sözü ✨' : 'Quote of the day ✨', body: qlist[dayNum % qlist.length] }]);
     }
-    if (settings.alarmOn === true && wakeMin !== null && !state.sentAlarm && inWindow(nowMin, wakeMin, WINDOW_MIN)) {
+    if (settings.alarmOn !== false && wakeMin !== null && !state.sentAlarm && inWindow(nowMin, wakeMin, WINDOW_MIN)) {
       toSend.push(['sentAlarm', lang === 'tr'
-        ? { title: 'Günaydın ☀️', body: 'Yeni güne nazikçe uyanma vakti. Önce bir derin nefes al, sonra yavaşça kalk.' }
-        : { title: 'Good morning ☀️', body: 'Time to wake up gently. Take one deep breath first, then rise slowly.' }]);
+        ? { title: 'Günaydın ☀️', body: 'Yeni bir gün, yeni bir şans. Bugün kendine iyi bak; ben buradayım.' }
+        : { title: 'Good morning ☀️', body: "A new day, a new chance. Take good care of yourself today — I'm here." }]);
     }
 
     // Kullanıcının kapattığı bildirim türleri gönderilmez (bayrak "gönderildi" sayılır: zincirler bozulmasın).

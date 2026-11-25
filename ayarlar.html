@@ -86,9 +86,9 @@
         <p class="mt-3 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsNotifExplain">
           Bildirimler, uyanma / eve geliş / yatma saatlerine göre gönderilir: uyanmandan 15 dk sonra
           spor, 1 saat sonra bir minnettarlık mesajı, gün içinde su hatırlatmaları; eve geldiğinde bir
-          "günü kapatma" kontrolü, 1 saat sonra tekrar minnettarlık mesajı, 90 dk sonra okuma
-          hatırlatması; yatmadan 1 saat önce diş sağlığı hatırlatması, 30 dk sonra (yatmadan yarım saat
-          önce) küçük bir akşam sporu, yatma saatinde de günü bırakma nudge'ı.
+          "günü kapatma" kontrolü, 1 saat sonra tekrar minnettarlık mesajı, 2 saat sonra okuma
+          hatırlatması; yatmadan 1 saat önce küçük bir akşam sporu, yatmadan yarım saat önce diş
+          fırçalama hatırlatması, yatma saatinde de günü bırakma nudge'ı.
         </p>
       </section>
 
@@ -96,6 +96,15 @@
         <h2 class="font-heading text-sm font-semibold" data-i18n="notifPrefsTitle">Hangi bildirimleri alayım?</h2>
         <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="notifPrefsHelp">İstemediklerini kapat; yalnızca açık olanlar gelir. Değişiklik için aşağıdaki Kaydet'e bas.</p>
         <ul id="notif-toggles" class="mt-3 divide-y divide-border"></ul>
+      </section>
+
+      <section id="notif-trouble" class="mt-5 hidden rounded-[22px] border border-border bg-card p-4">
+        <h2 class="font-heading text-sm font-semibold" data-i18n="notifTroubleTitle">Bildirimler gelmiyor mu?</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="notifTroubleBody">Bazı telefonlar (Xiaomi, Oppo, Vivo, Huawei, Samsung…) pil tasarrufu için uygulamaları kısıtlar. Bildirimlere izin verildiğinden ve pil kullanımının "Kısıtlama yok" olduğundan emin ol; telefonda "otomatik başlatma" ayarı varsa Hemcan için aç.</p>
+        <div class="mt-3 grid grid-cols-1 gap-2">
+          <button id="btn-open-notif-settings" type="button" class="flex h-11 items-center justify-center gap-2 rounded-theme border border-border bg-secondary text-xs font-semibold" data-i18n="notifTroubleBtnNotif">Bildirim ayarlarını aç</button>
+          <button id="btn-open-battery-settings" type="button" class="flex h-11 items-center justify-center gap-2 rounded-theme border border-border bg-secondary text-xs font-semibold" data-i18n="notifTroubleBtnBattery">Pil ayarlarını aç</button>
+        </div>
       </section>
 
       <section class="mt-5 rounded-[22px] border border-border bg-card p-4">
@@ -333,8 +342,18 @@
         return id;
       }
       // --- Bildirim tercihleri (kapatılanlar settings.off içinde tutulur) ---
-      var offKeys = ['alarm'];
-      var alarmWanted = false;
+      (function () {
+        var N = window.ONE_NATIVE;
+        if (!(N && N.isNative && N.platform === 'android')) return;
+        var box = document.getElementById('notif-trouble');
+        if (box) box.classList.remove('hidden');
+        var b1 = document.getElementById('btn-open-notif-settings');
+        var b2 = document.getElementById('btn-open-battery-settings');
+        if (b1) b1.addEventListener('click', function () { N.openAndroidSettings('notifications'); });
+        if (b2) b2.addEventListener('click', function () { N.openAndroidSettings('battery'); });
+      })();
+      var offKeys = [];
+      var alarmWanted = true;
       var TOGGLES = ['wake', 'exercise', 'water', 'noon', 'steps', 'stepsGoal', 'home', 'gratitude', 'reading', 'teeth', 'exerciseEvening', 'bed', 'quote', 'alarm'];
       function renderToggles() {
         var ul = document.getElementById('notif-toggles');
@@ -404,8 +423,8 @@
           if (saved.situps) counters.situps = saved.situps;
           if (saved.pages) counters.pages = saved.pages;
           if (Array.isArray(saved.off)) offKeys = saved.off.slice();
-          alarmWanted = saved.alarmOn === true;
-          if (!alarmWanted && offKeys.indexOf('alarm') === -1) offKeys.push('alarm'); // alarm varsayılan kapalı
+          alarmWanted = saved.alarmOn !== false; // güne karşılama varsayılan AÇIK
+          if (!alarmWanted && offKeys.indexOf('alarm') === -1) offKeys.push('alarm');
           // Kaydedilmiş bir "ek hareketler" listesi varsa (boş dizi [] dahil,
           // kullanıcı hepsini bilerek silmiş olabilir) onu kullan. Hiç
           // kaydedilmemişse (alan tanımsızsa — ör. bu özellik eklenmeden

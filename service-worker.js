@@ -1,11 +1,9 @@
-const CACHE_NAME = 'one-shell-v19';
+const CACHE_NAME = 'one-shell-v20';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
   './asistan.html',
   './otomasyonlar.html',
-  './bellek.html',
-  './cihazlar.html',
   './hedefler.html',
   './cuzdan.html',
   './cuzdan.js',

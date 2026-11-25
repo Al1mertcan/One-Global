@@ -52,6 +52,15 @@
 
     <!-- Uygulama dikey çalışır; ama "dikey ekran zorunlu" demiyoruz, böylece Play'de daha fazla cihaza (tablet, Chromebook vb.) yüklenebilir. -->
     <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
+    <!-- Sensör / donanım özellikleri "zorunlu değil": adım sensörü olmayan telefonlar da (Play'de görünür, yüklenir) uygulamayı kullanabilir. -->
+    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.faketouch" android:required="false" />
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <!-- Permissions -->
 

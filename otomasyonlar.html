@@ -152,25 +152,17 @@
           <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
           <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabAssistant">Asistan</span>
         </a>
-        <a data-fv-tab="Otomasyonlar" data-fv-tab-active="true" href="otomasyonlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-0.5 text-primary ring-1 ring-primary/35">
-          <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-bold" data-i18n="navAutomations">Otomasyonlar</span>
-        </a>
-        <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
-          <iconify-icon icon="lucide:brain-circuit" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabMemory">Bellek</span>
-        </a>
-        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
-          <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
+        <a data-fv-tab="Hemcan" href="hemcan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
+          <iconify-icon icon="lucide:heart-handshake" class="text-xl"></iconify-icon>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabHemcan">Hemcan</span>
         </a>
         <a data-fv-tab="Hedefler" href="hedefler.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:target" class="text-xl"></iconify-icon>
           <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="navGoals">Hedeflerimiz</span>
         </a>
-        <a data-fv-tab="Hemcan" href="hemcan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
-          <iconify-icon icon="lucide:heart-handshake" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabHemcan">Hemcan</span>
+        <a data-fv-tab="Otomasyonlar" data-fv-tab-active="true" href="otomasyonlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-0.5 text-primary ring-1 ring-primary/35">
+          <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
+          <span class="max-w-full truncate text-[9px] font-bold" data-i18n="navAutomations">Otomasyonlar</span>
         </a>
       </nav>
     </div>
@@ -264,7 +256,7 @@
 
       function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
       function isOff(s, key) {
-        if (key === 'alarm') return s.alarmOn !== true || (Array.isArray(s.off) && s.off.indexOf('alarm') !== -1);
+        if (key === 'alarm') return s.alarmOn === false || (Array.isArray(s.off) && s.off.indexOf('alarm') !== -1);
         return Array.isArray(s.off) && s.off.indexOf(key) !== -1;
       }
 
@@ -319,9 +311,9 @@
           ['lucide:droplets', t('autoCardWaterTitle'), s.wakeTime + ' + 120' + min + ', + 480' + min, t('autoCardWaterDesc'), 'water'],
           ['lucide:door-open', t('autoCard4Title'), s.homeTime, t('autoCard4Desc'), 'home'],
           ['lucide:heart', t('autoCardEveGratTitle'), s.homeTime + ' + 60' + min, t('autoCardEveGratDesc'), 'gratitude'],
-          ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 90' + min, t('autoCard5Desc', { pages: s.pages }), 'reading'],
-          ['lucide:smile', t('autoCard6Title'), s.bedTime + ' - 60' + min, t('autoCard6Desc'), 'teeth'],
-          ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 30' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s), 'exerciseEvening'],
+          ['lucide:book-open', t('autoCard5Title'), s.homeTime + ' + 120' + min, t('autoCard5Desc', { pages: s.pages }), 'reading'],
+          ['lucide:smile', t('autoCard6Title'), s.bedTime + ' - 30' + min, t('autoCard6Desc'), 'teeth'],
+          ['lucide:moon-star', t('autoCard7Title'), s.bedTime + ' - 60' + min, t('autoCardWorkoutDesc', { pushups: s.pushups, squat: s.squat, situps: s.situps }) + customExerciseSuffix(s), 'exerciseEvening'],
           ['lucide:bed', t('autoCard8Title'), s.bedTime, t('autoCard8Desc'), 'bed'],
           ['lucide:sparkles', t('autoCardQuoteTitle'), '10:00', t('autoCardQuoteDesc'), 'quote'],
           ['lucide:alarm-clock', t('autoCardAlarmTitle'), s.wakeTime, t('autoCardAlarmDesc'), 'alarm'],

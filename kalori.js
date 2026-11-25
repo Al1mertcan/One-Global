@@ -710,15 +710,15 @@
       var t = tokens[i];
       var frac = /^(\d+)\/(\d+)$/.exec(t);
       if (frac && +frac[2]) { qty = +frac[1] / +frac[2]; used = i; break; }
-      if (/^\d+([.,]\d+)?$/.test(t)) { qty = parseFloat(t.replace(',', '.')); used = i; break; }
+      if (/^\d+([.,]\d+)?(gr|g|kg|ml|lt|l)?$/.test(t)) { qty = parseFloat(t.replace(',', '.')); used = i; break; }
       if (Object.prototype.hasOwnProperty.call(NUM_WORDS, t)) { qty = NUM_WORDS[t]; used = i; break; }
     }
-    if (qty !== null && /^(bir)$/.test(tokens[used]) && tokens[used + 1] === 'bucuk') qty = 1.5;
+    if (qty !== null && /^(bir|1)$/.test(tokens[used]) && tokens[used + 1] === 'bucuk') qty = 1.5;
     return qty;
   }
 
   function detectUnit(n) {
-    if (/(^| )(kg|kilo|kilogram)( |$)/.test(n)) return { type: 'g', mult: 1000 };
+    if (/(^| )(kg|kilo|kilogram)( |$)/.test(n) || /\dkg( |$)/.test(n)) return { type: 'g', mult: 1000 };
     if (/(^| )(gr|gram|g)( |$)/.test(n) || /\d(gr|g)( |$)/.test(n)) return { type: 'g', mult: 1 };
     if (/(^| )(lt|litre|liter|l)( |$)/.test(n) || /\d(lt|l)( |$)/.test(n)) return { type: 'g', mult: 1000 };
     if (/(^| )(ml)( |$)/.test(n) || /\dml( |$)/.test(n)) return { type: 'g', mult: 1 };
@@ -758,16 +758,47 @@
     return { text: text, food: food.name, qty: count, kcal: Math.max(0, Math.round(kcal)) };
   }
 
+  // --- Çok ürünlü giriş ---
+  // Kullanıcı virgül / "ve" / alt satır kullanmasa bile ("3 yumurta 400 gr tavuk") her yeni
+  // miktar (sayı) yeni bir yiyecek başlatır — ama yalnızca önceki parçada zaten bir yiyecek adı
+  // varsa ("1 su bardağı süt" tek parça kalır, "2 dilim ekmek 1 yumurta" ikiye bölünür).
+  var UNIT_TOKENS = {};
+  ['gr', 'g', 'gram', 'kg', 'kilo', 'kilogram', 'ml', 'lt', 'l', 'litre', 'liter', 'bucuk', 'x'].forEach(function (w) { UNIT_TOKENS[w] = 1; });
+  Object.keys(UNITS_G).concat(COUNT_WORDS).forEach(function (w) { norm(w).split(' ').forEach(function (p) { if (p !== 'su') UNIT_TOKENS[p] = 1; }); });
+  function isQtyToken(t) {
+    return /^\d+([.,]\d+)?(gr|g|kg|ml|lt|l)?$/.test(t) || /^\d+\/\d+$/.test(t) || Object.prototype.hasOwnProperty.call(NUM_WORDS, t);
+  }
+  function splitByQuantity(text) {
+    var tokens = String(text || '').split(/\s+/).filter(Boolean);
+    if (tokens.length < 3) return [String(text || '').trim()].filter(Boolean);
+    var nt = tokens.map(norm);
+    var out = [], start = 0;
+    for (var i = 1; i < tokens.length; i++) {
+      if (!isQtyToken(nt[i]) || isQtyToken(nt[i - 1])) continue;
+      if (nt[i - 1] === 'bucuk' || nt[i - 1] === 'x') continue;
+      if (!isQtyToken(nt[start])) continue; // parça sayıyla başlamıyorsa ("ekmek 2 dilim") bölme
+      var hasFood = false;
+      for (var k = start + 1; k < i; k++) { if (!isQtyToken(nt[k]) && !UNIT_TOKENS[nt[k]]) { hasFood = true; break; } }
+      if (!hasFood) continue;
+      out.push(tokens.slice(start, i).join(' '));
+      start = i;
+    }
+    out.push(tokens.slice(start).join(' '));
+    return out;
+  }
+
   // "2 yumurta, 1 dilim ekmek ve çay" -> [estimate, ...]
   function parse(input) {
     var parts = String(input || '')
-      .split(/[,;\n+]|\s+ve\s+|\s+ile\s+|\s+and\s+|\s+with\s+/i)
+      .split(/[,;\n+&\/]|\s+ve\s+|\s+ile\s+|\s+and\s+|\s+with\s+/i)
       .map(function (s) { return s.trim(); })
       .filter(Boolean);
-    return parts.map(estimate);
+    var phrases = [];
+    parts.forEach(function (p) { splitByQuantity(p).forEach(function (q) { phrases.push(q); }); });
+    return phrases.map(estimate);
   }
 
-  var api = { FOODS: FOODS, norm: norm, findFood: findFood, estimate: estimate, parse: parse };
+  var api = { FOODS: FOODS, norm: norm, findFood: findFood, estimate: estimate, parse: parse, splitByQuantity: splitByQuantity };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else global.ONE_KCAL = api;
 })(typeof window !== 'undefined' ? window : globalThis);

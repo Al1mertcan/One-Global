@@ -320,24 +320,6 @@
           </form>
         </section>
 
-        <section class="mt-6">
-          <div class="mb-3 flex items-center justify-between">
-            <div>
-              <h2 class="font-heading text-lg font-semibold" data-i18n="devicesPreviewTitle">Cihaz kontrolü</h2>
-              <p class="mt-1 text-xs text-muted-foreground" data-i18n="devicesPreviewSub">Henüz yok — dürüstçe açıklıyoruz</p>
-            </div>
-          </div>
-          <a href="cihazlar.html" class="flex items-center gap-3 rounded-[22px] border border-border bg-card p-4">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-theme bg-secondary text-muted-foreground">
-              <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
-            </div>
-            <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-semibold" data-i18n="devicesPreviewCardTitle">Hemcan henüz cihazlarını kontrol edemiyor</p>
-              <p class="mt-1 text-[11px] text-muted-foreground" data-i18n="devicesPreviewCardDesc">Detaylar ve yol haritası için dokun</p>
-            </div>
-            <iconify-icon icon="lucide:chevron-right" class="text-lg text-muted-foreground"></iconify-icon>
-          </a>
-        </section>
       </main>
 
       <nav data-fv-tabbar class="fixed bottom-5 left-3 right-3 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-1 shadow-2xl backdrop-blur-2xl">
@@ -345,25 +327,17 @@
           <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
           <span class="max-w-full truncate text-[9px] font-bold" data-i18n="tabAssistant">Asistan</span>
         </a>
-        <a data-fv-tab="Otomasyonlar" href="otomasyonlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] px-0.5 text-muted-foreground">
-          <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="navAutomations">Otomasyonlar</span>
-        </a>
-        <a data-fv-tab="Bellek" href="bellek.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
-          <iconify-icon icon="lucide:brain-circuit" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabMemory">Bellek</span>
-        </a>
-        <a data-fv-tab="Cihazlar" href="cihazlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
-          <iconify-icon icon="lucide:monitor-smartphone" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabDevices">Cihazlar</span>
+        <a data-fv-tab="Hemcan" href="hemcan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
+          <iconify-icon icon="lucide:heart-handshake" class="text-xl"></iconify-icon>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabHemcan">Hemcan</span>
         </a>
         <a data-fv-tab="Hedefler" href="hedefler.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:target" class="text-xl"></iconify-icon>
           <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="navGoals">Hedeflerimiz</span>
         </a>
-        <a data-fv-tab="Hemcan" href="hemcan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
-          <iconify-icon icon="lucide:heart-handshake" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="tabHemcan">Hemcan</span>
+        <a data-fv-tab="Otomasyonlar" href="otomasyonlar.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] px-0.5 text-muted-foreground">
+          <iconify-icon icon="lucide:workflow" class="text-xl"></iconify-icon>
+          <span class="max-w-full truncate text-[9px] font-semibold" data-i18n="navAutomations">Otomasyonlar</span>
         </a>
       </nav>
     </div>
@@ -909,7 +883,7 @@
   </script>
   <script>
     // Üst başlıktaki selamlama, günün saatine göre değişir (kullanıcının
-    // kendi cihaz saati) — 12'ye kadar günaydın, 17'ye kadar iyi günler,
+    // kendi cihaz saati) — 05:00'e kadar iyi geceler, 12'ye kadar günaydın, 17'ye kadar iyi günler,
     // 22'ye kadar iyi akşamlar, sonrası iyi geceler. i18n.js her dil
     // değişiminde (ilk yükleme dahil) "one-lang-changed" olayını
     // tetikliyor, biz de bunu dinleyip doğru anahtarla yeniden yazıyoruz —
@@ -919,6 +893,7 @@
       'use strict';
       function currentGreetingKey() {
         var h = new Date().getHours();
+        if (h < 5) return 'greetingNight';
         if (h < 12) return 'greeting';
         if (h < 17) return 'greetingAfternoon';
         if (h < 22) return 'greetingEvening';
@@ -928,7 +903,7 @@
         var el = document.getElementById('greeting-text');
         if (!el || !window.ONE_I18N || !window.ONE_I18N.t) return;
         var nm = (window.ONE_PROFILE && window.ONE_PROFILE.firstName()) || '';
-        el.textContent = window.ONE_I18N.t(currentGreetingKey()) + (nm ? ' ' + nm : '');
+        el.textContent = window.ONE_I18N.t(currentGreetingKey()) + (nm ? ', ' + nm : '');
       }
       window.addEventListener('one-lang-changed', applyGreeting);
       // Kullanıcı uygulamayı arka planda bırakıp saatler sonra geri
