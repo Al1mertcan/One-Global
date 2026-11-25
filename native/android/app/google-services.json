@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "203134090033",
+    "project_id": "hemcan",
+    "storage_bucket": "hemcan.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203134090033:android:3977e75ebd6c5a0e368e10",
+        "android_client_info": {
+          "package_name": "app.netlify.cheery_rolypoly_540555.twa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM1SLkr2rd4-8ix2V8UHVv0h6gzMdFPNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
