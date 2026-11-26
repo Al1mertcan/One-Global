@@ -190,12 +190,39 @@
             <div id="water-bar" class="h-full rounded-full bg-accent transition-[width] duration-500" style="width:0%"></div>
           </div>
           <div class="mt-3 grid grid-cols-3 gap-2">
-            <button type="button" data-water-ml="250" class="flex h-11 items-center justify-center rounded-theme border border-accent/30 bg-card text-xs font-bold text-card-foreground"><span data-i18n="waterAddGlass">+ Bir bardak</span></button>
+            <button type="button" id="water-glass-btn" data-water-ml="250" class="flex h-11 items-center justify-center rounded-theme border border-accent/30 bg-card text-xs font-bold text-card-foreground"><span id="water-glass-label" data-i18n="waterAddGlass">+ Bir bardak</span></button>
             <button type="button" data-water-ml="500" class="flex h-11 items-center justify-center rounded-theme border border-accent/30 bg-card text-xs font-bold text-card-foreground">+ 500 ml</button>
             <button type="button" data-water-ml="1000" class="flex h-11 items-center justify-center rounded-theme border border-accent/30 bg-card text-xs font-bold text-card-foreground">+ 1 <span class="ml-1" data-i18n="waterUnitL">lt</span></button>
           </div>
+          <div id="water-cups" class="mt-3 grid grid-cols-8 gap-1.5" role="list"></div>
+          <p id="water-cups-note" class="mt-1.5 text-[11px] text-muted-foreground"></p>
           <p id="water-goal-msg" class="mt-3 hidden text-xs font-semibold leading-5 text-success" data-i18n="waterGoalReached">Tebrikler! Günlük sağlıklı su içme miktarına ulaştın 🎉</p>
           <button type="button" id="water-undo" class="mt-2 hidden text-[11px] font-semibold text-muted-foreground underline" data-i18n="waterUndo">Son eklemeyi geri al</button>
+
+          <div class="mt-4 rounded-theme border border-border bg-card/60 p-3">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-xs font-semibold text-card-foreground" data-i18n="waterWeekTitle">Son 7 gün</p>
+              <p id="water-streak" class="text-[11px] font-bold text-chart5"></p>
+            </div>
+            <div id="water-week" class="mt-2 flex h-16 items-end gap-1.5"></div>
+            <div id="water-week-days" class="mt-1 flex gap-1.5 text-center text-[10px] text-muted-foreground"></div>
+            <p id="water-avg" class="mt-2 text-[11px] text-muted-foreground"></p>
+          </div>
+
+          <button type="button" id="water-cfg-toggle" aria-expanded="false" class="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-theme border border-border bg-card/60 text-xs font-semibold text-card-foreground">
+            <iconify-icon icon="lucide:sliders-horizontal" class="text-base"></iconify-icon><span data-i18n="waterCfgBtn">Hedef ve bardak boyutu</span>
+          </button>
+          <div id="water-cfg" class="mt-3 hidden">
+            <p class="text-[11px] font-semibold text-muted-foreground" data-i18n="waterGoalLbl">Günlük hedef (ml)</p>
+            <div id="water-goal-chips" class="mt-1.5 flex flex-wrap gap-2"></div>
+            <div class="mt-2 flex gap-2">
+              <input id="water-goal-input" type="number" inputmode="numeric" min="500" max="6000" step="50" data-i18n-placeholder="waterCustomGoal" placeholder="Özel hedef" class="h-10 min-w-0 flex-1 rounded-lg border border-border bg-input px-3 text-sm outline-none">
+              <button type="button" id="water-goal-apply" class="h-10 rounded-lg bg-accent px-4 text-xs font-bold text-accent-foreground" data-i18n="waterCustomApply">Uygula</button>
+            </div>
+            <p class="mt-3 text-[11px] font-semibold text-muted-foreground" data-i18n="waterGlassLbl">Bardak boyutu (ml)</p>
+            <div id="water-glass-chips" class="mt-1.5 flex flex-wrap gap-2"></div>
+            <p class="mt-3 text-[11px] leading-5 text-muted-foreground" data-i18n="waterCfgNote">Genelde yetişkinler için günde 1,5–2,5 litre önerilir; ihtiyaç kiloya, havaya ve spora göre değişir. Sağlık durumun için doktoruna danış.</p>
+          </div>
         </section>
 
         <a id="wallet-card" href="cuzdan.html" class="mt-4 flex items-center gap-3 rounded-[24px] border border-success/25 bg-success/5 p-4">
@@ -238,7 +265,42 @@
           <iconify-icon icon="lucide:chevron-right" class="text-lg text-muted-foreground"></iconify-icon>
         </a>
 
-
+        <section id="wb-hub" class="mt-6">
+          <h2 class="font-heading text-lg font-semibold" data-i18n="wbHubTitle">Sağlık ve iyi oluş</h2>
+          <p class="mt-1 text-xs text-muted-foreground" data-i18n="wbHubSub">Zihnin ve bedenin için küçük, günlük araçlar</p>
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <a id="wb-tile-mood" href="gunluk.html" class="flex flex-col rounded-[20px] border border-chart2/25 bg-chart2/5 p-3.5">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-chart2/15 text-chart2"><iconify-icon icon="lucide:smile-plus" class="text-xl"></iconify-icon></div>
+              <h3 class="mt-2.5 text-sm font-semibold text-chart2" data-i18n="wbTileMood">Ruh hali günlüğü</h3>
+              <p class="mt-1 text-[11px] leading-4 text-muted-foreground" data-i18n="wbTileMoodSub">Bugün nasılsın? Kısa not al</p>
+            </a>
+            <a id="wb-tile-calm" href="nefes.html" class="flex flex-col rounded-[20px] border border-primary/25 bg-primary/5 p-3.5">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary"><iconify-icon icon="lucide:wind" class="text-xl"></iconify-icon></div>
+              <h3 class="mt-2.5 text-sm font-semibold text-primary" data-i18n="wbTileCalm">Nefes & Uyku</h3>
+              <p class="mt-1 text-[11px] leading-4 text-muted-foreground" data-i18n="wbTileCalmSub">Nefes, meditasyon, uyku sesleri</p>
+            </a>
+            <a id="wb-tile-habit" href="aliskanlik.html" class="flex flex-col rounded-[20px] border border-chart5/25 bg-chart5/5 p-3.5">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-chart5/15 text-chart5"><iconify-icon icon="lucide:sparkles" class="text-xl"></iconify-icon></div>
+              <h3 class="mt-2.5 text-sm font-semibold text-chart5" data-i18n="wbTileHabit">Alışkanlıklar</h3>
+              <p class="mt-1 text-[11px] leading-4 text-muted-foreground" data-i18n="wbTileHabitSub">Seri tut, dostunu büyüt</p>
+            </a>
+            <a id="wb-tile-break" href="mola.html" class="flex flex-col rounded-[20px] border border-success/25 bg-success/5 p-3.5">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-success/15 text-success"><iconify-icon icon="lucide:lightbulb" class="text-xl"></iconify-icon></div>
+              <h3 class="mt-2.5 text-sm font-semibold text-success" data-i18n="wbTileBreak">Ekrandan mola</h3>
+              <p class="mt-1 text-[11px] leading-4 text-muted-foreground" data-i18n="wbTileBreakSub">Göz molası, soru, bilmece</p>
+            </a>
+            <a id="wb-tile-kaza" href="kaza.html" class="col-span-2 flex flex-col rounded-[20px] border border-chart2/25 bg-chart2/5 p-3.5">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-chart2/15 text-chart2"><iconify-icon icon="lucide:moon-star" class="text-xl"></iconify-icon></div>
+              <h3 class="mt-2.5 text-sm font-semibold text-chart2" data-i18n="wbTileKaza">Kaza namazı</h3>
+              <p class="mt-1 text-[11px] leading-4 text-muted-foreground" data-i18n="wbTileKazaSub">Vakitleri say, kıldıkça azalt</p>
+            </a>
+            <a id="wb-tile-walk" href="yuruyus.html" class="col-span-2 flex flex-col rounded-[20px] border border-accent/25 bg-accent/5 p-3.5">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent"><iconify-icon icon="lucide:route" class="text-xl"></iconify-icon></div>
+              <h3 class="mt-2.5 text-sm font-semibold text-accent" data-i18n="wbTileWalk">Yürüyüş & Koşu</h3>
+              <p class="mt-1 text-[11px] leading-4 text-muted-foreground" data-i18n="wbTileWalkSub">GPS ile rota, mesafe, tempo</p>
+            </a>
+          </div>
+        </section>
 
         <section class="mt-6">
           <div class="mb-3 flex items-center justify-between">
@@ -739,6 +801,7 @@
       loadGoodNews();
     })();
   </script>
+  <script src="wb-strings.js"></script>
   <script src="i18n.js"></script>
   <script>
     // Cüzdan kartı: bu ayki harcama varsa özetini gösterir (veri yalnızca cihazda).
@@ -773,33 +836,59 @@
 
   <script>
     // Su takibi: günlük içilen su cihazda (localStorage) tutulur, gece yarısı
-    // (yerel saate göre) sıfırlanır. 2 litreye ulaşınca tebrik edilir.
+    // (yerel saate göre) sıfırlanır. Hedef ve bardak boyutu ayarlanabilir
+    // ("one-water-cfg"); her günün toplamı 7 günlük geçmiş için "one-water-hist"e yazılır.
     (function () {
       'use strict';
-      var KEY = 'one-water';
-      var GOAL_ML = 2000;
+      var KEY = 'one-water', CFG_KEY = 'one-water-cfg', HIST_KEY = 'one-water-hist';
+      var GOALS = [1500, 2000, 2500, 3000, 3500], GLASSES = [150, 200, 250, 300, 330, 400];
       var totalEl = document.getElementById('water-total');
       var barEl = document.getElementById('water-bar');
       var msgEl = document.getElementById('water-goal-msg');
       var undoEl = document.getElementById('water-undo');
       if (!totalEl) return;
 
-      function today() {
-        var d = new Date();
-        return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+      function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+      function today() { return ymd(new Date()); }
+      function readJson(k, def) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? def : v; } catch (e) { return def; } }
+      function writeJson(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+      function cfg() {
+        var c = readJson(CFG_KEY, {}) || {};
+        var g = parseInt(c.goal, 10), gl = parseInt(c.glass, 10);
+        return { goal: g >= 500 && g <= 6000 ? g : 2000, glass: gl >= 50 && gl <= 1000 ? gl : 250 };
       }
+      function setCfg(patch) { var c = cfg(); for (var k in patch) c[k] = patch[k]; writeJson(CFG_KEY, c); render(); }
+
       function fresh() { return { date: today(), log: [], congrats: false }; }
       function load() {
-        var st = null;
-        try { st = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+        var st = readJson(KEY, null);
         if (!st || st.date !== today() || !Array.isArray(st.log)) st = fresh();
         return st;
       }
-      function save(st) { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+      function save(st) { writeJson(KEY, st); }
       function sum(st) { return st.log.reduce(function (a, b) { return a + b; }, 0); }
+      function hist() { return readJson(HIST_KEY, {}) || {}; }
+      function writeHist(st) {
+        var h = hist(), ml = sum(st), changed = false;
+        if (ml > 0 && h[st.date] !== ml) { h[st.date] = ml; changed = true; }
+        if (ml === 0 && h[st.date] != null) { delete h[st.date]; changed = true; }
+        // Bir önceki oturumdan kalan "dünkü" kayıt günü değişince geçmişe işlenir.
+        var old = readJson(KEY, null);
+        if (old && old.date && old.date !== st.date && Array.isArray(old.log)) {
+          var om = old.log.reduce(function (a, b) { return a + b; }, 0);
+          if (om > 0 && h[old.date] !== om) { h[old.date] = om; changed = true; }
+        }
+        var cut = ymd(new Date(Date.now() - 90 * 86400000));
+        Object.keys(h).forEach(function (k) { if (k < cut) { delete h[k]; changed = true; } });
+        if (changed) writeJson(HIST_KEY, h);
+      }
 
       function tr(key, fallback) {
         return (window.ONE_I18N && window.ONE_I18N.t) ? window.ONE_I18N.t(key) : fallback;
+      }
+      function trv(key, vars, fallback) {
+        return (window.ONE_I18N && window.ONE_I18N.t) ? window.ONE_I18N.t(key, vars) : fallback;
       }
       function lang() { return (window.ONE_I18N && window.ONE_I18N.getLang) ? window.ONE_I18N.getLang() : 'en'; }
       function fmtL(ml) {
@@ -809,13 +898,86 @@
         return txt + ' ' + tr('waterUnitL', 'L');
       }
 
+      var CUP = '<svg viewBox="0 0 24 28" class="h-full w-full" aria-hidden="true"><path d="M4 3h16l-2 21a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L4 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path class="fill" d="M5 11h14l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 11z" fill="currentColor"/></svg>';
+      function renderCups(ml, c) {
+        var box = document.getElementById('water-cups'), note = document.getElementById('water-cups-note');
+        if (!box) return;
+        var total = Math.max(1, Math.min(24, Math.ceil(c.goal / c.glass)));
+        var filled = Math.floor(ml / c.glass), part = (ml % c.glass) / c.glass;
+        box.innerHTML = '';
+        for (var i = 0; i < total; i++) {
+          var full = i < filled, half = i === filled && part >= 0.25;
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.setAttribute('role', 'listitem');
+          b.className = 'aspect-[6/7] ' + (full ? 'text-accent' : (half ? 'text-accent/60' : 'text-border'));
+          b.setAttribute('aria-label', full ? tr('waterCupFull', 'Full') : tr('waterCupAdd', 'Add a glass'));
+          b.innerHTML = CUP;
+          var fill = b.querySelector('.fill');
+          if (fill) fill.setAttribute('opacity', full ? '1' : (half ? '0.45' : '0'));
+          if (i === filled) b.addEventListener('click', function () { add(c.glass); });
+          else b.disabled = true;
+          box.appendChild(b);
+        }
+        if (note) note.textContent = trv('waterCupsOf', { n: Math.min(filled, total), total: total }, filled + ' / ' + total);
+      }
+
+      function renderWeek(c) {
+        var wk = document.getElementById('water-week'), lb = document.getElementById('water-week-days');
+        if (!wk) return;
+        var h = hist(), st = load(); h[st.date] = Math.max(sum(st), 0);
+        wk.innerHTML = ''; lb.innerHTML = '';
+        var sumMl = 0, met = 0, now = new Date();
+        for (var i = 6; i >= 0; i--) {
+          var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i), k = ymd(d), ml = h[k] || 0;
+          sumMl += ml; if (ml >= c.goal) met++;
+          var col = document.createElement('div'); col.className = 'flex h-full flex-1 items-end';
+          var bar = document.createElement('div');
+          bar.className = 'w-full rounded-t-md ' + (ml >= c.goal ? 'bg-success' : (ml > 0 ? 'bg-accent/70' : 'bg-muted'));
+          bar.style.height = Math.max(ml > 0 ? 10 : 4, Math.min(100, ml / c.goal * 100)) + '%';
+          bar.setAttribute('data-day', k); bar.setAttribute('data-ml', String(ml));
+          col.appendChild(bar); wk.appendChild(col);
+          var lab = document.createElement('div'); lab.className = 'flex-1';
+          var wd = ''; try { wd = d.toLocaleDateString(lang(), { weekday: 'narrow' }); } catch (e) { wd = ''; }
+          lab.textContent = wd; lb.appendChild(lab);
+        }
+        // seri: bugün henüz bitmediyse onu bozmadan dünden geriye say
+        var streak = 0, t0 = ymd(now);
+        for (var j = 0; j < 365; j++) {
+          var dd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - j), kk = ymd(dd);
+          if ((h[kk] || 0) >= c.goal) streak++; else if (kk !== t0) break;
+        }
+        var sEl = document.getElementById('water-streak');
+        if (sEl) sEl.textContent = streak >= 2 ? trv('waterStreak', { n: streak }, '🔥 ' + streak) : '';
+        var aEl = document.getElementById('water-avg');
+        if (aEl) aEl.textContent = trv('waterAvg', { v: fmtL(Math.round(sumMl / 7)) }, '') + ' · ' + trv('waterGoalMetDays', { n: met }, '');
+      }
+
+      function renderCfg(c) {
+        var gc = document.getElementById('water-goal-chips'), cc = document.getElementById('water-glass-chips'), btn = document.getElementById('water-glass-btn'), lab = document.getElementById('water-glass-label');
+        if (btn) { btn.setAttribute('data-water-ml', String(c.glass)); }
+        if (lab) { lab.removeAttribute('data-i18n'); lab.textContent = trv('waterGlassBtn', { ml: c.glass }, '+' + c.glass + ' ml'); }
+        function chips(box, vals, cur, onPick, attr) {
+          if (!box) return; box.innerHTML = '';
+          vals.forEach(function (v) {
+            var b = document.createElement('button'); b.type = 'button'; b.setAttribute(attr, String(v)); b.setAttribute('aria-pressed', v === cur ? 'true' : 'false');
+            b.className = 'rounded-full border px-3 py-1.5 text-xs font-semibold ' + (v === cur ? 'border-accent bg-accent/20 text-accent' : 'border-border bg-input text-card-foreground');
+            b.textContent = v; b.addEventListener('click', function () { onPick(v); }); box.appendChild(b);
+          });
+        }
+        chips(gc, GOALS.indexOf(c.goal) >= 0 ? GOALS : GOALS.concat([c.goal]).sort(function (a, b) { return a - b; }), c.goal, function (v) { setCfg({ goal: v }); }, 'data-goal');
+        chips(cc, GLASSES.indexOf(c.glass) >= 0 ? GLASSES : GLASSES.concat([c.glass]).sort(function (a, b) { return a - b; }), c.glass, function (v) { setCfg({ glass: v }); }, 'data-glass');
+      }
+
       function render() {
-        var st = load();
+        var st = load(), c = cfg();
         var ml = sum(st);
-        totalEl.textContent = fmtL(ml) + ' / ' + fmtL(GOAL_ML);
-        barEl.style.width = Math.min(100, (ml / GOAL_ML) * 100) + '%';
-        msgEl.classList.toggle('hidden', ml < GOAL_ML);
+        totalEl.textContent = fmtL(ml) + ' / ' + fmtL(c.goal);
+        barEl.style.width = Math.min(100, (ml / c.goal) * 100) + '%';
+        msgEl.classList.toggle('hidden', ml < c.goal);
         undoEl.classList.toggle('hidden', st.log.length === 0);
+        writeHist(st);
+        renderCfg(c); renderCups(ml, c); renderWeek(c);
       }
 
       function notifyGoal() {
@@ -834,11 +996,11 @@
       function add(ml) {
         ml = parseInt(ml, 10);
         if (!(ml > 0 && ml <= 5000)) return;
-        var st = load();
+        var st = load(), goal = cfg().goal;
         var before = sum(st);
         st.log.push(ml);
         var after = before + ml;
-        var reached = before < GOAL_ML && after >= GOAL_ML && !st.congrats;
+        var reached = before < goal && after >= goal && !st.congrats;
         if (reached) st.congrats = true;
         save(st);
         render();
@@ -856,6 +1018,10 @@
         btn.addEventListener('click', function () { add(btn.getAttribute('data-water-ml')); });
       });
       undoEl.addEventListener('click', undo);
+      var tg = document.getElementById('water-cfg-toggle'), panel = document.getElementById('water-cfg');
+      if (tg && panel) tg.addEventListener('click', function () { var open = panel.classList.toggle('hidden') === false; tg.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+      var gi = document.getElementById('water-goal-input'), ga = document.getElementById('water-goal-apply');
+      if (ga && gi) ga.addEventListener('click', function () { var v = parseInt(gi.value, 10); if (v >= 500 && v <= 6000) { setCfg({ goal: v }); gi.value = ''; } else { gi.focus(); } });
 
       // Bildirimdeki düğmeden gelen ekleme: açık uygulamaya service worker iletir,
       // kapalıysa ?su=<ml> ile açılır (bir kez işlenir, sonra adresten silinir).

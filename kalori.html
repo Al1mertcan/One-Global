@@ -144,6 +144,25 @@
           <iconify-icon icon="lucide:calculator" class="text-lg"></iconify-icon>
           <span data-i18n="kcalCalcBtn">Hesapla</span>
         </button>
+        <div id="photo-box" class="mt-3 hidden">
+          <div class="grid grid-cols-2 gap-2">
+            <button id="btn-photo-cam" type="button" class="flex h-11 items-center justify-center gap-2 rounded-theme border border-primary/40 bg-primary/10 text-xs font-bold text-primary"><iconify-icon icon="lucide:camera" class="text-lg"></iconify-icon><span data-i18n="photoCam">Fotoğrafını çek</span></button>
+            <button id="btn-photo-pick" type="button" class="flex h-11 items-center justify-center gap-2 rounded-theme border border-border bg-input text-xs font-bold text-card-foreground"><iconify-icon icon="lucide:image" class="text-lg"></iconify-icon><span data-i18n="photoPick">Galeriden seç</span></button>
+          </div>
+          <p id="photo-left" class="mt-2 hidden text-[11px] font-semibold text-primary"></p>
+          <input id="photo-cam" type="file" accept="image/*" capture="environment" class="hidden">
+          <input id="photo-pick" type="file" accept="image/*" class="hidden">
+          <div id="photo-consent" class="mt-2 hidden rounded-xl border border-border bg-card p-3">
+            <p class="text-xs font-semibold" data-i18n="photoConsentTitle">Fotoğraf nasıl işlenir?</p>
+            <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="photoConsentText">Seçtiğin fotoğraf, kalori tahmini yapılması için güvenli bağlantıyla Hemcan sunucusuna ve yapay zeka servisi sağlayıcımız Anthropic'e gönderilir. Fotoğraf kaydedilmez ve hesabınla ilişkilendirilmez; yalnızca tahmin üretilirken kullanılır. Kişi içeren fotoğraflar yerine yalnızca yemeğini çekmeni öneririz.</p>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <button id="photo-consent-no" type="button" class="h-10 rounded-lg border border-border bg-input text-xs font-bold" data-i18n="photoConsentNo">Vazgeç</button>
+              <button id="photo-consent-ok" type="button" class="h-10 rounded-lg bg-primary text-xs font-bold text-primary-foreground" data-i18n="photoConsentOk">Anladım, devam et</button>
+            </div>
+          </div>
+          <p id="photo-status" class="mt-2 hidden text-[11px] font-semibold leading-5" role="status" aria-live="polite"></p>
+          <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="photoNote">Fotoğraftan tahmin, ortalama değerlere dayanır ve yanılabilir; tıbbi veya diyet tavsiyesi değildir.</p>
+        </div>
         <div id="preview" class="mt-3 hidden">
           <ul id="preview-list" class="space-y-2"></ul>
           <p id="preview-total" class="mt-3 text-right text-xs font-semibold text-muted-foreground"></p>
@@ -178,6 +197,7 @@
     })();
   </script>
   <script src="kalori.js"></script>
+  <script src="wb-strings.js"></script>
   <script src="i18n.js"></script>
   <script>
     (function () {
@@ -307,6 +327,79 @@
       $('limit-plus').addEventListener('click', function () { state.limit = Math.min(6000, state.limit + 100); save(); render(); });
       $('day-prev').addEventListener('click', function () { if (offset > -60) { offset--; pending = []; render(); } });
       $('day-next').addEventListener('click', function () { if (offset < 0) { offset++; pending = []; render(); } });
+      // ---- Fotoğraftan kalori (sunucuda PHOTO_KCAL_ENABLED=1 ise görünür) ----
+      (function () {
+        var CONSENT = 'one-photo-consent', box = $('photo-box'), st = $('photo-status'), wantInput = null, busy = false;
+        function subId() {
+          var id = null; try { id = localStorage.getItem('one-sub-id'); } catch (e) {}
+          if (!id) { id = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'one-' + Date.now() + '-' + Math.random().toString(36).slice(2)); try { localStorage.setItem('one-sub-id', id); } catch (e) {} }
+          return id;
+        }
+        function showLeft(n) { var el = $('photo-left'); if (typeof n !== 'number') return; el.textContent = t('photoLeft', { n: n }); el.classList.remove('hidden'); }
+        function say(msg, tone) { st.textContent = msg; st.className = 'mt-2 text-[11px] font-semibold leading-5 ' + (tone === 'err' ? 'text-destructive' : (tone === 'ok' ? 'text-success' : 'text-muted-foreground')); }
+        function hasConsent() { try { return localStorage.getItem(CONSENT) === '1'; } catch (e) { return false; } }
+        try {
+          fetch('/api/photo-calorie?id=' + encodeURIComponent(subId()), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.enabled === true) { box.classList.remove('hidden'); showLeft(j.remaining); } }).catch(function () {});
+        } catch (e) {}
+        function open(inp) {
+          if (busy) return;
+          if (hasConsent()) { inp.value = ''; inp.click(); return; }
+          wantInput = inp; $('photo-consent').classList.remove('hidden');
+        }
+        $('btn-photo-cam').addEventListener('click', function () { open($('photo-cam')); });
+        $('btn-photo-pick').addEventListener('click', function () { open($('photo-pick')); });
+        $('photo-consent-no').addEventListener('click', function () { $('photo-consent').classList.add('hidden'); wantInput = null; });
+        $('photo-consent-ok').addEventListener('click', function () {
+          try { localStorage.setItem(CONSENT, '1'); } catch (e) {}
+          $('photo-consent').classList.add('hidden'); if (wantInput) { wantInput.value = ''; wantInput.click(); wantInput = null; }
+        });
+        // Fotoğrafı küçült (en uzun kenar 1024 px, JPEG): hem hızlı yüklenir hem sunucuya gereğinden fazla veri gitmez.
+        function shrink(file) {
+          return new Promise(function (resolve, reject) {
+            var url = URL.createObjectURL(file), img = new Image();
+            img.onload = function () {
+              try {
+                var max = 1024, w = img.naturalWidth, h = img.naturalHeight, sc = Math.min(1, max / Math.max(w, h));
+                var c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w * sc)); c.height = Math.max(1, Math.round(h * sc));
+                c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                var data = c.toDataURL('image/jpeg', 0.8); URL.revokeObjectURL(url); resolve(data.split(',')[1]);
+              } catch (e) { URL.revokeObjectURL(url); reject(e); }
+            };
+            img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('img')); };
+            img.src = url;
+          });
+        }
+        function errMsg(code, status) {
+          if (status === 503) return t('photoErrDisabled'); if (status === 429) return t(code === 'monthly_cap' ? 'photoErrMonthly' : code === 'daily_cap' ? 'photoErrDaily' : 'photoErrRate');
+          if (status === 413) return t('photoErrLarge'); if (code === 'monthly_cap') return t('photoErrMonthly'); return t('photoErrGeneric');
+        }
+        function handle(file) {
+          if (!file || busy) return; busy = true; say(t('photoAnalyzing'), 'info'); pending = []; renderPreview();
+          shrink(file).then(function (b64) {
+            function send() {
+              return fetch('/api/photo-calorie', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: subId(), image: b64, mime: 'image/jpeg', lang: window.ONE_I18N.getLang() }) })
+                .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, status: r.status, j: j }; }); });
+            }
+            return send().then(function (res) {
+              // Üye kaydı yoksa (ör. ilk açılışta internet yoktu) bir kez kaydedip yeniden dene.
+              if (res.status === 403 && res.j && res.j.error === 'not_member') {
+                return fetch('/api/member-count', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: subId() }) }).then(function (m) { return m.ok ? send() : res; }).catch(function () { return res; });
+              }
+              return res;
+            });
+          }).then(function (res) {
+            busy = false;
+            if (!res.ok) { if (res.j && res.j.error === 'monthly_cap') showLeft(0); say(errMsg(res.j && res.j.error, res.status), 'err'); return; }
+            showLeft(res.j.remaining);
+            var items = Array.isArray(res.j.items) ? res.j.items : [];
+            if (!items.length) { say(res.j.note || t('photoNoFood'), 'err'); return; }
+            pending = items.map(function (i) { return { text: i.name + (i.grams ? ' · ~' + i.grams + (i.ml ? ' ml' : ' g') : ''), kcal: i.kcal, food: null }; });
+            say(t('photoDone', { n: items.length }) + ' ' + t('photoConf_' + (res.j.confidence || 'low')) + (res.j.note ? ' · ' + res.j.note : ''), 'ok'); renderPreview();
+          }).catch(function (e) { busy = false; say(t(navigator.onLine === false ? 'photoErrOffline' : 'photoErrGeneric'), 'err'); });
+        }
+        ['photo-cam', 'photo-pick'].forEach(function (id) { $(id).addEventListener('change', function (e) { handle(e.target.files && e.target.files[0]); }); });
+      })();
+
       window.addEventListener('one-lang-changed', render);
       document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
       render();

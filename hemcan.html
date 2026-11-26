@@ -118,6 +118,7 @@
             <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="memberCountTitle">Hemcan ailesi</h2>
           </div>
           <p id="member-count-number" class="mt-2 font-heading text-3xl font-bold tracking-tight text-foreground" data-i18n="memberCountLoading">Yükleniyor…</p>
+          <p id="member-count-status" class="hidden mt-1 text-[11px] leading-4 text-muted-foreground" role="status"></p>
           <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-card">
             <div id="member-count-bar" class="h-full rounded-full bg-primary transition-[width] duration-700" style="width:0%"></div>
           </div>
@@ -241,22 +242,45 @@
         }
       }
 
-      function loadMemberCount() {
-        fetch('/api/member-count')
-          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
-          .then(function (result) {
-            if (!result.ok || typeof result.data.count !== 'number') throw new Error('bad response');
-            render(result.data);
-          })
-          .catch(function () {
-            numberEl.removeAttribute('data-i18n');
-            numberEl.textContent = '—';
-          });
+      // Son başarılı sayıyı saklarız: ağ/sunucu bir an yanıt vermezse "—" yerine son bilinen sayı görünür.
+      var CACHE_KEY = 'one-member-cache', statusEl = document.getElementById('member-count-status'), tries = 0, timer = null, loading = false;
+      function readCache() { try { var c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); return c && typeof c.count === 'number' ? c : null; } catch (e) { return null; } }
+      function tr(key, vars, fb) { try { var v = window.ONE_I18N && window.ONE_I18N.t ? window.ONE_I18N.t(key, vars) : null; if (v && v !== key) return v; } catch (e) {} return fb; }
+      function showStatus(msg) { if (!statusEl) return; statusEl.textContent = msg || ''; statusEl.classList.toggle('hidden', !msg); }
+      function fail(reason) {
+        var c = readCache();
+        if (c) render(c); else { numberEl.removeAttribute('data-i18n'); numberEl.textContent = '—'; }
+        // Neden alınamadığını kısa kodla göster (destek için işe yarar); dokununca yeniden dener.
+        showStatus(tr('memberCountRetry', { e: reason }, 'Sayı şu an alınamadı (' + reason + '). Yenilemek için sayıya dokun.'));
+        if (tries < 3) { tries++; clearTimeout(timer); timer = setTimeout(loadMemberCount, [3000, 10000, 30000][tries - 1]); }
       }
+      function loadMemberCount() {
+        if (loading) return; loading = true;
+        fetch('/api/member-count', { cache: 'no-store' })
+          .then(function (res) {
+            return res.text().then(function (txt) {
+              var data = null; try { data = JSON.parse(txt); } catch (e) {}
+              return { ok: res.ok, status: res.status, data: data };
+            });
+          })
+          .then(function (result) {
+            loading = false;
+            if (!result.ok) { fail('HTTP ' + result.status + (result.data && result.data.error ? ' ' + String(result.data.error).slice(0, 40) : '')); return; }
+            if (!result.data || typeof result.data.count !== 'number') { fail('bad-data'); return; }
+            try { localStorage.setItem(CACHE_KEY, JSON.stringify(result.data)); } catch (e) {}
+            tries = 0; showStatus(''); render(result.data);
+          })
+          .catch(function (e) { loading = false; fail(navigator.onLine === false ? 'offline' : 'network'); });
+      }
+      numberEl.addEventListener('click', function () { tries = 0; loadMemberCount(); });
+      window.addEventListener('online', function () { tries = 0; loadMemberCount(); });
+      document.addEventListener('visibilitychange', function () { if (!document.hidden && statusEl && !statusEl.classList.contains('hidden')) { tries = 0; loadMemberCount(); } });
+      var cached = readCache(); if (cached) render(cached);
       renderGoals();
       loadMemberCount();
     })();
   </script>
+  <script src="wb-strings.js"></script>
   <script src="i18n.js"></script>
   <script>
     if ('serviceWorker' in navigator) {

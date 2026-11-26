@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="native.js"></script>
+  <script src="profile.js"></script>
+  <title>Ekrandan mola — Hemcan</title>
+
+  <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          chart1: 'rgb(57 215 255 / <alpha-value>)',
+          chart2: 'rgb(167 139 250 / <alpha-value>)',
+          chart3: 'rgb(61 219 165 / <alpha-value>)',
+          chart4: 'rgb(112 167 255 / <alpha-value>)',
+          chart5: 'rgb(242 182 109 / <alpha-value>)',
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+</script>
+
+  <!-- Iconify Web Component -->
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+  <!-- Design Tokens + Custom Classes -->
+  <style>
+  :root {
+    --color-background: #07111F;
+    --color-foreground: #EFF7FF;
+    --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C;
+    --color-secondary: #162A46;
+    --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA;
+    --color-accent-foreground: #130D28;
+    --color-muted: #10213A;
+    --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30;
+    --color-card-foreground: #EFF7FF;
+    --color-border: #28415F;
+    --color-input: #102540;
+    --color-destructive: #FF657A;
+    --color-destructive-foreground: #26040A;
+    --color-success: #3DDBA5;
+    --color-success-foreground: #031B14;
+    --color-chart1: #39D7FF;
+    --color-chart2: #A78BFA;
+    --color-chart3: #3DDBA5;
+    --color-chart4: #70A7FF;
+    --color-chart5: #F2B66D;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hemcan">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-24">
+    <div class="pointer-events-none absolute -top-28 -right-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute top-[430px] -left-32 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
+
+    <header class="relative px-5 pt-12">
+      <div class="flex items-center justify-between">
+        <a href="asistan.html" data-i18n-aria="wbBack" aria-label="Geri" class="flex h-11 w-11 items-center justify-center rounded-theme border border-border bg-card/80 text-foreground shadow-lg backdrop-blur-xl">
+          <iconify-icon icon="lucide:arrow-left" class="text-xl"></iconify-icon>
+        </a>
+        <span class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground" data-i18n="molaHeader">Ekrandan mola</span>
+        <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-theme border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
+      </div>
+    </header>
+
+    <main class="relative px-5 pt-6">
+      <section class="rounded-[24px] border border-success/30 bg-success/5 p-4">
+        <div class="flex items-center gap-2"><span class="text-lg">👀</span><h1 class="font-heading text-sm font-semibold" data-i18n="molaEyeTitle">20-20-20 göz molası</h1></div>
+        <p class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="molaEyeText">Ekrana uzun süre bakınca her 20 dakikada bir, 20 saniye boyunca yaklaşık 6 metre ötedeki bir şeye bak. Gözlerin dinlenir.</p>
+        <div class="mt-3 flex items-center gap-4">
+          <div class="relative h-20 w-20 shrink-0">
+            <svg viewBox="0 0 80 80" class="h-full w-full -rotate-90" aria-hidden="true"><circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" class="text-muted" stroke-width="7"/><circle id="eye-ring" cx="40" cy="40" r="34" fill="none" stroke="currentColor" class="text-success" stroke-width="7" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg>
+            <span id="eye-left" class="absolute inset-0 flex items-center justify-center font-heading text-xl font-bold">20</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p id="eye-msg" class="min-h-[2.5rem] text-xs leading-5 text-card-foreground" aria-live="polite"></p>
+            <button id="eye-btn" type="button" class="mt-1 h-10 rounded-theme bg-success px-4 text-xs font-bold text-success-foreground" data-i18n="molaEyeStart">20 saniye başlat</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="mola-games" class="mt-4 rounded-[24px] border border-primary/25 bg-primary/5 p-4">
+        <div class="flex items-center gap-2"><span class="text-lg">🏅</span><h2 class="font-heading text-sm font-semibold" data-i18n="molaGamesTitle">Günlük yarışmalar</h2></div>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="molaGamesSub">Herkese aynı gün aynı oyun</p>
+        <div class="mt-3 grid grid-cols-2 gap-2">
+          <a id="game-sudoku" href="sudoku.html" class="flex flex-col rounded-[18px] border border-border bg-card p-3"><span class="text-xl" aria-hidden="true">🔢</span><span class="mt-1 text-sm font-semibold" data-i18n="molaSudokuTile">Günlük sudoku</span><span class="mt-0.5 text-[11px] leading-4 text-muted-foreground" data-i18n="molaSudokuSub">Kolay, orta, zor</span></a>
+          <a id="game-trivia" href="genelkultur.html" class="flex flex-col rounded-[18px] border border-border bg-card p-3"><span class="text-xl" aria-hidden="true">🧠</span><span class="mt-1 text-sm font-semibold" data-i18n="molaTriviaTile">Genel kültür</span><span class="mt-0.5 text-[11px] leading-4 text-muted-foreground" data-i18n="molaTriviaSub">10 soru · 30 sn</span></a>
+        </div>
+      </section>
+
+      <section class="mt-4 rounded-[24px] border border-primary/25 bg-card p-4">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2"><span class="text-lg">💡</span><h2 class="font-heading text-sm font-semibold" data-i18n="molaDailyTitle">Günün sorusu</h2></div>
+          <span id="daily-streak" class="text-[11px] font-bold text-chart5"></span>
+        </div>
+        <p id="daily-q" class="mt-3 text-sm font-semibold leading-6"></p>
+        <div id="daily-opts" class="mt-3 grid gap-2"></div>
+        <p id="daily-result" class="mt-3 hidden text-xs font-semibold leading-5" aria-live="polite"></p>
+        <p id="daily-why" class="mt-1 hidden text-[11px] leading-5 text-muted-foreground"></p>
+        <p id="daily-done" class="mt-3 hidden text-[11px] text-muted-foreground" data-i18n="molaDailyDone">Bugünün sorusunu cevapladın. Yarın yenisi geliyor!</p>
+      </section>
+
+      <section class="mt-4 rounded-[24px] border border-accent/25 bg-accent/5 p-4">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2"><span class="text-lg">🧩</span><h2 class="font-heading text-sm font-semibold text-accent" data-i18n="molaRiddleTitle">Bilmece</h2></div>
+          <span id="riddle-count" class="text-[11px] text-muted-foreground"></span>
+        </div>
+        <p id="riddle-q" class="mt-3 text-sm font-semibold leading-6"></p>
+        <p id="riddle-hint" class="mt-2 hidden text-xs leading-5 text-muted-foreground"></p>
+        <p id="riddle-a" class="mt-2 hidden rounded-theme border border-accent/40 bg-card px-3 py-2 text-sm font-bold text-accent"></p>
+        <div class="mt-3 grid grid-cols-2 gap-2">
+          <button id="riddle-hint-btn" type="button" class="h-10 rounded-theme border border-border bg-card text-xs font-bold text-card-foreground" data-i18n="molaHint">İpucu</button>
+          <button id="riddle-show-btn" type="button" class="h-10 rounded-theme border border-border bg-card text-xs font-bold text-card-foreground" data-i18n="molaShowAnswer">Cevabı göster</button>
+        </div>
+        <button id="riddle-next" type="button" class="mt-2 h-10 w-full rounded-theme bg-accent text-xs font-bold text-accent-foreground" data-i18n="molaNextRiddle">Sonraki bilmece</button>
+      </section>
+
+      <section class="mt-4 rounded-[24px] border border-chart5/30 bg-chart5/5 p-4">
+        <div class="flex items-center gap-2"><span class="text-lg">🏆</span><h2 class="font-heading text-sm font-semibold" data-i18n="molaQuizTitle">Mini bilgi yarışması</h2></div>
+        <div id="quiz-intro">
+          <p class="mt-2 text-xs leading-5 text-muted-foreground" data-i18n="molaQuizIntro">Karışık 5 soru. Hazırsan başla!</p>
+          <p id="quiz-stats" class="mt-1 text-[11px] text-muted-foreground"></p>
+          <button id="quiz-start" type="button" class="mt-3 h-11 w-full rounded-theme bg-chart5 text-sm font-bold text-primary-foreground" data-i18n="molaQuizStart">Başla</button>
+        </div>
+        <div id="quiz-play" class="hidden">
+          <div class="mt-3 flex items-center justify-between text-[11px] text-muted-foreground"><span id="quiz-num"></span><span id="quiz-score-live"></span></div>
+          <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted"><div id="quiz-bar" class="h-full rounded-full bg-chart5 transition-[width] duration-300" style="width:0%"></div></div>
+          <p id="quiz-q" class="mt-3 text-sm font-semibold leading-6"></p>
+          <div id="quiz-opts" class="mt-3 grid gap-2"></div>
+          <p id="quiz-why" class="mt-3 hidden text-[11px] leading-5 text-muted-foreground"></p>
+          <button id="quiz-next" type="button" class="mt-3 hidden h-11 w-full rounded-theme bg-chart5 text-sm font-bold text-primary-foreground" data-i18n="molaQuizNext">Sonraki</button>
+        </div>
+        <div id="quiz-end" class="hidden text-center">
+          <p class="mt-3 text-4xl">🎯</p>
+          <p id="quiz-final" class="mt-1 font-heading text-2xl font-bold"></p>
+          <p id="quiz-praise" class="mt-1 text-xs text-card-foreground"></p>
+          <p id="quiz-best" class="mt-1 text-[11px] text-muted-foreground"></p>
+          <button id="quiz-again" type="button" class="mt-3 h-11 w-full rounded-theme bg-chart5 text-sm font-bold text-primary-foreground" data-i18n="molaQuizAgain">Tekrar oyna</button>
+        </div>
+      </section>
+
+      <section class="mt-4 rounded-[22px] border border-border bg-card/70 p-4">
+        <h2 class="font-heading text-sm font-semibold" data-i18n="molaWhy">Neden bu sayfa?</h2>
+        <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="molaWhyText">Ekrana kaydırmak yerine kısa, işe yarar bir mola ver: gözlerini dinlendir, zihnini canlandır, sonra işine dön.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="wb-strings.js"></script>
+  <script src="i18n.js"></script>
+  <script src="wellbeing.js"></script>
+  <script src="mola-data.js"></script>
+  <script src="mola.js"></script>
+</body>
+</html>

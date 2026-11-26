@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v21';
+const CACHE_NAME = 'one-shell-v24';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -19,6 +19,27 @@ const APP_SHELL = [
   './profile.js',
   './kalori.html',
   './kalori.js',
+  './wb-strings.js',
+  './wellbeing.js',
+  './gunluk.html',
+  './gunluk.js',
+  './nefes.html',
+  './nefes.js',
+  './aliskanlik.html',
+  './aliskanlik.js',
+  './mola.html',
+  './mola.js',
+  './mola-data.js',
+  './kaza.html',
+  './kaza.js',
+  './sudoku.html',
+  './sudoku.js',
+  './genelkultur.html',
+  './genelkultur.js',
+  './daily-core.js',
+  './daily-net.js',
+  './yuruyus.html',
+  './yuruyus.js',
   './hemcan.html',
   './rutin.html',
   './manifest.json',
@@ -45,6 +66,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+  // Sunucu işlevleri (/api/...) canlı veridir: önbelleğe alınmaz, hata cevapları saklanmaz.
+  try { if (new URL(req.url).pathname.indexOf('/api/') === 0) return; } catch (e) {}
 
   const isAppShell = APP_SHELL.some((path) => req.url.endsWith(path.replace('./', '/')) || req.url.endsWith(path));
 
@@ -57,8 +80,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          const resClone = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+          if (res && res.ok) { const resClone = res.clone(); caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone)); }
           return res;
         })
         .catch(() => caches.match(req)),
@@ -69,8 +91,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(req)
       .then((res) => {
-        const resClone = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+        if (res && res.ok) { const resClone = res.clone(); caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone)); }
         return res;
       })
       .catch(() => caches.match(req)),

@@ -5894,6 +5894,17 @@
   }
 };
 
+  // Ek metinler: wb-strings.js (varsa) window.ONE_I18N_EXTRA = { tr:{...}, en:{...} } tanımlar;
+  // burada ana sözlüğe eklenir. Çevirisi olmayan diller İngilizceye düşer (t() ve apply()).
+  (function mergeExtra() {
+    var X = global.ONE_I18N_EXTRA;
+    if (!X) return;
+    for (var l in X) {
+      if (!Object.prototype.hasOwnProperty.call(X, l) || !STRINGS[l]) continue;
+      for (var k in X[l]) if (Object.prototype.hasOwnProperty.call(X[l], k)) STRINGS[l][k] = X[l][k];
+    }
+  })();
+
   function getLang() {
     try {
       var saved = localStorage.getItem('one-lang');

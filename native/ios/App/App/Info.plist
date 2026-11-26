@@ -55,6 +55,12 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Hemcan, yemeğinin kalorisini tahmin edebilmek için yalnızca sen istediğinde fotoğraf çeker. Fotoğraf kaydedilmez.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Hemcan, kalori tahmini için yalnızca senin seçtiğin yemek fotoğrafını kullanır. Fotoğraf kaydedilmez.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Hemcan, yürüyüş veya koşunun mesafesini ve rotasını kaydetmek için konumuna yalnızca uygulama açıkken ve sen Başla'ya bastığında erişir. Rota yalnızca bu cihazda kalır.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Hemcan, günlük adım sayını göstermek için hareket ve adım verilerine erişir. Veri yalnızca bu cihazda kalır.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

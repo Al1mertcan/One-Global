@@ -75,11 +75,17 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: corsHeaders, body: '' };
 
-  const { getStore, connectLambda } = require('@netlify/blobs');
-  connectLambda(event);
-  const counterStore = getStore('one-member-counter');
-  const membersStore = getStore('one-members');
-  const rateLimitStore = getStore('one-member-ratelimit');
+  let counterStore, membersStore, rateLimitStore;
+  try {
+    const { getStore, connectLambda } = require('@netlify/blobs');
+    connectLambda(event);
+    counterStore = getStore('one-member-counter');
+    membersStore = getStore('one-members');
+    rateLimitStore = getStore('one-member-ratelimit');
+  } catch (err) {
+    // Depo başlatılamadı (ör. Netlify Blobs kapalı/ayarsız): ham hata yerine okunur bir kod döndür.
+    return { statusCode: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'store-unavailable' }) };
+  }
 
   function shape(count) {
     return {

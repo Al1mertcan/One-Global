@@ -76,6 +76,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <!-- Yürüyüş/koşu kaydı: konum yalnızca kullanıcı "Başla"ya basınca ve uygulama açıkken kullanılır; arka planda konum izni istemiyoruz. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- Kesin alarm izni istemiyoruz: hatırlatmalar birkaç dakika kayabilir ama sistem ayar ekranı açılmaz. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
 </manifest>
