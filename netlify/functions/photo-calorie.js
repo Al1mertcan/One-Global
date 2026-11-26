@@ -88,6 +88,7 @@ async function refund(store, key) {
 exports.parseResult = parseResult;
 
 exports.handler = async (event) => {
+  const t0 = Date.now();
   const cors = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -153,8 +154,9 @@ exports.handler = async (event) => {
 
   // Netlify senkron işlevleri varsayılan 10 sn'de kesilir (ve boş bir 502 döner). Bu yüzden isteği 8,5 sn'de kendimiz
   // keser, hakkı geri verir ve okunur bir "timeout" döneriz.
+  if (Date.now() - t0 > 6500) { await refund(store, ukey); return json(504, { error: 'slow_store' }); }
   const ctl = typeof AbortController === 'function' ? new AbortController() : null;
-  const timer = ctl ? setTimeout(() => ctl.abort(), 8500) : null;
+  const timer = ctl ? setTimeout(() => ctl.abort(), Math.max(1500, 9200 - (Date.now() - t0))) : null;
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       signal: ctl ? ctl.signal : undefined,

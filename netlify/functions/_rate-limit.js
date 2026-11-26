@@ -41,6 +41,12 @@ async function updateJSON(store, key, fn) {
 
     if (!conditionalSupported(res)) return decision.result; // eski SDK: koşul yok sayıldı
     if (res.modified && res.etag) return decision.result;
+    if (res.modified && !res.etag) {
+      // SDK, 412 dışındaki bir hatayı "modified:true + boş etag" diye gizlemiş olabilir (koşullu yazma bu ortamda çalışmıyor).
+      // Döngüde 12 kez bekleyip zaman aşımına düşmek yerine, koşulsuz yazmaya düş (aynı anda gelen çok nadir isteklerde sayaç 1 sapabilir).
+      await store.setJSON(key, decision.next);
+      return decision.result;
+    }
     // modified=false (başkası araya girdi) ya da boş etag -> tekrar dene
     await new Promise((r) => setTimeout(r, Math.random() * 20 * Math.min(attempt + 1, 8)));
   }
