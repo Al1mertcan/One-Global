@@ -87,7 +87,7 @@ async function refund(store, key) {
 
 exports.parseResult = parseResult;
 
-exports.handler = async (event) => {
+async function core(event) {
   const t0 = Date.now();
   const cors = {
     'Access-Control-Allow-Origin': '*',
@@ -99,6 +99,10 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors, body: '' };
   if (event.httpMethod === 'GET') {
     const out = { enabled: enabled(), monthly: intEnv('PHOTO_KCAL_MONTHLY_PER_USER', 100) };
+    if (event.queryStringParameters && event.queryStringParameters.probe === '3') {
+      try { const { getStore, connectLambda } = require('@netlify/blobs'); connectLambda(event); out.diag = (await getStore('one-photo-ratelimit').get('diag_log', { type: 'json' })) || []; } catch (e) { out.diag = 'err'; }
+      return json(200, out);
+    }
     // GEÇİCİ TANI: ?probe=2 -> depo işlemlerinin süresi ve koşullu yazmanın gerçekten çalışıp çalışmadığı.
     if (out.enabled && event.queryStringParameters && event.queryStringParameters.probe === '2') {
       const pr = {};
@@ -225,4 +229,29 @@ exports.handler = async (event) => {
   } finally {
     if (timer) clearTimeout(timer);
   }
+}
+
+// GEÇİCİ TANI: son istekleri depoya yazar (yalnızca durum/süre/boyut/tarayıcı türü; görsel ya da kimlik YOK).
+async function diag(event, patch) {
+  try {
+    const { getStore, connectLambda } = require('@netlify/blobs'); connectLambda(event);
+    const st = getStore('one-photo-ratelimit');
+    const cur = (await st.get('diag_log', { type: 'json' })) || [];
+    const list = Array.isArray(cur) ? cur : [];
+    if (patch.phase === 'start') list.push({ at: new Date().toISOString(), phase: 'start', len: (event.body || '').length, ua: String((event.headers || {})['user-agent'] || '').slice(0, 60) });
+    else list.push({ at: new Date().toISOString(), ...patch });
+    await st.setJSON('diag_log', list.slice(-12));
+  } catch (e) { /* yok say */ }
+}
+
+exports.handler = async (event) => {
+  const post = event.httpMethod === 'POST';
+  if (post) await Promise.race([diag(event, { phase: 'start' }), new Promise((r) => setTimeout(r, 800))]);
+  const t0 = Date.now();
+  const res = await core(event);
+  if (post) {
+    let code = ''; try { code = JSON.parse(res.body).error || 'ok'; } catch (e) {}
+    await Promise.race([diag(event, { phase: 'end', status: res.statusCode, code, ms: Date.now() - t0 }), new Promise((r) => setTimeout(r, 800))]);
+  }
+  return res;
 };
