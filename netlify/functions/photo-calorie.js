@@ -99,6 +99,23 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors, body: '' };
   if (event.httpMethod === 'GET') {
     const out = { enabled: enabled(), monthly: intEnv('PHOTO_KCAL_MONTHLY_PER_USER', 100) };
+    // GEÇİCİ TANI: ?probe=1 -> Anthropic'e 1x1 görselle minik istek atar, yalnızca durum kodu + süre + hata türü döner.
+    if (out.enabled && event.queryStringParameters && event.queryStringParameters.probe === '1') {
+      const p0 = Date.now();
+      try {
+        const c2 = new AbortController(); const t2 = setTimeout(() => c2.abort(), 8000);
+        const r2 = await fetch('https://api.anthropic.com/v1/messages', {
+          signal: c2.signal, method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+          body: JSON.stringify({ model: model(), max_tokens: 5, messages: [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/png', data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==' } },
+            { type: 'text', text: 'ok?' }] }] }),
+        });
+        clearTimeout(t2);
+        const d2 = await r2.json().catch(() => null);
+        out.probe = { status: r2.status, ms: Date.now() - p0, etype: d2 && d2.error && d2.error.type, model: model() };
+      } catch (e) { out.probe = { fail: (e && e.name) || 'err', ms: Date.now() - p0 }; }
+    }
     const qid = event.queryStringParameters && event.queryStringParameters.id;
     if (out.enabled && typeof qid === 'string' && ID_PATTERN.test(qid)) {
       try {
@@ -156,7 +173,7 @@ exports.handler = async (event) => {
   // keser, hakkı geri verir ve okunur bir "timeout" döneriz.
   if (Date.now() - t0 > 6500) { await refund(store, ukey); return json(504, { error: 'slow_store' }); }
   const ctl = typeof AbortController === 'function' ? new AbortController() : null;
-  const timer = ctl ? setTimeout(() => ctl.abort(), Math.max(1500, 9200 - (Date.now() - t0))) : null;
+  const timer = ctl ? setTimeout(() => ctl.abort(), Math.max(1500, 7800 - (Date.now() - t0))) : null;
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       signal: ctl ? ctl.signal : undefined,
