@@ -10,7 +10,7 @@
 //
 // Bu fonksiyon, Stripe'tan gelen abonelik olaylarını dinler ve
 // `one-subscriptions` Blobs deposuna GERÇEK abonelik durumunu yazar
-// (id -> { status, customerId, subscriptionId, currency, updatedAt }).
+// (id -> { status, plan: 'basic'|'pro', customerId, subscriptionId, currency, updatedAt }).
 // Henüz uygulamanın geri kalanı bu durumu okuyup bir "paywall" (ücretsiz
 // deneme bitince özellik kısıtlama) uygulamıyor — bu, birlikte ayrıca
 // tasarlanması gereken bir sonraki adım.
@@ -66,13 +66,14 @@ exports.handler = async (event) => {
           customerId: session.customer,
           subscriptionId: session.subscription,
           currency: session.currency,
+          plan: session.metadata && session.metadata.plan === 'pro' ? 'pro' : 'basic',
         });
         break;
       }
       case 'customer.subscription.updated': {
         const sub = stripeEvent.data.object;
         const oneId = sub.metadata && sub.metadata.one_sub_id;
-        await upsert(oneId, { status: sub.status, subscriptionId: sub.id });
+        await upsert(oneId, { status: sub.status, subscriptionId: sub.id, ...(sub.metadata && sub.metadata.plan ? { plan: sub.metadata.plan === 'pro' ? 'pro' : 'basic' } : {}) });
         break;
       }
       case 'customer.subscription.deleted': {

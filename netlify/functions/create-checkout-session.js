@@ -9,13 +9,13 @@
 // notunu göstermeye devam eder — yani anahtar eklenene kadar hiçbir şey
 // bozulmaz, kullanıcı yanıltılmaz.
 //
-// POST /api/create-checkout-session { id, currency }
+// POST /api/create-checkout-session { id, currency, plan: 'basic' | 'pro' }
 //   -> { url }               (Stripe Checkout sayfasına yönlendirme adresi)
 //
 // "Ayda sadece 1 birim" fiyatlandırma modeli, Stripe'ın `price_data` ile
 // dinamik olarak her para biriminde "1 birim/ay" fiyatı kurulmasıyla
 // uygulanır (önceden sabit bir Price ID oluşturmaya gerek kalmadan). İlk
-// hafta ücretsiz deneme, Stripe'ın `trial_period_days: 7` alanıyla
+// hafta ücretsiz deneme (artık 14 gün), Stripe'ın `trial_period_days: 14` alanıyla
 // sağlanır — yani deneme süresi sonunda GERÇEKTEN otomatik tahsilat
 // başlar (Kullanım Şartları'nda bu netleştirilmelidir, bkz. sartlar.html —
 // bu fonksiyon aktive edildiğinde o metnin de güncellenmesi gerekir).
@@ -52,6 +52,13 @@ const PRICE_OVERRIDES = {
   MWK: 10, HTG: 10, BOB: 10, MMK: 10, NGN: 10,
 };
 
+// Kalori Pro = temel plan x 1,5 (fotoğraflı kalori dahil). Sıfır ondalıklı para birimlerinde yukarı yuvarlanır.
+// currencies.js'teki getProPrice ile birebir aynı tutulmalıdır.
+function proUnits(base, cur) {
+  const v = base * 1.5;
+  return ZERO_DECIMAL_CURRENCIES.has(cur) ? Math.ceil(v) : v;
+}
+
 exports.handler = async (event) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -84,6 +91,7 @@ exports.handler = async (event) => {
   }
 
   const { id, currency } = payload;
+  const plan = payload.plan === 'pro' ? 'pro' : 'basic';
   if (!id || typeof id !== 'string') {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'id zorunludur.' }) };
   }
@@ -97,12 +105,14 @@ exports.handler = async (event) => {
     const stripe = Stripe(secretKey);
 
     const siteUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://example.com';
-    const baseUnits = PRICE_OVERRIDES.hasOwnProperty(cur) ? PRICE_OVERRIDES[cur] : 1;
-    const unitAmount = ZERO_DECIMAL_CURRENCIES.has(cur) ? baseUnits : baseUnits * 100;
+    const basicUnits = PRICE_OVERRIDES.hasOwnProperty(cur) ? PRICE_OVERRIDES[cur] : 1;
+    const baseUnits = plan === 'pro' ? proUnits(basicUnits, cur) : basicUnits;
+    const unitAmount = ZERO_DECIMAL_CURRENCIES.has(cur) ? baseUnits : Math.round(baseUnits * 100);
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       client_reference_id: id,
+      metadata: { plan },
       line_items: [
         {
           price_data: {
@@ -110,18 +120,20 @@ exports.handler = async (event) => {
             unit_amount: unitAmount,
             recurring: { interval: 'month' },
             product_data: {
-              name: 'Hemcan — Aylık Abonelik',
-              description: PRICE_OVERRIDES.hasOwnProperty(cur)
-                ? 'Aylık abonelik — ' + baseUnits + ' ' + cur + '.'
-                : 'Dünyanın her yerinde, ayda sadece 1 birim.',
+              name: plan === 'pro' ? 'Hemcan — Kalori Pro (aylık)' : 'Hemcan — Aylık Abonelik',
+              description: plan === 'pro'
+                ? 'Hemcan Plan + fotoğraflı kalori — ' + baseUnits + ' ' + cur + '/ay.'
+                : (PRICE_OVERRIDES.hasOwnProperty(cur)
+                  ? 'Aylık abonelik — ' + baseUnits + ' ' + cur + '.'
+                  : 'Dünyanın her yerinde, ayda sadece 1 birim.'),
             },
           },
           quantity: 1,
         },
       ],
       subscription_data: {
-        trial_period_days: 7,
-        metadata: { one_sub_id: id },
+        trial_period_days: 14,
+        metadata: { one_sub_id: id, plan },
       },
       success_url: siteUrl + '/ayarlar.html?sub=success',
       cancel_url: siteUrl + '/abonelik.html?sub=cancelled',

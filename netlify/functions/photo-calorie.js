@@ -12,6 +12,13 @@
 //   tüm site için günde en fazla PHOTO_KCAL_DAILY_CAP (varsayılan 300) fotoğraf.
 //   Sınır deposu çalışmazsa istek REDDEDİLİR (fatura korunur).
 //
+// ÜCRETLİ PLAN HAZIRLIĞI (varsayılan KAPALI): PHOTO_KCAL_PAYWALL=1 olduğunda kimlik, "id" yerine oturum belirteci
+// (Authorization: Bearer <one-session>) ile doğrulanır ve hak türü hesaptan okunur:
+//   - deneme süresi içinde (14 gün)  -> günde PHOTO_KCAL_TRIAL_DAILY (varsayılan 3) fotoğraf
+//   - Kalori Pro abonesi             -> ayda PHOTO_KCAL_PRO_MONTHLY (varsayılan 300) fotoğraf
+//   - diğerleri                      -> kapalı (upgrade_required)
+// Bayrak KAPALIYKEN yukarıdaki mevcut davranış aynen çalışır.
+//
 // GET  /api/photo-calorie[?id=<kimlik>]  -> { enabled, monthly, remaining? }   (arayüz düğmeyi ve kalan hakkı buna göre gösterir)
 // POST /api/photo-calorie  { id, image: <base64, "data:" öneki olmadan>, mime: 'image/jpeg', lang: 'tr' }
 //      -> { items: [{ name, grams, kcal }], total, note, confidence, remaining }
@@ -27,6 +34,7 @@ const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp'];
 const LANG_NAMES = { tr: 'Turkish', en: 'English', de: 'German', fr: 'French', es: 'Spanish', ar: 'Arabic', ru: 'Russian', pt: 'Portuguese', it: 'Italian', nl: 'Dutch', ja: 'Japanese', ko: 'Korean', zh: 'Chinese', hi: 'Hindi', id: 'Indonesian', fa: 'Persian', pl: 'Polish', uk: 'Ukrainian' };
 
 const crypto = require('crypto');
+const SES = require('./_session');
 const { consume, updateJSON } = require('./_rate-limit');
 function monthKey() { return new Date(Date.now() + 3 * 3600 * 1000).toISOString().slice(0, 7); } // Türkiye saatiyle ay
 function userKey(id) { return 'user_' + crypto.createHash('sha256').update('hemcan-photo|' + id).digest('hex').slice(0, 20) + '_' + monthKey(); }
@@ -37,6 +45,22 @@ function getClientIp(event) {
   return h['x-nf-client-connection-ip'] || h['client-ip'] || (h['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
 }
 function intEnv(name, def) { const n = parseInt(process.env[name], 10); return n > 0 ? n : def; }
+function paywallOn() { return process.env.PHOTO_KCAL_PAYWALL === '1'; }
+function dayKey() { return new Date(Date.now() + 3 * 3600 * 1000).toISOString().slice(0, 10); }
+function acctKey(uid, period) { return 'acct_' + crypto.createHash('sha256').update('hemcan-photo-acct|' + uid).digest('hex').slice(0, 20) + '_' + period; }
+
+// Oturum belirtecinden hesabı ve fotoğraf hakkını çözer. Hata: { err: <kod>, status }.
+async function resolveAccount(event) {
+  const sec = SES.secret();
+  if (!sec) return { err: 'unavailable_auth', status: 503 };
+  const p = SES.verifySession(SES.bearer(event), sec);
+  if (!p) return { err: 'login_required', status: 401 };
+  const { getStore, connectLambda } = require('@netlify/blobs'); connectLambda(event);
+  const user = await getStore('one-users').get('id_' + p.sub, { type: 'json' });
+  if (!user) return { err: 'login_required', status: 401 };
+  const sub = await getStore('one-subscriptions').get(user.id, { type: 'json' });
+  return { user, access: SES.photoAccess(user, sub) };
+}
 function enabled() { return process.env.PHOTO_KCAL_ENABLED === '1' && !!process.env.ANTHROPIC_API_KEY; }
 
 function buildPrompt(lang) {
@@ -101,12 +125,34 @@ async function core(event) {
   const t0 = Date.now();
   const cors = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   };
   const json = (code, obj) => ({ statusCode: code, headers: { ...cors, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(obj) });
 
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors, body: '' };
+  if (event.httpMethod === 'GET' && paywallOn()) {
+    const out = { enabled: enabled(), paywall: true, tier: 'guest' };
+    if (!out.enabled) return json(200, out);
+    try {
+      const r = await resolveAccount(event);
+      if (r.err) return json(200, out);
+      const a = r.access;
+      out.tier = a.tier; out.trialEndsAt = a.trialEndsAt;
+      if (a.tier === 'trial') {
+        out.limit = a.daily; out.period = 'day';
+        const { getStore } = require('@netlify/blobs');
+        const cur = await getStore('one-photo-ratelimit').get(acctKey(r.user.id, 'd' + dayKey()), { type: 'json' });
+        out.remaining = Math.max(0, a.daily - (cur && typeof cur.count === 'number' ? cur.count : 0));
+      } else if (a.tier === 'pro') {
+        out.limit = a.monthly; out.period = 'month';
+        const { getStore } = require('@netlify/blobs');
+        const cur = await getStore('one-photo-ratelimit').get(acctKey(r.user.id, 'm' + monthKey()), { type: 'json' });
+        out.remaining = Math.max(0, a.monthly - (cur && typeof cur.count === 'number' ? cur.count : 0));
+      }
+    } catch (e) { /* durum gösterilemese de özellik çalışır */ }
+    return json(200, out);
+  }
   if (event.httpMethod === 'GET') {
     const out = { enabled: enabled(), monthly: intEnv('PHOTO_KCAL_MONTHLY_PER_USER', 100) };
     const qid = event.queryStringParameters && event.queryStringParameters.id;
@@ -133,27 +179,39 @@ async function core(event) {
   const approxBytes = Math.floor((image.length * 3) / 4);
   if (approxBytes > MAX_IMAGE_BYTES) return json(413, { error: 'too_large' });
   if (approxBytes < 1000) return json(400, { error: 'bad_image' });
+  const paywall = paywallOn();
   const id = payload.id;
-  if (typeof id !== 'string' || !ID_PATTERN.test(id)) return json(400, { error: 'bad_id' });
+  if (!paywall && (typeof id !== 'string' || !ID_PATTERN.test(id))) return json(400, { error: 'bad_id' });
   const lang = typeof payload.lang === 'string' && /^[a-z]{2}(-[A-Za-z]{2,4})?$/.test(payload.lang) ? payload.lang.slice(0, 2).toLowerCase() : 'en';
 
   // Üyelik + hız sınırı + kişi başı aylık hak + günlük tavan (maliyet koruması). Depo çalışmazsa reddet.
-  const monthly = intEnv('PHOTO_KCAL_MONTHLY_PER_USER', 100);
-  let store, ukey = userKey(id), remaining = null, stage = 'store';
+  let monthly = intEnv('PHOTO_KCAL_MONTHLY_PER_USER', 100);
+  let store, ukey = paywall ? '' : userKey(id), remaining = null, stage = 'store';
+  let uLimit = monthly, uWindow = MONTH_MS, uDeny = 'monthly_cap';
   try {
     const { getStore, connectLambda } = require('@netlify/blobs');
     connectLambda(event);
     store = getStore('one-photo-ratelimit');
-    stage = 'member';
-    const member = await getStore('one-members').get('m_' + id);
-    if ((member === null || member === undefined)) return json(403, { error: 'not_member' });
+    if (paywall) {
+      stage = 'account';
+      const r = await resolveAccount(event);
+      if (r.err) return json(r.status, { error: r.err });
+      const a = r.access;
+      if (a.tier === 'none') return json(403, { error: 'upgrade_required' });
+      if (a.tier === 'trial') { ukey = acctKey(r.user.id, 'd' + dayKey()); uLimit = a.daily; uWindow = 24 * 60 * 60 * 1000; uDeny = 'trial_daily'; }
+      else { ukey = acctKey(r.user.id, 'm' + monthKey()); uLimit = a.monthly; uWindow = MONTH_MS; uDeny = 'monthly_cap'; }
+    } else {
+      stage = 'member';
+      const member = await getStore('one-members').get('m_' + id);
+      if ((member === null || member === undefined)) return json(403, { error: 'not_member' });
+    }
     stage = 'rate_ip';
     const perHour = await consume(store, 'ip_' + getClientIp(event), intEnv('PHOTO_KCAL_IP_PER_HOUR', 10), 60 * 60 * 1000);
     if (!perHour.allowed) return json(429, { error: 'rate_limited' });
     stage = 'rate_user';
-    const mine = await consume(store, ukey, monthly, MONTH_MS);
-    if (!mine.allowed) return json(429, { error: 'monthly_cap', remaining: 0 });
-    remaining = Math.max(0, monthly - mine.count);
+    const mine = await consume(store, ukey, uLimit, uWindow);
+    if (!mine.allowed) return json(429, { error: uDeny, remaining: 0 });
+    remaining = Math.max(0, uLimit - mine.count);
     stage = 'rate_day';
     const day = new Date().toISOString().slice(0, 10);
     const daily = await consume(store, 'day_' + day, intEnv('PHOTO_KCAL_DAILY_CAP', 300), 24 * 60 * 60 * 1000);

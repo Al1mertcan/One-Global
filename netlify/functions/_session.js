@@ -6,7 +6,7 @@
 const crypto = require('crypto');
 
 const SESSION_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 gün
-const TRIAL_MS = 7 * 24 * 60 * 60 * 1000;        // 1 hafta ücretsiz deneme
+const TRIAL_MS = 14 * 24 * 60 * 60 * 1000;       // 2 hafta ücretsiz deneme
 const EMAIL_PATTERN = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
 
 function b64u(buf) { return Buffer.from(buf).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_'); }
@@ -91,7 +91,22 @@ function entitlement(user, sub, now = Date.now()) {
   return { active: false, reason: 'expired', trialEndsAt };
 }
 
+// Fotoğraflı kalori hakkı (yalnızca PHOTO_KCAL_PAYWALL=1 iken kullanılır):
+//  - 'pro'   : aktif abonelik ve plan === 'pro' (Kalori Pro) -> ayda PRO_MONTHLY fotoğraf
+//  - 'trial' : ücretsiz deneme süresi içinde                  -> günde TRIAL_DAILY fotoğraf
+//  - 'none'  : diğer durumlar (temel plan, süresi bitmiş)     -> fotoğraflı kalori kapalı
+// Sayıların varsayılanı kodda; PHOTO_KCAL_TRIAL_DAILY / PHOTO_KCAL_PRO_MONTHLY ile değiştirilebilir.
+function photoAccess(user, sub, now = Date.now()) {
+  const intEnv = (n, d) => { const v = parseInt(process.env[n], 10); return v > 0 ? v : d; };
+  const trialEndsAt = user.trialStartedAt + TRIAL_MS;
+  if (sub && sub.status === 'active' && (!sub.expiresAt || now < sub.expiresAt) && sub.plan === 'pro') {
+    return { tier: 'pro', monthly: intEnv('PHOTO_KCAL_PRO_MONTHLY', 300), trialEndsAt };
+  }
+  if (now < trialEndsAt) return { tier: 'trial', daily: intEnv('PHOTO_KCAL_TRIAL_DAILY', 3), trialEndsAt };
+  return { tier: 'none', trialEndsAt };
+}
+
 module.exports = {
-  SESSION_TTL_MS, TRIAL_MS, CORS, reply, notConfigured, secret, normalizeEmail, validEmail, emailKey, codeHash,
+  photoAccess, SESSION_TTL_MS, TRIAL_MS, CORS, reply, notConfigured, secret, normalizeEmail, validEmail, emailKey, codeHash,
   signSession, verifySession, bearer, getClientIp, findUserByEmail, createUser, entitlement, safeEqual,
 };
