@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v28';
+const CACHE_NAME = 'one-shell-v29';
 // Not: büyük ses kayıtları (sounds/*.mp3) kurulumda indirilmez; ilk dinlenişte önbelleğe alınır (aşağıdaki genel kural).
 const APP_SHELL = [
   './',
@@ -43,6 +43,17 @@ const APP_SHELL = [
   './fark.js',
   './hafiza.html',
   './hafiza.js',
+  './oyun2048.js',
+  './oyun2048.html',
+  './scramble-words.js',
+  './kelimecevir.js',
+  './kelimecevir.html',
+  './grup-words.js',
+  './gruplama.js',
+  './gruplama.html',
+  './wordle-words.js',
+  './wordle.js',
+  './wordle.html',
   './daily-core.js',
   './daily-net.js',
   './yuruyus.html',

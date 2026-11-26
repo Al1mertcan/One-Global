@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="native.js"></script>
+  <script src="profile.js"></script>
+  <title>Hemcan — Gruplama</title>
+
+  <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          chart1: 'rgb(57 215 255 / <alpha-value>)',
+          chart2: 'rgb(167 139 250 / <alpha-value>)',
+          chart3: 'rgb(61 219 165 / <alpha-value>)',
+          chart4: 'rgb(112 167 255 / <alpha-value>)',
+          chart5: 'rgb(242 182 109 / <alpha-value>)',
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+</script>
+
+  <!-- Iconify Web Component -->
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+  <!-- Design Tokens + Custom Classes -->
+  <style>
+  :root {
+    --color-background: #07111F;
+    --color-foreground: #EFF7FF;
+    --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C;
+    --color-secondary: #162A46;
+    --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA;
+    --color-accent-foreground: #130D28;
+    --color-muted: #10213A;
+    --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30;
+    --color-card-foreground: #EFF7FF;
+    --color-border: #28415F;
+    --color-input: #102540;
+    --color-destructive: #FF657A;
+    --color-destructive-foreground: #26040A;
+    --color-success: #3DDBA5;
+    --color-success-foreground: #031B14;
+    --color-chart1: #39D7FF;
+    --color-chart2: #A78BFA;
+    --color-chart3: #3DDBA5;
+    --color-chart4: #70A7FF;
+    --color-chart5: #F2B66D;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hemcan">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-24">
+    <div class="pointer-events-none absolute -top-28 -right-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute top-[430px] -left-32 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
+
+    <header class="relative px-5 pt-12">
+      <div class="flex items-center justify-between">
+        <a href="mola.html" data-i18n-aria="wbBack" aria-label="Geri" class="flex h-11 w-11 items-center justify-center rounded-theme border border-border bg-card/80 text-foreground shadow-lg backdrop-blur-xl">
+          <iconify-icon icon="lucide:arrow-left" class="text-xl"></iconify-icon>
+        </a>
+        <span class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground" data-i18n="grHeader">Gruplama</span>
+        <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-theme border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
+      </div>
+    </header>
+
+    <main class="relative px-5 pt-6">
+      <section id="gr-play">
+        <div class="rounded-[24px] border border-primary/25 bg-card p-4">
+          <h1 class="font-heading text-base font-semibold" data-i18n="grHeader">Gruplama</h1>
+          <p class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="grIntro">16 kelimeyi 4 gruba ayır.</p>
+          <p class="mt-1 text-[11px] leading-5 text-muted-foreground" data-i18n="grLangNote">Kategoriler Türkçe ve İngilizce.</p>
+        </div>
+        <div id="gr-solved" class="mt-4 grid gap-2"></div>
+        <div id="gr-grid" class="mt-2 grid grid-cols-4 gap-2"></div>
+        <p id="gr-msg" class="mt-3 min-h-[1.25rem] text-center text-xs font-semibold text-chart5" role="status" aria-live="polite"></p>
+        <p id="gr-left" class="text-center text-xs font-bold text-muted-foreground"></p>
+        <div class="mt-3 grid grid-cols-3 gap-2">
+          <button id="gr-shuffle" type="button" class="h-11 rounded-theme border border-border bg-card text-xs font-bold text-card-foreground" data-i18n="grShuffle">Karıştır</button>
+          <button id="gr-clear" type="button" class="h-11 rounded-theme border border-border bg-card text-xs font-bold text-card-foreground" data-i18n="grDeselect">Seçimi kaldır</button>
+          <button id="gr-submit" type="button" class="h-11 rounded-theme bg-primary text-xs font-bold text-primary-foreground disabled:opacity-40" data-i18n="grSubmit">Gönder</button>
+        </div>
+      </section>
+
+      <section id="gr-done" class="mt-4 hidden rounded-[24px] border border-success/30 bg-success/5 p-5 text-center">
+        <p id="gr-done-emoji" class="text-3xl" aria-hidden="true">🎉</p>
+        <h2 id="gr-done-title" class="mt-2 font-heading text-xl font-bold"></h2>
+        <p id="gr-stats" class="mt-2 text-[11px] leading-5 text-muted-foreground"></p>
+        <button id="gr-new" type="button" class="mt-4 h-11 w-full rounded-theme bg-primary text-sm font-bold text-primary-foreground" data-i18n="grNew">Yeni oyun</button>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="wb-strings.js"></script>
+  <script src="i18n.js"></script>
+  <script src="wellbeing.js"></script>
+  <script src="grup-words.js"></script>
+  <script src="gruplama.js"></script>
+</body>
+</html>
