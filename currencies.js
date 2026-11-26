@@ -206,5 +206,13 @@
     return PRICE_OVERRIDES.hasOwnProperty(code) ? PRICE_OVERRIDES[code] : 1;
   }
 
-  global.ONE_CURRENCIES = { list: CURRENCIES, guess: guessCurrency, getPrice: getPrice };
+  // Kalori Pro (fotoğraflı kalori dahil) = temel fiyat x 1,5. Sıfır ondalıklı para birimlerinde
+  // yukarı yuvarlanır. Sunucudaki create-checkout-session.js proUnits() ile birebir aynı olmalı.
+  var ZERO_DECIMAL = { BIF: 1, CLP: 1, DJF: 1, GNF: 1, JPY: 1, KMF: 1, KRW: 1, MGA: 1, PYG: 1, RWF: 1, UGX: 1, VND: 1, VUV: 1, XAF: 1, XOF: 1, XPF: 1 };
+  function getProPrice(code) {
+    var v = getPrice(code) * 1.5;
+    return ZERO_DECIMAL.hasOwnProperty(code) ? Math.ceil(v) : v;
+  }
+
+  global.ONE_CURRENCIES = { list: CURRENCIES, guess: guessCurrency, getPrice: getPrice, getProPrice: getProPrice };
 })(window);

@@ -335,11 +335,13 @@
           if (!id) { id = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'one-' + Date.now() + '-' + Math.random().toString(36).slice(2)); try { localStorage.setItem('one-sub-id', id); } catch (e) {} }
           return id;
         }
-        function showLeft(n) { var el = $('photo-left'); if (typeof n !== 'number') return; el.textContent = t('photoLeft', { n: n }); el.classList.remove('hidden'); }
+        var leftKey = 'photoLeft';
+        function authHdr(h) { var tk = null; try { tk = localStorage.getItem('one-session'); } catch (e) {} if (tk) h['Authorization'] = 'Bearer ' + tk; return h; }
+        function showLeft(n) { var el = $('photo-left'); if (typeof n !== 'number') return; el.textContent = t(leftKey, { n: n }); el.classList.remove('hidden'); }
         function say(msg, tone) { st.textContent = msg; st.className = 'mt-2 text-[11px] font-semibold leading-5 ' + (tone === 'err' ? 'text-destructive' : (tone === 'ok' ? 'text-success' : 'text-muted-foreground')); }
         function hasConsent() { try { return localStorage.getItem(CONSENT) === '1'; } catch (e) { return false; } }
         try {
-          fetch('/api/photo-calorie?id=' + encodeURIComponent(subId()), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.enabled === true) { box.classList.remove('hidden'); showLeft(j.remaining); } }).catch(function () {});
+          fetch('/api/photo-calorie?id=' + encodeURIComponent(subId()), { cache: 'no-store', headers: authHdr({}) }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.enabled === true) { box.classList.remove('hidden'); if (j.period === 'day') leftKey = 'photoLeftDay'; showLeft(j.remaining); } }).catch(function () {});
         } catch (e) {}
         function open(inp) {
           if (busy) return;
@@ -370,6 +372,7 @@
           });
         }
         function errMsg(code, status) {
+          if (code === 'login_required') return t('photoErrLogin'); if (code === 'upgrade_required') return t('photoErrUpgrade'); if (code === 'trial_daily') return t('photoErrTrialDay');
           if (status === 503 && code === 'disabled') return t('photoErrDisabled'); if (status === 429) return t(code === 'monthly_cap' ? 'photoErrMonthly' : code === 'daily_cap' ? 'photoErrDaily' : 'photoErrRate');
           if (status === 413) return t('photoErrLarge'); if (code === 'monthly_cap') return t('photoErrMonthly'); return t('photoErrGeneric') + ' (' + status + (code ? ' ' + code : '') + (window.__photoUp ? ' ' + window.__photoUp : '') + ')';
         }
@@ -377,7 +380,7 @@
           if (!file || busy) return; busy = true; say(t('photoAnalyzing'), 'info'); pending = []; renderPreview();
           shrink(file).then(function (b64) {
             function send() {
-              return fetch('/api/photo-calorie', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: subId(), image: b64, mime: 'image/jpeg', lang: window.ONE_I18N.getLang() }) })
+              return fetch('/api/photo-calorie', { method: 'POST', headers: authHdr({ 'Content-Type': 'application/json' }), body: JSON.stringify({ id: subId(), image: b64, mime: 'image/jpeg', lang: window.ONE_I18N.getLang() }) })
                 .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, status: r.status, j: j }; }); });
             }
             return send().then(function (res) {
@@ -389,7 +392,7 @@
             });
           }).then(function (res) {
             busy = false;
-            if (!res.ok) { if (res.j && res.j.error === 'monthly_cap') showLeft(0); window.__photoUp = res.j && typeof res.j.up === 'number' ? res.j.up : ''; say(errMsg(res.j && res.j.error, res.status), 'err'); return; }
+            if (!res.ok) { if (res.j && (res.j.error === 'monthly_cap' || res.j.error === 'trial_daily')) showLeft(0); window.__photoUp = res.j && typeof res.j.up === 'number' ? res.j.up : ''; say(errMsg(res.j && res.j.error, res.status), 'err'); return; }
             showLeft(res.j.remaining);
             var items = Array.isArray(res.j.items) ? res.j.items : [];
             if (!items.length) { say(res.j.note || t('photoNoFood'), 'err'); return; }

@@ -114,7 +114,7 @@
         <p class="mt-3 text-sm leading-6 text-muted-foreground" data-i18n="planSub">Çoğu ülkede Hemcan, yerel para biriminin sadece 1 birimi kadardır. Türkiye gibi yüksek enflasyonlu ülkelerde ise bu tutar 10 birimdir.</p>
         <div class="mx-auto mt-4 flex w-fit items-center gap-2 rounded-full border border-success/25 bg-success/10 px-4 py-2">
           <iconify-icon icon="lucide:gift" class="text-base text-success"></iconify-icon>
-          <span class="text-xs font-bold text-success" data-i18n="planTrialBadge">İlk 1 hafta ücretsiz</span>
+          <span class="text-xs font-bold text-success" data-i18n="planTrialBadge">İlk 2 hafta ücretsiz</span>
         </div>
       </section>
 
@@ -125,6 +125,29 @@
           <iconify-icon icon="lucide:map-pin" class="text-sm text-primary"></iconify-icon>
           <span data-i18n="planCurrencyAuto">Yerel para birimini otomatik seçtik — istersen değiştirebilirsin.</span>
         </p>
+      </section>
+
+      <section class="mt-6" aria-labelledby="plan-pick-title">
+        <h2 id="plan-pick-title" class="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground" data-i18n="planPickTitle">Planını seç</h2>
+        <div id="plan-cards" class="grid gap-3" role="radiogroup">
+          <button type="button" role="radio" aria-checked="true" data-plan="basic" class="plan-card flex w-full items-center gap-3 rounded-[20px] border border-primary bg-primary/10 p-4 text-left">
+            <span class="plan-dot flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-primary"><span class="h-2.5 w-2.5 rounded-full bg-primary"></span></span>
+            <span class="min-w-0 flex-1">
+              <span class="block font-heading text-sm font-semibold" data-i18n="planBasicName">Hemcan Plan</span>
+              <span class="mt-0.5 block text-[11px] leading-4 text-muted-foreground" data-i18n="planBasicDesc">Su, cüzdan, rutin, hedefler, reklam yok</span>
+            </span>
+            <span class="shrink-0 text-right"><span id="price-basic" class="block font-heading text-base font-bold text-primary">$1</span><span class="block text-[10px] text-muted-foreground" data-i18n="planPerMonth">/ ay</span></span>
+          </button>
+          <button type="button" role="radio" aria-checked="false" data-plan="pro" class="plan-card flex w-full items-center gap-3 rounded-[20px] border border-border bg-card p-4 text-left">
+            <span class="plan-dot flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-border"><span class="h-2.5 w-2.5 rounded-full bg-transparent"></span></span>
+            <span class="min-w-0 flex-1">
+              <span class="flex flex-wrap items-center gap-2"><span class="font-heading text-sm font-semibold" data-i18n="planProName">Kalori Pro</span><span class="rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] font-bold text-accent" data-i18n="planProBadge">Fotoğraflı kalori</span></span>
+              <span class="mt-0.5 block text-[11px] leading-4 text-muted-foreground" data-i18n="planProDesc">Hemcan Plan + fotoğraftan kalori (ayda 300 fotoğraf)</span>
+            </span>
+            <span class="shrink-0 text-right"><span id="price-pro" class="block font-heading text-base font-bold text-accent">$1.5</span><span class="block text-[10px] text-muted-foreground" data-i18n="planPerMonth">/ ay</span></span>
+          </button>
+        </div>
+        <p class="mt-2 text-[11px] leading-5 text-muted-foreground" data-i18n="planProWhy">Fotoğraf analizi her seferinde yapay zeka kullandığı için ayrı bir planda. Kullanmayacaksan Hemcan Plan yeterli.</p>
       </section>
 
       <section class="mt-6 rounded-[22px] border border-border bg-card p-4">
@@ -161,7 +184,8 @@
         <span data-i18n="planCta">Abone ol</span>
         <span id="price-preview">— $1</span>
       </button>
-      <p class="mt-3 text-center text-[11px] font-semibold text-success" data-i18n="planTrialLine">İlk 1 hafta ücretsiz. Sonrasında istediğin zaman iptal edebilirsin.</p>
+      <p class="mt-3 text-center text-[11px] font-semibold text-success" data-i18n="planTrialLine">İlk 2 hafta ücretsiz. Sonrasında istediğin zaman iptal edebilirsin.</p>
+      <p class="mt-1.5 text-center text-[11px] text-muted-foreground" data-i18n="planTrialPhotoNote">Deneme süresince fotoğraflı kalori de açık (günde 3 fotoğraf).</p>
       <p id="plan-demo-note" class="mt-1.5 text-center text-[11px] text-muted-foreground" data-i18n="planDemoNote">Bu bir tasarım önizlemesidir — henüz gerçek ödeme alınmıyor.</p>
     </main>
   </div>
@@ -172,6 +196,24 @@
       'use strict';
       var select = document.getElementById('currency-select');
       var pricePreview = document.getElementById('price-preview');
+      var priceBasic = document.getElementById('price-basic');
+      var pricePro = document.getElementById('price-pro');
+      var cards = document.querySelectorAll('.plan-card');
+      window.__plan = 'basic';
+      function fmt(n) { return String(Math.round(n * 100) / 100); }
+      function setPlan(plan) {
+        window.__plan = plan;
+        for (var i = 0; i < cards.length; i++) {
+          var on = cards[i].getAttribute('data-plan') === plan;
+          cards[i].setAttribute('aria-checked', on ? 'true' : 'false');
+          cards[i].className = 'plan-card flex w-full items-center gap-3 rounded-[20px] border p-4 text-left ' + (on ? 'border-primary bg-primary/10' : 'border-border bg-card');
+          var dot = cards[i].querySelector('.plan-dot');
+          dot.className = 'plan-dot flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ' + (on ? 'border-primary' : 'border-border');
+          dot.firstElementChild.className = 'h-2.5 w-2.5 rounded-full ' + (on ? 'bg-primary' : 'bg-transparent');
+        }
+        updatePreview();
+      }
+      for (var ci = 0; ci < cards.length; ci++) (function (c) { c.addEventListener('click', function () { setPlan(c.getAttribute('data-plan')); }); })(cards[ci]);
 
       function global_ONE_CURRENCIES() {
         return window.ONE_CURRENCIES || { list: [{ code: 'USD', symbol: '$', name: 'US Dollar' }], guess: function () { return 'USD'; }, getPrice: function () { return 1; } };
@@ -197,8 +239,12 @@
         var currencies = api.list;
         var found = null;
         for (var i = 0; i < currencies.length; i++) if (currencies[i].code === select.value) { found = currencies[i]; break; }
-        var price = found && api.getPrice ? api.getPrice(found.code) : 1;
-        pricePreview.textContent = '— ' + (found ? found.symbol : '') + price;
+        var sym = found ? found.symbol : '';
+        var pBasic = found && api.getPrice ? api.getPrice(found.code) : 1;
+        var pPro = found && api.getProPrice ? api.getProPrice(found.code) : pBasic * 1.5;
+        if (priceBasic) priceBasic.textContent = sym + fmt(pBasic);
+        if (pricePro) pricePro.textContent = sym + fmt(pPro);
+        pricePreview.textContent = '— ' + sym + fmt(window.__plan === 'pro' ? pPro : pBasic);
       }
       select.addEventListener('change', updatePreview);
       populate();
@@ -234,7 +280,7 @@
         fetch('/api/create-checkout-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: getSubId(), currency: select ? select.value : 'USD' }),
+          body: JSON.stringify({ id: getSubId(), currency: select ? select.value : 'USD', plan: window.__plan === 'pro' ? 'pro' : 'basic' }),
         })
           .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
           .then(function (result) {
