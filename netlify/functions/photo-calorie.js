@@ -99,6 +99,24 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors, body: '' };
   if (event.httpMethod === 'GET') {
     const out = { enabled: enabled(), monthly: intEnv('PHOTO_KCAL_MONTHLY_PER_USER', 100) };
+    // GEÇİCİ TANI: ?probe=2 -> depo işlemlerinin süresi ve koşullu yazmanın gerçekten çalışıp çalışmadığı.
+    if (out.enabled && event.queryStringParameters && event.queryStringParameters.probe === '2') {
+      const pr = {};
+      const tm = async (k, f) => { const a0 = Date.now(); try { const v = await f(); pr[k] = { ms: Date.now() - a0, v }; } catch (e) { pr[k] = { ms: Date.now() - a0, err: String((e && e.message) || e).slice(0, 80) }; } };
+      try {
+        const { getStore, connectLambda } = require('@netlify/blobs'); connectLambda(event);
+        const rs = getStore('one-photo-ratelimit'); const ms = getStore('one-members');
+        const k = 'probe_' + Date.now();
+        await tm('get_member', async () => (await ms.get('m_probe_none')) === null);
+        await tm('raw_new', async () => { const r = await rs.setJSON(k, { count: 1 }, { onlyIfNew: true }); return { modified: r && r.modified, etag: !!(r && r.etag) }; });
+        await tm('read_back', async () => { const r = await rs.get(k, { type: 'json' }); return !!r; });
+        await tm('consume', async () => (await consume(rs, k + 'c', 1000, 60000)).allowed);
+        await tm('member_new', async () => { const r = await ms.set('probe_' + k, 'x', { onlyIfNew: true }); const back = await ms.get('probe_' + k); try { await ms.delete('probe_' + k); } catch (e) {} return { modified: r && r.modified, etag: !!(r && r.etag), stored: back !== null }; });
+        try { await rs.delete(k); await rs.delete(k + 'c'); } catch (e) {}
+      } catch (e) { pr.fail = String(e && e.message).slice(0, 80); }
+      out.probe2 = pr;
+      return json(200, out);
+    }
     // GEÇİCİ TANI: ?probe=1 -> Anthropic'e 1x1 görselle minik istek atar, yalnızca durum kodu + süre + hata türü döner.
     if (out.enabled && event.queryStringParameters && event.queryStringParameters.probe === '1') {
       const p0 = Date.now();
