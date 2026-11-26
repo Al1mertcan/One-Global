@@ -5,6 +5,7 @@
   var WB = window.WB, $ = WB.$, t = WB.t;
   var KEY = 'one-calm', KEY_PREF = 'one-calm-pref';
   var pref = WB.load(KEY_PREF, { tab: 'breath', pattern: '478', bdur: 3, sound: false, haptic: true, mdur: 10, mint: 0, mamb: 'none', mix: { rain: 0.6 }, timer: 30 });
+  (function () { var ok = { rain: 1, ocean: 1, wind: 1, fire: 1, night: 1 }, m = {}; Object.keys(pref.mix || {}).forEach(function (k) { if (ok[k]) m[k] = pref.mix[k]; }); pref.mix = Object.keys(m).length ? m : { rain: 0.6 }; if (pref.mamb !== 'none' && !ok[pref.mamb]) pref.mamb = 'rain'; })();
 
   // ---------------------------------------------------------------- kayıt / istatistik
   function log() { var l = WB.load(KEY, null); if (!l || !l.days) l = { days: {} }; return l; }
@@ -197,8 +198,8 @@
     rain: { layers: [{ f: 'sounds/rain-a.mp3', g: 1 }, { f: 'sounds/rain-b.mp3', g: 0.6 }], thunder: true },
     ocean: { layers: [{ f: 'sounds/ocean-a.mp3', g: 1 }, { f: 'sounds/ocean-b.mp3', g: 0.5 }] },
     wind: { layers: [{ f: 'sounds/wind-a.mp3', g: 1 }, { f: 'sounds/wind-b.mp3', g: 0.55 }] },
-    fire: { layers: [{ f: 'sounds/fire-a.mp3', g: 1 }, { f: 'sounds/fire-b.mp3', g: 0.6 }] },
-    night: { layers: [{ f: 'sounds/night-a.mp3', g: 1 }] }
+    fire: { layers: [{ f: 'sounds/fire-a.mp3', g: 1.25 }, { f: 'sounds/fire-b.mp3', g: 0.9 }, { f: 'sounds/fire-c.mp3', g: 0.55 }] },
+    night: { layers: [{ f: 'sounds/night-a.mp3', g: 1 }, { f: 'sounds/night-b.mp3', g: 0.5 }] }
   };
   var THUNDER = { f: 'sounds/thunder.mp3', clips: [[0, 20], [21.5, 20], [43, 10], [54.5, 7.7]] };
   var fileCache = {};
@@ -272,11 +273,11 @@
       };
     };
   });
-  var SOUND_ICONS = { rain: '🌧️', ocean: '🌊', wind: '🍃', fire: '🔥', night: '🦗', white: '☁️', pink: '🌫️', brown: '🌑' };
-  var SOUND_IDS = ['rain', 'ocean', 'wind', 'fire', 'night', 'white', 'pink', 'brown'];
+  var SOUND_ICONS = { rain: '🌧️', ocean: '🌊', wind: '🍃', fire: '🔥', night: '🦗' };
+  var SOUND_IDS = ['rain', 'ocean', 'wind', 'fire', 'night'];
   var MIXES = [
     { id: 'rainy', mix: { rain: 0.7, night: 0.25 } }, { id: 'coast', mix: { ocean: 0.7, wind: 0.3 } },
-    { id: 'cabin', mix: { fire: 0.6, rain: 0.35 } }, { id: 'deep', mix: { brown: 0.7 } }, { id: 'forest', mix: { wind: 0.4, night: 0.45 } }
+    { id: 'cabin', mix: { fire: 0.6, rain: 0.35 } }, { id: 'deep', mix: { ocean: 0.45, rain: 0.25 } }, { id: 'forest', mix: { wind: 0.4, night: 0.45 } }
   ];
   var layers = {}; // id -> { gain, stop }
   function layerSet(id, vol) {
@@ -415,7 +416,7 @@
     seg($('med-dur'), MED_DURS.map(function (m) { return { v: m, label: String(m) + ' ' + t('calmMinShort') }; }), pref.mdur, function (v) { if (M.run) return; pref.mdur = v; save(); renderMedOptions(); medIdle(); }, 'h-10');
     seg($('med-interval'), MED_INT.map(function (m) { return { v: m, label: m ? m + ' ' + t('calmMinShort') : t('calmOff') }; }), pref.mint, function (v) { pref.mint = v; save(); renderMedOptions(); }, 'h-10');
     var box = $('med-ambient'); box.innerHTML = '';
-    [{ v: 'none', label: '🔇 ' + t('calmOff') }].concat(['rain', 'ocean', 'wind', 'fire', 'night', 'brown'].map(function (id) { return { v: id, label: SOUND_ICONS[id] + ' ' + t('calmSnd_' + id) }; })).forEach(function (it) {
+    [{ v: 'none', label: '🔇 ' + t('calmOff') }].concat(['rain', 'ocean', 'wind', 'fire', 'night'].map(function (id) { return { v: id, label: SOUND_ICONS[id] + ' ' + t('calmSnd_' + id) }; })).forEach(function (it) {
       var on = pref.mamb === it.v;
       var b = WB.el('button', 'rounded-full border px-3 py-1.5 text-xs font-semibold ' + (on ? 'border-accent bg-accent/15 text-accent' : 'border-border bg-card text-card-foreground'), it.label);
       b.type = 'button'; b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('data-amb', it.v);
