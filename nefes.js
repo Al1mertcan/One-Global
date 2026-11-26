@@ -25,79 +25,168 @@
   function save() { WB.save(KEY_PREF, pref); }
 
   // ---------------------------------------------------------------- ses motoru
+  // Sesler telefonda üretilir. Amaç: tiz/keskin değil, yumuşak ve doğal; hiçbir ses ani "tık" yapmaz.
   var AC = null, master = null, noiseCache = {};
   function ctx() {
     if (!AC) {
       var C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
-      AC = new C(); master = AC.createGain(); master.gain.value = 1; master.connect(AC.destination);
+      AC = new C(); master = AC.createGain(); master.gain.value = 1;
+      // üst üste binen sesler patlamasın diye hafif sınırlayıcı
+      var lim = AC.createDynamicsCompressor();
+      lim.threshold.value = -10; lim.knee.value = 12; lim.ratio.value = 3; lim.attack.value = 0.03; lim.release.value = 0.4;
+      master.connect(lim); lim.connect(AC.destination);
     }
     if (AC.state === 'suspended') { try { AC.resume(); } catch (e) {} }
     return AC;
   }
+  var LOOP_SEC = 8;
   function noiseBuf(type) {
     if (noiseCache[type]) return noiseCache[type];
-    var ac = ctx(), len = Math.floor(ac.sampleRate * 8), b = ac.createBuffer(1, len, ac.sampleRate), d = b.getChannelData(0), i;
+    var ac = ctx(), sr = ac.sampleRate, N = Math.floor(sr * LOOP_SEC), fade = Math.floor(sr * 0.5), len = N + fade;
+    var b = ac.createBuffer(1, N, sr), d = new Float32Array(len), i;
     if (type === 'white') { for (i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; }
     else if (type === 'pink') { // Paul Kellet yaklaşımı
       var b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
       for (i = 0; i < len; i++) { var w = Math.random() * 2 - 1; b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759; b2 = 0.969 * b2 + w * 0.153852; b3 = 0.8665 * b3 + w * 0.3104856; b4 = 0.55 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.016898; d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11; b6 = w * 0.115926; }
     } else { var last = 0; for (i = 0; i < len; i++) { var x = Math.random() * 2 - 1; last = (last + 0.02 * x) / 1.02; d[i] = last * 3.5; } }
-    // döngü dikişini yumuşat (son 2048 örnek başa karışır)
-    var fade = 2048; for (i = 0; i < fade; i++) { var a = i / fade; d[len - fade + i] = d[len - fade + i] * (1 - a) + d[i] * a; }
+    // kesintisiz döngü: sondaki "fade" kadar fazlalık, başa eşit güçle karıştırılır -> dikiş duyulmaz
+    var out = b.getChannelData(0);
+    for (i = 0; i < N; i++) out[i] = d[i];
+    for (i = 0; i < fade; i++) { var a = (i / fade) * Math.PI / 2; out[i] = d[i] * Math.sin(a) + d[N + i] * Math.cos(a); }
     noiseCache[type] = b; return b;
   }
-  function noiseSrc(type) { var ac = ctx(), s = ac.createBufferSource(); s.buffer = noiseBuf(type); s.loop = true; s.loopStart = 0; s.loopEnd = s.buffer.duration - 2048 / ac.sampleRate; s.start(0, Math.random() * 4); return s; }
-  function lfo(freq, depth, target) { var ac = ctx(), o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = freq; g.gain.value = depth; o.connect(g); g.connect(target); o.start(); return o; }
-  function burst(out, kind) { // kısa gürültü patlaması (yağmur damlası / ateş çıtırtısı)
-    var ac = ctx(), s = ac.createBufferSource(); s.buffer = noiseBuf('white');
-    var f = ac.createBiquadFilter(), g = ac.createGain(), now = ac.currentTime;
-    if (kind === 'drop') { f.type = 'bandpass'; f.frequency.value = 1800 + Math.random() * 4200; f.Q.value = 1.2; var v = 0.05 + Math.random() * 0.12; g.gain.setValueAtTime(v, now); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.03 + Math.random() * 0.04); }
-    else { f.type = 'highpass'; f.frequency.value = 1200 + Math.random() * 2500; var v2 = 0.1 + Math.random() * 0.35; g.gain.setValueAtTime(v2, now); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.01 + Math.random() * 0.05); }
-    s.connect(f); f.connect(g); g.connect(out); s.start(now, Math.random() * 6, 0.12); s.stop(now + 0.14);
+  function noiseSrc(type) { var ac = ctx(), s = ac.createBufferSource(); s.buffer = noiseBuf(type); s.loop = true; s.loopStart = 0; s.loopEnd = s.buffer.duration; s.start(0, Math.random() * (LOOP_SEC - 0.1)); return s; }
+  function filt(type, f, q) { var n = ctx().createBiquadFilter(); n.type = type; n.frequency.value = f; if (q != null) n.Q.value = q; return n; }
+  function gainNode(v) { var g = ctx().createGain(); g.gain.value = v; return g; }
+  function chain() { for (var i = 0; i < arguments.length - 1; i++) arguments[i].connect(arguments[i + 1]); }
+  // Yavaş, tekrarlanmayan hissi veren dalgalanma: rastgele fazlı 3 sinüs (toplam genlik = depth)
+  function drift(target, depth, speed) {
+    var ac = ctx(), list = [];
+    [[0.037, 0.5], [0.061, 0.32], [0.097, 0.18]].forEach(function (p) {
+      var o = ac.createOscillator(), g = ac.createGain(), ph = Math.random() * Math.PI * 2;
+      try { o.setPeriodicWave(ac.createPeriodicWave(new Float32Array([0, Math.sin(ph)]), new Float32Array([0, Math.cos(ph)]))); } catch (e) { o.type = 'sine'; }
+      o.frequency.value = p[0] * (speed || 1) * (0.8 + Math.random() * 0.4); g.gain.value = depth * p[1];
+      o.connect(g); g.connect(target); o.start(); list.push(o);
+    });
+    return list;
   }
-  // Her ses: out (GainNode) döndürür; stop() ile durur.
+  function stopAll(list) { list.forEach(function (n) { try { n.stop(); } catch (e) {} }); }
+  // Rastgele zamanlı olaylar (damla, çıtırtı): ses saatine göre önceden planlanır, zamanlayıcı geç kalsa bile yığılma olmaz
+  function scatter(rate, fn) {
+    var ac = ctx(), alive = true, tm, next = ac.currentTime + 0.05;
+    (function tick() {
+      if (!alive) return;
+      var now = ac.currentTime; if (next < now) next = now;
+      while (next < now + 1.5) { fn(next); next += -Math.log(1 - Math.random()) / (typeof rate === 'function' ? rate() : rate); }
+      tm = setTimeout(tick, 400);
+    })();
+    return function () { alive = false; clearTimeout(tm); };
+  }
+  // Tek bir kısa, yumuşak gürültü darbesi (başı 1-5 ms yükselir: tık sesi yok)
+  function grain(out, when, o) {
+    var ac = ctx(), s = ac.createBufferSource(); s.buffer = noiseBuf('white');
+    var f = filt(o.type || 'bandpass', o.freq, o.q || 1), g = ac.createGain(), atk = o.atk || 0.004, end = when + atk + o.dec * 4;
+    g.gain.setValueAtTime(0, when); g.gain.linearRampToValueAtTime(o.vol, when + atk); g.gain.setTargetAtTime(0, when + atk, o.dec);
+    chain(s, f, g, out); s.start(when, Math.random() * (LOOP_SEC - 1)); s.stop(end + 0.05);
+  }
+  // Her ses: out (GainNode) alır; stop() ile durur.
   var BUILD = {
+    // Yağmur: ince, sık damlaların yumuşak hışırtısı + uzak gürleme + seyrek iri damlalar
     rain: function (out) {
-      var timers = [], a = noiseSrc('pink'), hp = ctx().createBiquadFilter(), lp = ctx().createBiquadFilter(), g = ctx().createGain();
-      hp.type = 'highpass'; hp.frequency.value = 450; lp.type = 'lowpass'; lp.frequency.value = 9000; g.gain.value = 0.55;
-      a.connect(hp); hp.connect(lp); lp.connect(g); g.connect(out);
-      var alive = true; (function drop() { if (!alive) return; burst(out, 'drop'); timers[0] = setTimeout(drop, 25 + Math.random() * 90); })();
-      return function () { alive = false; clearTimeout(timers[0]); try { a.stop(); } catch (e) {} };
+      var a = noiseSrc('pink'), b = noiseSrc('white'), c = noiseSrc('brown'), nodes = [a, b, c];
+      chain(a, filt('highpass', 260, 0.5), filt('lowpass', 3800, 0.5), gainNode(0.42), out);
+      var bp = filt('bandpass', 1700, 0.4), g2 = gainNode(0.07); chain(b, bp, g2, out);
+      nodes = nodes.concat(drift(g2.gain, 0.035), drift(bp.frequency, 350));
+      chain(c, filt('lowpass', 200, 0.5), gainNode(0.2), out);
+      var stopDrops = scatter(function () { return 7 + Math.random() * 7; }, function (t) {
+        grain(out, t, { freq: 500 * Math.pow(6, Math.random()), q: 1.2 + Math.random() * 1.5, vol: 0.012 + Math.random() * 0.045, atk: 0.003, dec: 0.012 + Math.random() * 0.03 });
+      });
+      return function () { stopDrops(); stopAll(nodes); };
     },
+    // Okyanus: kahverengi gürültü + yaklaşık 8-13 sn'de bir kabarıp sönen dalgalar, tepede köpük hışırtısı
     ocean: function (out) {
-      var a = noiseSrc('brown'), lp = ctx().createBiquadFilter(), g = ctx().createGain();
-      lp.type = 'lowpass'; lp.frequency.value = 650; g.gain.value = 0.5;
-      a.connect(lp); lp.connect(g); g.connect(out);
-      var l1 = lfo(0.11, 0.38, g.gain), l2 = lfo(0.07, 260, lp.frequency);
-      return function () { try { a.stop(); l1.stop(); l2.stop(); } catch (e) {} };
+      var ac = ctx(), alive = true, tm;
+      var a = noiseSrc('brown'), lp = filt('lowpass', 380, 0.4), body = gainNode(0.18); chain(a, lp, body, out);
+      var s = noiseSrc('pink'), bp = filt('bandpass', 1100, 0.45), foam = gainNode(0), foamLp = filt('lowpass', 3200, 0.5); chain(s, bp, foamLp, foam, out);
+      var nodes = [a, s], next = ac.currentTime + 0.3, N = 128;
+      function shape(x, rise) { return x < rise ? Math.pow(Math.sin(x / rise * Math.PI / 2), 2) : Math.pow(Math.cos((x - rise) / (1 - rise) * Math.PI / 2), 2); }
+      function plan() {
+        if (!alive) return;
+        if (next < ac.currentTime) next = ac.currentTime + 0.05;
+        while (next < ac.currentTime + 26) {
+          var dur = 8.5 + Math.random() * 5, peak = 0.5 + Math.random() * 0.5, rise = 0.36 + Math.random() * 0.1;
+          var cb = new Float32Array(N), cl = new Float32Array(N), cf = new Float32Array(N), i;
+          for (i = 0; i < N; i++) {
+            var x = i / (N - 1), w = shape(x, rise), wf = shape(Math.max(0, Math.min(1, (x - 0.07) / 0.93)), rise);
+            cb[i] = 0.12 + 0.7 * peak * w; cl[i] = 300 + 650 * peak * w; cf[i] = 0.1 * peak * Math.pow(wf, 2.2);
+          }
+          body.gain.setValueCurveAtTime(cb, next, dur); lp.frequency.setValueCurveAtTime(cl, next, dur); foam.gain.setValueCurveAtTime(cf, next, dur);
+          next += dur + 0.03;
+        }
+        tm = setTimeout(plan, 4000);
+      }
+      plan();
+      return function () { alive = false; clearTimeout(tm); stopAll(nodes); };
     },
+    // Rüzgâr: ıslık yok; geniş, yumuşak bantlar ve rastgele esen hamleler
     wind: function (out) {
-      var a = noiseSrc('pink'), bp = ctx().createBiquadFilter(), g = ctx().createGain();
-      bp.type = 'bandpass'; bp.frequency.value = 420; bp.Q.value = 0.9; g.gain.value = 0.7;
-      a.connect(bp); bp.connect(g); g.connect(out);
-      var l1 = lfo(0.06, 220, bp.frequency), l2 = lfo(0.045, 0.3, g.gain);
-      return function () { try { a.stop(); l1.stop(); l2.stop(); } catch (e) {} };
+      var a = noiseSrc('pink'), b = noiseSrc('pink');
+      var lp = filt('lowpass', 700, 0.3), g = gainNode(0.5); chain(a, filt('highpass', 80, 0.5), lp, g, out);
+      var bp = filt('bandpass', 900, 0.45), g2 = gainNode(0.2); chain(b, bp, g2, out);
+      var nodes = [a, b].concat(drift(lp.frequency, 300, 1.1), drift(g.gain, 0.24, 1), drift(bp.frequency, 280, 0.8), drift(g2.gain, 0.16, 1.3));
+      return function () { stopAll(nodes); };
     },
+    // Ateş: sıcak, alçak uğultu + yumuşak, seyrek çıtırtılar (bazen daha belirgin patlama)
     fire: function (out) {
-      var a = noiseSrc('brown'), lp = ctx().createBiquadFilter(), g = ctx().createGain(), alive = true, tm;
-      lp.type = 'lowpass'; lp.frequency.value = 380; g.gain.value = 0.55; a.connect(lp); lp.connect(g); g.connect(out);
-      (function crackle() { if (!alive) return; burst(out, 'crack'); if (Math.random() < 0.35) burst(out, 'crack'); tm = setTimeout(crackle, 30 + Math.random() * 360); })();
-      return function () { alive = false; clearTimeout(tm); try { a.stop(); } catch (e) {} };
+      var a = noiseSrc('brown'), b = noiseSrc('pink');
+      var lp = filt('lowpass', 300, 0.4), g = gainNode(0.4); chain(a, lp, g, out);
+      var bp = filt('bandpass', 700, 0.5), g2 = gainNode(0.05); chain(b, bp, g2, out);
+      var nodes = [a, b].concat(drift(g.gain, 0.12, 1.6), drift(lp.frequency, 90, 1.4), drift(g2.gain, 0.03, 1.8));
+      var stopCr = scatter(function () { return 2.5 + Math.random() * Math.random() * 9; }, function (t) {
+        var r = Math.random(), big = r > 0.93, v = (big ? 0.6 : 0.12) + Math.pow(Math.random(), 3) * (big ? 0.45 : 0.3);
+        grain(out, t, { freq: 800 + Math.random() * 2600, q: 0.9 + Math.random() * 1.2, vol: v, atk: 0.0015, dec: 0.004 + Math.random() * (big ? 0.03 : 0.012) });
+        if (big) grain(out, t, { type: 'lowpass', freq: 260, q: 0.5, vol: 0.35, atk: 0.003, dec: 0.05 });
+      });
+      return function () { stopCr(); stopAll(nodes); };
     },
+    // Gece: yumuşak cırcır böceği korosu; sivri bip yok, düşük frekanslı, kısa darbeli ve nazik
     night: function (out) {
-      var ac = ctx(), alive = true, tm, oscs = [], gains = [];
-      var bed = noiseSrc('pink'), bp = ac.createBiquadFilter(), bg = ac.createGain(); bp.type = 'lowpass'; bp.frequency.value = 500; bg.gain.value = 0.12; bed.connect(bp); bp.connect(bg); bg.connect(out);
-      for (var i = 0; i < 3; i++) { var o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = 4100 + i * 260 + Math.random() * 80; g.gain.value = 0; o.connect(g); g.connect(out); o.start(); oscs.push(o); gains.push(g); }
-      (function chirp() {
-        if (!alive) return; var now = ac.currentTime, c = Math.floor(Math.random() * 3), g = gains[c], p;
-        for (p = 0; p < 3; p++) { var s = now + p * 0.07; g.gain.setValueAtTime(0, s); g.gain.linearRampToValueAtTime(0.05, s + 0.012); g.gain.linearRampToValueAtTime(0, s + 0.05); }
-        tm = setTimeout(chirp, 250 + Math.random() * 900);
-      })();
-      return function () { alive = false; clearTimeout(tm); try { bed.stop(); oscs.forEach(function (o) { o.stop(); }); } catch (e) {} };
+      var ac = ctx(), alive = true, tm, nodes = [];
+      var bed = noiseSrc('pink'), bedLp = filt('lowpass', 420, 0.4), bedG = gainNode(0.05); chain(bed, bedLp, bedG, out); nodes.push(bed);
+      nodes = nodes.concat(drift(bedG.gain, 0.025, 1));
+      var bus = filt('lowpass', 3900, 0.5); bus.connect(out);
+      var crickets = [], i;
+      for (i = 0; i < 4; i++) {
+        var o = ac.createOscillator(), env = ac.createGain(), pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
+        o.type = 'sine'; o.frequency.value = 2900 + i * 230 + Math.random() * 100; env.gain.value = 0;
+        o.connect(env); if (pan) { pan.pan.value = (i - 1.5) * 0.45; env.connect(pan); pan.connect(bus); } else env.connect(bus);
+        o.start(); nodes.push(o);
+        crickets.push({ env: env, next: ac.currentTime + Math.random() * 3, period: 0.36 + Math.random() * 0.2, pulses: 3 + (i % 2), amp: 0.02 + Math.random() * 0.008 });
+      }
+      function plan() {
+        if (!alive) return;
+        var now = ac.currentTime;
+        crickets.forEach(function (c) {
+          if (c.next < now) c.next = now + Math.random() * 0.5;
+          while (c.next < now + 6) {
+            var p, t0 = c.next;
+            for (p = 0; p < c.pulses; p++) {
+              var s = t0 + p * 0.036;
+              c.env.gain.setValueAtTime(0, s); c.env.gain.linearRampToValueAtTime(c.amp * (0.8 + 0.2 * (p / c.pulses)), s + 0.011); c.env.gain.linearRampToValueAtTime(0, s + 0.03);
+            }
+            c.next += c.period * (0.92 + Math.random() * 0.16);
+            if (Math.random() < 0.04) c.next += 2.5 + Math.random() * 7; // arada sessizce dinlenir
+          }
+        });
+        tm = setTimeout(plan, 2000);
+      }
+      plan();
+      return function () { alive = false; clearTimeout(tm); stopAll(nodes); };
     },
-    white: function (out) { var a = noiseSrc('white'), lp = ctx().createBiquadFilter(), g = ctx().createGain(); lp.type = 'lowpass'; lp.frequency.value = 11000; g.gain.value = 0.28; a.connect(lp); lp.connect(g); g.connect(out); return function () { try { a.stop(); } catch (e) {} }; },
-    pink: function (out) { var a = noiseSrc('pink'), g = ctx().createGain(); g.gain.value = 0.85; a.connect(g); g.connect(out); return function () { try { a.stop(); } catch (e) {} }; },
-    brown: function (out) { var a = noiseSrc('brown'), g = ctx().createGain(); g.gain.value = 0.7; a.connect(g); g.connect(out); return function () { try { a.stop(); } catch (e) {} }; }
+    // Beyaz: gerçek beyaz gürültünün tiz kısmı yumuşatılmış hâli
+    white: function (out) { var a = noiseSrc('white'); chain(a, filt('lowpass', 6500, 0.5), gainNode(0.22), out); return function () { stopAll([a]); }; },
+    pink: function (out) { var a = noiseSrc('pink'); chain(a, filt('lowpass', 8000, 0.5), gainNode(0.6), out); return function () { stopAll([a]); }; },
+    brown: function (out) { var a = noiseSrc('brown'); chain(a, filt('highpass', 28, 0.5), filt('lowpass', 1600, 0.5), gainNode(0.6), out); return function () { stopAll([a]); }; }
   };
   var SOUND_ICONS = { rain: '🌧️', ocean: '🌊', wind: '🍃', fire: '🔥', night: '🦗', white: '☁️', pink: '🌫️', brown: '🌑' };
   var SOUND_IDS = ['rain', 'ocean', 'wind', 'fire', 'night', 'white', 'pink', 'brown'];
