@@ -61,8 +61,18 @@ function parseResult(text) {
   const end = text.lastIndexOf('}');
   if (start < 0 || end <= start) return null;
   let obj;
-  try { obj = JSON.parse(text.slice(start, end + 1)); } catch (e) { return null; }
-  if (!obj || typeof obj !== 'object') return null;
+  try { obj = JSON.parse(text.slice(start, end + 1)); } catch (e) { obj = null; }
+  if (!obj) {
+    // Kesilmiş / bozuk JSON: tamamlanmış {"name":..,"kcal":..} kayıtlarını tek tek kurtar.
+    const found = [];
+    const re = /\{[^{}]*?"name"\s*:\s*"((?:[^"\\]|\\.)*)"[^{}]*?\}/g;
+    let m;
+    while ((m = re.exec(text)) !== null && found.length < MAX_ITEMS) { try { found.push(JSON.parse(m[0])); } catch (e) { /* atla */ } }
+    if (!found.length) return null;
+    const cm = /"confidence"\s*:\s*"(low|medium|high)"/.exec(text);
+    obj = { items: found, confidence: cm ? cm[1] : 'low', note: '' };
+  }
+  if (typeof obj !== 'object') return null;
   const items = [];
   (Array.isArray(obj.items) ? obj.items : []).slice(0, MAX_ITEMS).forEach((it) => {
     if (!it || typeof it.name !== 'string') return;
@@ -203,7 +213,7 @@ async function core(event) {
       headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: model(),
-        max_tokens: 450,
+        max_tokens: 1000,
         messages: [{
           role: 'user',
           content: [
@@ -220,7 +230,7 @@ async function core(event) {
     }
     const block = Array.isArray(data.content) ? data.content.find((b) => b && b.type === 'text') : null;
     const parsed = parseResult(block && block.text);
-    if (!parsed) { await refund(store, ukey); return json(502, { error: 'parse' }); }
+    if (!parsed) { await refund(store, ukey); await diag(event, { phase: 'parse', stop: data.stop_reason, head: String((block && block.text) || '').slice(0, 160) }); return json(502, { error: 'parse' }); }
     return json(200, { ...parsed, remaining });
   } catch (e) {
     await refund(store, ukey);
