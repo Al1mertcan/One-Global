@@ -128,23 +128,27 @@ exports.handler = async (event) => {
 
   // Üyelik + hız sınırı + kişi başı aylık hak + günlük tavan (maliyet koruması). Depo çalışmazsa reddet.
   const monthly = intEnv('PHOTO_KCAL_MONTHLY_PER_USER', 100);
-  let store, ukey = userKey(id), remaining = null;
+  let store, ukey = userKey(id), remaining = null, stage = 'store';
   try {
     const { getStore, connectLambda } = require('@netlify/blobs');
     connectLambda(event);
     store = getStore('one-photo-ratelimit');
+    stage = 'member';
     const member = await getStore('one-members').get('m_' + id);
     if (member === null || member === undefined) return json(403, { error: 'not_member' });
+    stage = 'rate_ip';
     const perHour = await consume(store, 'ip_' + getClientIp(event), intEnv('PHOTO_KCAL_IP_PER_HOUR', 10), 60 * 60 * 1000);
     if (!perHour.allowed) return json(429, { error: 'rate_limited' });
+    stage = 'rate_user';
     const mine = await consume(store, ukey, monthly, MONTH_MS);
     if (!mine.allowed) return json(429, { error: 'monthly_cap', remaining: 0 });
     remaining = Math.max(0, monthly - mine.count);
+    stage = 'rate_day';
     const day = new Date().toISOString().slice(0, 10);
     const daily = await consume(store, 'day_' + day, intEnv('PHOTO_KCAL_DAILY_CAP', 300), 24 * 60 * 60 * 1000);
     if (!daily.allowed) { await refund(store, ukey); return json(429, { error: 'daily_cap' }); }
   } catch (e) {
-    return json(503, { error: 'unavailable' });
+    return json(503, { error: 'unavailable_' + stage });
   }
 
   try {

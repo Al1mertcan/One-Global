@@ -27,7 +27,9 @@ function conditionalSupported(res) {
 // current: depodaki mevcut değer (yoksa null). Başarılı olursa result döner.
 async function updateJSON(store, key, fn) {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const entry = await store.getWithMetadata(key, { type: 'json', consistency: 'strong' });
+    let entry;
+    try { entry = await store.getWithMetadata(key, { type: 'json', consistency: 'strong' }); }
+    catch (e) { entry = await store.getWithMetadata(key, { type: 'json' }); } // bazı ortamlarda "strong" desteklenmez; sıradan okumaya düş
     const current = entry && entry.data !== undefined ? entry.data : null;
     const etag = entry ? entry.etag : undefined;
 
