@@ -14,7 +14,8 @@
 - **Sekmeler:** Bellek ve Cihazlar kaldırıldı; alt menü: Asistan, Hemcan, Hedefler, Otomasyon.
 - **Kalori:** birden çok yiyecek virgül / "ve" / "ile" / "+" / alt satır ile ayrılır; ayırıcı yazılmasa da yeni miktar ("3 yumurta 400 gr tavuk") yeni yiyecek sayılır. Giriş ipucuna uyarı eklendi.
 - **Bildirimler gelmiyor mu? (Android):** Ayarlar'da bildirim ve pil ayarlarını açan düğmeler. Manifestte sensör/donanım özellikleri "zorunlu değil" yapıldı (Play'de daha çok cihaz).
-- **Günlük haber hazırlığı:** her sabah ~09:33'te (10:00'a hazır) yeni 4 haberle güncellenmiş iyi-haberler.json sohbete gelir; sen GitHub'a yüklersin.
+- **Günlük haber hazırlığı:** her sabah ~09:33'te sohbete 1-3 yeni haber + güncellenmiş iyi-haberler.json gelir; sen GitHub'a yüklersin. Liste 5-10 haber (hedef 8). Ölçüt "umut / gülümseme testi": doğanın toparlanması, sağlıkta net kazanımlar, sıcak insan-hayvan hikâyeleri. Taze haber azsa 2026 başından en güzelleri eklenir. Her haber kaynak sayfasından doğrulanır; ön aşama bilimsel bulgular kesin tedavi gibi yazılmaz.
+- **Android sunucu bildirimi (Firebase):** pil kısıtlayan markalarda bildirimler kaybolmasın diye rutin / söz / hatırlatmalar sunucudan Google bildirim servisiyle gönderilir. Kurulum: `FIREBASE-REHBERI.md`. Kurulmazsa uygulama yerel bildirimlerle çalışmaya devam eder. Netlify zamanlayıcısı 5 dakikada bir çalışır.
 - **Spor / kitap bildirimleri:** günlük / aylık / yıllık toplamlar.
 - **Hemcan sekmesi (`hemcan.html`):** "Hemcan ailesi" (üye sayacı, hedefler) ve "Hemcan ne demek?" yalnızca burada; ana sayfadan kaldırıldı.
 - **Düzeltmeler:** hatırlatmalar artık silinmiyor (zamanı geçenler "Gönderildi" olur, yedeği tutulur); üye sayacı kaydı beklenip doğrulanıyor, kaydı hiç ulaşmamış cihazlar uygulama açılınca bir kez daha deniyor; sunucu sayacı üye listesinden kendini düzeltiyor (5 dk'da bir), hız sınırı hata verirse kayıt engellenmiyor, sayaç önbelleğe alınmıyor. Sunucu düzeltmesi için GitHub'a yükleme şart.
@@ -22,15 +23,17 @@
 
 ## Yayın öncesi yapılacaklar
 1. GitHub'a yükle (GitHub Desktop). Site otomatik yayına girer.
-2. Codemagic: Android için `android-release`, iOS için `ios-3` etiketi.
-3. **Google Play → Uygulama içeriği:** "Fiziksel aktivite" iznini (ACTIVITY_RECOGNITION) kullandığını belirt; veri cihazda kalır. Veri güvenliği formunda değişiklik gerekmez (veri toplanmıyor/paylaşılmıyor).
-4. **App Store Connect:** Hareket ve Fitness (NSMotionUsageDescription) metni Info.plist'te hazır; App Privacy'de değişiklik gerekmez (veri cihazda kalır).
+2. **Firebase kurulumu (yalnızca Android sunucu bildirimi için):** `FIREBASE-REHBERI.md` — `google-services.json` + Netlify'da `FIREBASE_SERVICE_ACCOUNT`.
+3. Codemagic: Android için `android-release`, iOS için `ios-3` etiketi.
+4. **Google Play → Uygulama içeriği:** "Fiziksel aktivite" iznini (ACTIVITY_RECOGNITION) kullandığını belirt; veri cihazda kalır. **Veri güvenliği:** Firebase kullanıldığında "Cihaz veya diğer kimlikler" toplanıyor olarak işaretlenmeli (bildirim adresi).
+5. **App Store Connect:** Hareket ve Fitness (NSMotionUsageDescription) metni Info.plist'te hazır; App Privacy'de değişiklik gerekmez (veri cihazda kalır).
 
 ## Bilinen sınırlar (dürüst not)
 - Adım sayar, widget ve alarm **gerçek telefonda denenmedi**; ilk testi sende olacak.
 - Android widget'ı ve 10 bin adım tebrigi, uygulama kapalıyken widget yenilendiğinde (~30 dk) veya uygulama açılınca çalışır. Widget eklenmemişse tebrik uygulamayı açınca gelir.
 - iPhone'da widget yok (ayrı bir Apple eklentisi gerekir); iPhone'da adım uygulama açılınca okunur.
 - Günün sözü bildirimleri önceden planlanır: Android 14 gün, iPhone 7 gün; uygulama bu süre içinde açılmazsa durur.
+- Firebase kodu (Android Java/Gradle) derlenemedi, yalnızca JS tarafı test edildi: ilk derlemede Codemagic günlüğünü kontrol et. Sunucu bildirimi ~5 dk gecikebilir, su düğmeleri yoktur, güne karşılamada ad yoktur.
 - Alarm bildirimi dakikalarca kayabilir (pil tasarrufu); gerçek çalar saat yerine geçmez.
 - Yeni metinler yalnızca Türkçe ve İngilizce; diğer 19 dilde İngilizce görünür.
 - Üye sayacı canlı sitede sandbox'tan denenemedi: yayından sonra sayıyı gerçekte uygulamayı açan kişi sayısıyla karşılaştır.

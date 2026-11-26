@@ -39,6 +39,14 @@
                 android:resource="@xml/steps_widget_info" />
         </receiver>
 
+        <!-- Sunucudan gelen (Firebase) bildirimler için varsayılan kanal ve küçük simge -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="hemcan-reminders" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_hemcan" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

@@ -76,4 +76,21 @@ public class StepsPlugin extends Plugin {
             }
         }
     }
+    /**
+     * Firebase (sunucudan bildirim) bu yapıda hazır mı? google-services.json eklenmişse Google'ın derleme eklentisi
+     * "google_app_id" kaynağını üretir; yoksa Firebase'i hiç çağırmayız (uygulama yine de normal çalışır, yerel bildirim kullanılır).
+     */
+    @PluginMethod
+    public void pushReady(PluginCall call) {
+        boolean ready = false;
+        try {
+            int id = getContext().getResources().getIdentifier("google_app_id", "string", getContext().getPackageName());
+            ready = id != 0 && getContext().getString(id).length() > 0;
+        } catch (Exception e) {
+            ready = false;
+        }
+        JSObject ret = new JSObject();
+        ret.put("ready", ready);
+        call.resolve(ret);
+    }
 }

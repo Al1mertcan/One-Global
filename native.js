@@ -555,7 +555,7 @@
   function reschedule() {
     if (!LN) return Promise.resolve();
     if (rescheduling) { again = true; return rescheduling; }
-    rescheduling = runSchedule().catch(function () {}).then(function () {
+    rescheduling = pushSync().catch(function () {}).then(function () { return runSchedule(); }).catch(function () {}).then(function () {
       rescheduling = null;
       if (again) { again = false; return reschedule(); }
     });
@@ -564,6 +564,11 @@
   function runSchedule() {
     return permState().then(function (perm) {
       if (perm !== 'granted' || localStorage.getItem(KEY_ENABLED) !== '1') {
+        return LN.getPending().then(function (r) { return r.notifications.length ? LN.cancel({ notifications: r.notifications }) : null; });
+      }
+      // Sunucu modu (Android + Firebase hazır): rutin, söz ve hatırlatmaları sunucu gönderir; telefonda
+      // planlı olanlar silinir ki çift bildirim gelmesin. Hazır değilse aşağıdaki yerel plan çalışır.
+      if (serverMode()) {
         return LN.getPending().then(function (r) { return r.notifications.length ? LN.cancel({ notifications: r.notifications }) : null; });
       }
       var lang = getLang();
@@ -663,6 +668,160 @@
     });
   }
 
+
+  // ---- 3b. Android: sunucudan bildirim (Firebase Cloud Messaging) ---------------
+  // Bazı telefon markaları (Xiaomi, Huawei, Oppo, Vivo, Samsung güç tasarrufu...) telefonda planlanmış
+  // bildirimleri siliyor. Bu yüzden Android'de rutin / söz / hatırlatmalar sunucudan, Google'ın bildirim
+  // servisi üzerinden gönderilir; bu servis telefon uyurken bile bildirimi iletir.
+  // Sunucu ya da Firebase hazır değilse (ayar yok, izin yok, internet yok) yerel bildirimler çalışmaya devam eder.
+  var PN = platform === 'android' ? plug('PushNotifications') : null;
+  var KEY_FCM_TOKEN = 'one-fcm-token';
+  var KEY_FCM_OK = 'one-fcm-ok';       // '1': sunucu bu telefon için kayıtlı ve Firebase hazır
+  var KEY_SUB_ID = 'one-sub-id';       // web ile aynı anahtar: sunucudaki kayıt kimliği
+  var KEY_FCM_SIG = 'one-fcm-sig', KEY_FCM_AT = 'one-fcm-at'; // son gönderilen içerik özeti / zamanı
+  var KEY_FCM_REG = 'one-fcm-reg';     // '1': sunucuda bu telefon için bir kayıt var (kapatınca silinmeli)
+
+  function serverMode() {
+    try { return platform === 'android' && !!PN && localStorage.getItem(KEY_FCM_OK) === '1' && localStorage.getItem(KEY_ENABLED) === '1'; } catch (e) { return false; }
+  }
+  function subId() {
+    var id = null;
+    try { id = localStorage.getItem(KEY_SUB_ID); } catch (e) {}
+    if (!id || id.length < 8) {
+      id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (ch) { var r = Math.random() * 16 | 0; return (ch === 'x' ? r : (r & 3 | 8)).toString(16); });
+      try { localStorage.setItem(KEY_SUB_ID, id); } catch (e) {}
+    }
+    return id;
+  }
+  function setFcmOk(v) { try { localStorage.setItem(KEY_FCM_OK, v ? '1' : '0'); } catch (e) {} }
+
+  var pushRegistering = null;
+  // Telefonun Firebase adresini (token) alır. Yoksa ya da izin verilmediyse null döner.
+  function pushReady() {
+    var H = plug('HemcanSteps');
+    if (!PN || !H || typeof H.pushReady !== 'function') return Promise.resolve(false);
+    return Promise.resolve(H.pushReady()).then(function (r) { return !!(r && r.ready); }).catch(function () { return false; });
+  }
+  function getPushToken() {
+    if (!PN) return Promise.resolve(null);
+    if (pushRegistering) return pushRegistering;
+    pushRegistering = pushReady().then(function (ready) {
+      if (!ready) return null; // bu yapıda Firebase yok: yerel bildirimlerle devam
+      return registerForToken();
+    }).then(function (v) { pushRegistering = null; return v; });
+    return pushRegistering;
+  }
+  function registerForToken() {
+    return new Promise(function (resolve) {
+      var done = false, handles = [];
+      var finish = function (v) {
+        if (done) return; done = true;
+        handles.forEach(function (h) { try { h && h.remove && h.remove(); } catch (e) {} });
+        resolve(v);
+      };
+      var timer = setTimeout(function () { finish(null); }, 15000);
+      Promise.resolve(PN.addListener('registration', function (t) {
+        clearTimeout(timer);
+        var v = t && t.value ? String(t.value) : null;
+        if (v) { try { localStorage.setItem(KEY_FCM_TOKEN, v); } catch (e) {} }
+        finish(v);
+      })).then(function (h) { handles.push(h); }).catch(function () {});
+      Promise.resolve(PN.addListener('registrationError', function () { clearTimeout(timer); finish(null); }))
+        .then(function (h) { handles.push(h); }).catch(function () {});
+      // Dinleyiciler eklendikten sonra kaydol (ilk çağrıda eklenti Firebase'i başlatır).
+      setTimeout(function () {
+        ensureChannel(getLang()).then(function () { return PN.register(); }).catch(function () { clearTimeout(timer); finish(null); });
+      }, 50);
+    });
+  }
+
+  var pushSyncing = null, tokenFresh = false;
+  // Sunucudaki kaydı güncel tutar: bildirim ayarları, dil, saat dilimi, hatırlatmalar.
+  function pushSync() {
+    if (!PN || platform !== 'android') return Promise.resolve();
+    if (pushSyncing) return pushSyncing;
+    pushSyncing = Promise.resolve().then(function () {
+      var enabled = false;
+      try { enabled = localStorage.getItem(KEY_ENABLED) === '1'; } catch (e) {}
+      if (!enabled) return pushOff();
+      return permState().then(function (perm) {
+        if (perm !== 'granted') { return pushOff(); }
+        var token = null;
+        try { token = localStorage.getItem(KEY_FCM_TOKEN); } catch (e) {}
+        // Adres (token) zamanla değişebilir: uygulama her açılışında bir kez tazelenir; olmazsa kayıtlı olan kullanılır.
+        var fresh = tokenFresh ? Promise.resolve(token) : getPushToken().then(function (v) { if (v) tokenFresh = true; return v || token; });
+        return (token && tokenFresh ? Promise.resolve(token) : fresh).then(function (t) {
+          if (!t) { setFcmOk(false); return; }
+          var reminders = readJSON(KEY_REMINDERS, []);
+          if (!Array.isArray(reminders)) reminders = [];
+          var body = {
+            id: subId(),
+            subscription: { endpoint: 'fcm:' + t, fcmToken: t },
+            timezone: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) { return 'UTC'; } })(),
+            lang: getLang(),
+            settings: readJSON(KEY_SETTINGS, {}),
+            reminders: reminders,
+          };
+          // Her sayfa açılışında sunucuya gitmemek için: içerik değişmediyse ve son gönderim 12 saatten yeniyse atla.
+          var sig = JSON.stringify([t, body.timezone, body.lang, body.settings, body.reminders]);
+          try {
+            if (localStorage.getItem(KEY_FCM_OK) === '1' && localStorage.getItem(KEY_FCM_SIG) === sig &&
+                Date.now() - (parseInt(localStorage.getItem(KEY_FCM_AT), 10) || 0) < 12 * 3600 * 1000) return;
+          } catch (e) {}
+          return fetch('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+            .then(function (res) { return res.ok ? res.json() : null; })
+            .then(function (j) {
+              setFcmOk(!!(j && j.ok && j.fcm === true));
+              if (j && j.ok) {
+                try {
+                  localStorage.setItem(KEY_FCM_REG, '1');
+                  localStorage.setItem(KEY_FCM_SIG, sig);
+                  localStorage.setItem(KEY_FCM_AT, String(Date.now()));
+                } catch (e) {}
+              }
+            })
+            .catch(function () { /* internet yok: önceki durum korunur */ });
+        });
+      });
+    }).catch(function () {}).then(function () { pushSyncing = null; });
+    return pushSyncing;
+  }
+  // Bildirimler kapatıldı: sunucudaki kaydı sil, sunucu modundan çık.
+  function pushOff() {
+    var reg = false;
+    try { reg = localStorage.getItem(KEY_FCM_REG) === '1'; } catch (e) {}
+    setFcmOk(false);
+    if (!reg) return Promise.resolve();
+    return fetch('/api/unsubscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: subId() }) })
+      .then(function (res) { if (res && res.ok) { try { localStorage.setItem(KEY_FCM_REG, '0'); localStorage.removeItem(KEY_FCM_SIG); } catch (e) {} } })
+      .catch(function () { /* internet yok: kayıt işareti kalır, sonraki denemede silinir */ });
+  }
+
+  if (PN) {
+    // Google adresi (token) sonradan değişirse kaydet; bir sonraki senkronda sunucuya gider.
+    PN.addListener('registration', function (t) {
+      try { if (t && t.value) localStorage.setItem(KEY_FCM_TOKEN, String(t.value)); } catch (e) {}
+    });
+    // Uygulama açıkken gelen sunucu bildirimi Android'de kendiliğinden görünmez: yerel bildirim olarak göster.
+    PN.addListener('pushNotificationReceived', function (n) {
+      try {
+        if (!LN || !n) return;
+        var url = (n.data && n.data.url) || 'asistan.html';
+        ensureChannel(getLang()).then(function () {
+          return LN.schedule({ notifications: [droid({ id: 3900 + Math.floor(Math.random() * 90), title: n.title || 'Hemcan', body: n.body || '', schedule: { at: new Date(Date.now() + 500) }, extra: { url: url } })] });
+        }).catch(function () {});
+      } catch (e) {}
+    });
+    // Arka planda gelen bildirime basılınca ilgili sayfayı aç.
+    PN.addListener('pushNotificationActionPerformed', function (ev) {
+      try {
+        var url = ev && ev.notification && ev.notification.data && ev.notification.data.url;
+        if (typeof url === 'string' && /^[a-z-]+\.html(#[a-z]+)?$/i.test(url)) location.href = url;
+      } catch (e) {}
+    });
+  }
+
   N.cachedPerm = function () { try { return localStorage.getItem(KEY_PERM) || 'prompt'; } catch (e) { return 'prompt'; } };
   N.permission = permState;
   N.reschedule = reschedule;
@@ -682,6 +841,7 @@
     try { localStorage.setItem(KEY_ENABLED, '0'); } catch (e) {}
     return reschedule();
   };
+  N.serverMode = serverMode;
   // Hemen göster (ör. su hedefi tamamlandı). İzin yoksa sessizce vazgeçer.
   N.notifyNow = function (kind, url) {
     if (!LN) return;

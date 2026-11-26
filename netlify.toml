@@ -2,6 +2,13 @@
   publish = "."
   functions = "netlify/functions"
 
+# Android uygulamasının Firebase ayar dosyası (google-services.json) içindeki "AIza..." anahtarı,
+# her Android uygulamasında bulunan ve gizli olmayan (herkese açık) bir istemci anahtarıdır.
+# Netlify'ın gizli anahtar taraması bunu yanlışlıkla "sır" sanıp derlemeyi durduruyor;
+# yalnızca bu dosya taramadan çıkarılır (diğer dosyalar taranmaya devam eder).
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = "native/android/app/google-services.json"
+
 # Kaldırılan sekmeler: eski bağlantılar ana sayfaya gitsin.
 [[redirects]]
   from = "/bellek.html"
@@ -30,6 +37,6 @@
   to = "/assetlinks-content.json"
   status = 200
 
-# Bildirim gönderici — her 15 dakikada bir çalışır (bkz. send-notifications.js).
+# Bildirim gönderici — her 5 dakikada bir çalışır (bkz. send-notifications.js).
 [functions."send-notifications"]
-  schedule = "*/15 * * * *"
+  schedule = "*/5 * * * *"

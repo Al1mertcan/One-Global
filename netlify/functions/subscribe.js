@@ -5,6 +5,7 @@
 // okuyup uygun saatlerde bildirim gönderir.
 
 const { getStore, connectLambda } = require('@netlify/blobs');
+const fcm = require('./_fcm');
 
 exports.handler = async (event) => {
   connectLambda(event);
@@ -59,7 +60,7 @@ exports.handler = async (event) => {
 
     await store.setJSON(id, record);
 
-    return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true }) };
+    return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: true, fcm: fcm.enabled() }) };
   } catch (err) {
     return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Kaydedilemedi.' }) };
   }

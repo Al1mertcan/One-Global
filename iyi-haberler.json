@@ -1,198 +1,134 @@
 {
   "tr": [
     {
+      "region": "world",
+      "headline": "Brezilya'da sivrisinek denemesi: çocuklarda dang, Zika ve chikungunya riski %68 düştü",
+      "summary": "Belo Horizonte'de 4 yıl süren denemede Wolbachia bakterisi taşıyan sivrisinekler doğaya salındı; bu bakteri sivrisineğin virüs bulaştırmasını engelliyor. Okul çocuklarında bu hastalıkların riski %68 azaldı, üstelik deneme Brezilya'nın kayıtlı en büyük dang salgınıyla aynı döneme denk geldi.",
+      "source": "Good News Network",
+      "url": "https://www.goodnewsnetwork.org/major-success-sees-viral-infections-fall-68-in-brazil-after-releasing-wolbachia-infected-mosquitoes/",
+      "date": "2026-11-24"
+    },
+    {
       "region": "tr",
-      "headline": "COP31'in yapıldığı Antalya'da 20.000 kelebekli tropikal bir bahçe kuruldu",
-      "summary": "Konya Tropikal Kelebek Bahçesi'nden getirilen 20.000 kelebek, zirve alanındaki serada 28 derece ve %80 nemde yaşıyor. Dev baykuş kelebekleri ve koza dönemindeki pupalar da ziyaretçilerin görebileceği şekilde sergileniyor.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/at-cop31-a-butterfly-oasis-thrives-amid-climate-wrangling-229618",
+      "headline": "Muş'ta tek öğrencili köy okulunda Öğretmenler Günü: Öğrenci, öğretmenine tavuk hediye etti",
+      "summary": "Kıryaka köyündeki okulun tek öğrencisi Seyit Zekeriya, annesinin bakımını yaptığı tavuklardan birini öğretmeni Gizem Uyanık'a hediye etti. Uyanık her sabah sobayı yakıp sınıfı ısıtıyor, teneffüste de öğrencisinin oyun arkadaşı oluyor.",
+      "source": "Habertürk",
+      "url": "https://www.haberturk.com/gundem/mustaki-koy-okulunda-duygulandiran-24-kasim-bir-ogretmen-bir-ogrenci-ve-bir-tavuk-haberler-3929621",
+      "date": "2026-11-24"
+    },
+    {
+      "region": "world",
+      "headline": "Brezilya'da golden retriever Tereza, havuza düşen küçük kızın yanına atladı",
+      "summary": "Chapada dos Guimarães'te güvenlik kamerası, 2 yaşındaki bir kızın havuzun derin yerine düşüp batmaya başladığı anı kaydetti. Köpek Tereza hemen suya atladı; kız, anne ve ablası gelene kadar köpeğe tutunarak su üstünde kaldı.",
+      "source": "RepórterMT",
+      "url": "https://www.reportermt.com/cidades/cachorra-pula-em-piscina-e-salva-menina-de-afogamento-em-chapada-dos-guimaraes-veja-video/246974",
+      "date": "2026-11-21"
+    },
+    {
+      "region": "world",
+      "headline": "13 yıl önce doğadan tamamen silinen Noel Adası kertenkelesi 500'den fazla bireyle yeniden doğada",
+      "summary": "Avustralya'da 2013'te doğal yaşamdan tamamen kaybolan Mavi Kuyruklu Noel Adası Kertenkelesi'nden 500'den fazla birey, 13 yıl sonra Horsburgh Adası'na bırakıldı. Yıllarca süren üretim ve kurtarma çalışmaları sonunda tür yeniden doğada yaşıyor.",
+      "source": "Yeni Birlik",
+      "url": "https://www.gazetebirlik.com/yasam/2013te-dogada-tamamen-silinmisti-13-yil-sonra-tarihi-donus/1123483",
       "date": "2026-11-20"
     },
     {
-      "region": "tr",
-      "headline": "Trabzon'da dört medeniyete ait antik liman gün yüzüne çıkıyor",
-      "summary": "Kadınlar Hali inşaatında bulunan Roma, Bizans, Komnenos ve Osmanlı dönemi liman kalıntılarında yaklaşık 150 metrelik çift taraflı sur duvarının restorasyonu tamamlandı. Kuzey kulesi güçlendiriliyor, ileride seyir terası yapılması planlanıyor.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/ancient-port-spanning-four-civilizations-unearthed-in-trabzon-229516",
-      "date": "2026-11-18"
-    },
-    {
       "region": "world",
-      "headline": "ABD'de nadir bir çocukluk hastalığında yaşam süresini uzattığı gösterilen ilk tedavi onaylandı",
-      "summary": "FDA, bebeklik başlangıçlı Niemann-Pick tip C hastalığı için adrabetadeks'i onayladı. Eşleştirilmiş kontrollere göre ölüm riskini %55 azaltıyor; ortanca sağkalım 4,9 yıldan 8,5 yıla çıktı. Ciddi bir işitme riski uyarısı da var.",
-      "source": "NeurologyLive (FDA)",
-      "url": "https://www.neurologylive.com/view/fda-approves-adrabetadex-first-therapy-improve-survival-infantile-onset-niemann-pick-disease-type-c",
-      "date": "2026-11-17"
+      "headline": "Ozon tabakası iyileşmeye devam ediyor: 2025'in ozon deliği onlarca yılın en küçüklerinden biri",
+      "summary": "Dünya Meteoroloji Örgütü'ne göre 2025'teki Antarktika ozon deliği, 1992'den bu yana en küçük dördüncü-beşinci delik oldu. Hem derinliği hem genişliği üst üste ikinci yıl 1990-2010 ortalamasının belirgin biçimde altında kaldı; WMO bunu ozon tabakasını korumak için atılan uluslararası adımların başarısı olarak gösteriyor.",
+      "source": "WMO",
+      "url": "https://wmo.int/media/news/wmo-bulletin-shows-successes-and-challenges-ozone-layer-recovery",
+      "date": "2026-09-16"
     },
     {
       "region": "tr",
-      "headline": "20 bin kilometrelik bisiklet yolculuğundaki İtalyan çifte Şanlıurfa'da sıcak karşılama",
-      "summary": "Tazmanya'dan yola çıkıp yaklaşık iki yılda 20.000 km pedallayan Simone Gislimberti ve Chiara Cattani'yi Şanlıurfa'da Göbeklitepe Bisiklet Kulübü ücretsiz ağırladı. Çift Muğla'da yolculuğunu bitirmeyi planlıyor.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/italian-cyclists-find-warm-welcome-after-20-000-km-ride-229468",
-      "date": "2026-11-17"
+      "headline": "Tuz Gölü'nde flamingo rekoru: 12 bin 800 yavru hayata tutundu",
+      "summary": "Bakan Murat Kurum, Tuz Gölü'nde son 5 yılın en yüksek yavru flamingo sayısına ulaşıldığını duyurdu. Koruma çalışmaları ve bu yıl bol yağış, kuraklık endişesinin ardından gölü yeniden şenlendirdi.",
+      "source": "Güneş TV",
+      "url": "https://www.gunestv.com/tuz-golunde-muhtesem-geri-donus-tam-12-bin-800-yavru-hayata-tutundu",
+      "date": "2026-07-19"
     },
     {
       "region": "world",
-      "headline": "Earthshot Ödülü 2026 sahiplerini Mumbai'de buldu: Butan ödülü kazanan ilk ülke oldu",
-      "summary": "Beş kazanan, 1'er milyon sterlinlik ödülü aldı: Ørsted, PFAS'sız Fransa kampanyası, Butan (doğayı koruma), Mahindra'nın elektrikli üç tekerlekli araçları ve Niue Okyanus Güven Fonu. Etki rakamları kazananların kendi beyanıdır.",
-      "source": "Euronews",
-      "url": "https://www.euronews.com/2026/11/17/change-is-possible-danish-offshore-wind-giant-wins-earthshot-prize-after-quitting-oil-and-",
-      "date": "2026-11-17"
-    },
-    {
-      "region": "tr",
-      "headline": "Diyarbakır'da bir sulama göleti, üniversite öğrencileri için doğal laboratuvara dönüştü",
-      "summary": "Dicle Üniversitesi kampüsündeki 25 hektarlık Kabaklı Göleti'nde 114 kuş türü kaydedildi. Öğrenciler ve akademisyenler gölet çevresini saha çalışması ve tezler için kullanıyor.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/bird-sanctuary-becomes-natural-lab-in-southeastern-turkiye-229470",
-      "date": "2026-11-17"
+      "headline": "Avrupa'dan gelen 5 Przewalski atı, Kazakistan bozkırında yeniden özgür",
+      "summary": "Mayıs sonunda bir aygır ve dört kısrak, Avrupa'daki üretim merkezlerinden Kazakistan'ın Altyn Dala bölgesindeki geniş bozkıra salındı. Atlar bir yıl boyunca uyum merkezinde bekledi; iki kısrağa takılan uydu tasmalarıyla yeni yuvalarına nasıl alıştıkları izleniyor.",
+      "source": "Leibniz-IZW",
+      "url": "https://www.izw-berlin.de/en/press-release/rewilding-an-ecosystem-new-generation-of-przewalski-s-horses-released-into-the-kazakh-steppe.html",
+      "date": "2026-06-08"
     },
     {
       "region": "world",
-      "headline": "Eritre trahomu ortadan kaldırdı: Afrika'da bu başarıya ulaşan 11. ülke",
-      "summary": "Dünya Sağlık Örgütü, Eritre'nin trahomu halk sağlığı sorunu olmaktan çıkardığını doğruladı. Eritre dünyada bu noktaya gelen 34., Afrika'da 11. ülke. Sonuçta toplum temelli temizlik çalışmaları ve DSÖ'nün SAFE stratejisi etkili oldu.",
-      "source": "WHO (allAfrica)",
-      "url": "https://allafrica.com/stories/202611160817.html",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "tr",
-      "headline": "Muğla'daki 1.900 yıllık Zeus Lepsynos Tapınağı'nın restorasyonu tamamlandı",
-      "summary": "Euromos Antik Kenti'ndeki tapınakta yaklaşık 900 mimari bloğun yaklaşık %70'i yerine konuldu; aşınan parçalar için yöreden çıkarılan yeni mermer kullanıldı. Çalışmalar 2015'te başlamıştı.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/zeus-lepsynos-temple-restored-to-former-glory-229423",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "world",
-      "headline": "İskoçya'da Dornoch Körfezi'nde 100 yıldan uzun süre sonra ilk kez yerli istiridye yavruları doğdu",
-      "summary": "Bilim insanları körfezde yerli istiridye yavruları buldu; bu, 2017'den beri bırakılan 140.000'den fazla elle yetiştirilmiş genç istiridyenin artık ürediğini gösteriyor. Hedef 2031'de yaklaşık 4 milyon istiridye; bunun için ek finansman gerekiyor.",
-      "source": "Heriot-Watt University",
-      "url": "https://www.hw.ac.uk/news/2026/first-oysters-born-in-dornoch-firth-for-over-100-years",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "tr",
-      "headline": "Antalyalı lise öğrencileri çöpten yaptıkları enstrümanlarla COP31'de konser verdi",
-      "summary": "Antalya ATSO Güzel Sanatlar Lisesi'nden 15 öğrenci, atılmış çöp kovaları, yağ tenekeleri ve su bidonlarından vurmalı çalgılar yaptı ve Türkiye İklim Okulu'nun açılışında sahne aldı.",
-      "source": "Daily Sabah",
-      "url": "https://www.dailysabah.com/turkiye/turkish-students-turn-waste-into-music-at-cop31/news",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "world",
-      "headline": "İngiltere nehirlerinde 'sonsuz kimyasal' PFOS yaklaşık %30 azaldı",
-      "summary": "Çevre Ajansı'na göre 2016-2025 arasında İngiliz nehirlerinde PFOS yaklaşık %30, PFOA %29 düştü; tatlı su balıklarında PFOS yaklaşık %49 geriledi. Rapor, PFAS'ın hâlâ yaygın olduğunu ve yapılacak çok iş bulunduğunu da belirtiyor.",
-      "source": "UK Environment Agency (GOV.UK)",
-      "url": "https://www.gov.uk/government/news/new-report-shows-progress-in-cutting-levels-of-forever-chemicals-in-englands-rivers",
-      "date": "2026-11-12"
-    },
-    {
-      "region": "world",
-      "headline": "Çin'in karbondioksit salımı üçüncü çeyrekte %3 düştü: 2022'den bu yana en büyük çeyreklik düşüş",
-      "summary": "Carbon Brief'te yayımlanan analize göre Çin'in CO₂ salımı 2026'nın 3. çeyreğinde yıllık %3,1 azaldı. Güneş, rüzgâr ve nükleer üretim artışı elektrik talebi artışının iki katından fazlaydı; elektrikli araçlar eylülde binek otomobil satışlarının %67'sine ulaştı. Ilıman hava da etkili oldu.",
-      "source": "Carbon Brief",
-      "url": "https://www.carbonbrief.org/analysis-chinas-quarterly-co2-falls-3-in-largest-drop-since-covid",
-      "date": "2026-11-06"
+      "headline": "Kuzey Aral Denizi yeniden hayata dönüyor: balıkçılara umut oldu",
+      "summary": "Kazakistan'daki Kuzey Aral Denizi'nin su hacmi 23 milyar metreküpe çıktı. Bölgede balıkçılar ve köylüler, denizin toparlanmasını geleceklerinin dönüm noktası olarak görüyor; yetkililer koruyucu barajı güçlendirip projenin yeni aşamasına geçmeyi planlıyor.",
+      "source": "The Astana Times",
+      "url": "https://astanatimes.com/2026/02/aral-sea-shows-signs-of-recovery-as-water-levels-rise/",
+      "date": "2026-02-14"
     }
   ],
   "en": [
     {
+      "region": "world",
+      "headline": "Brazil mosquito trial: schoolchildren's risk of dengue, Zika and chikungunya fell 68%",
+      "summary": "In a 4-year trial in Belo Horizonte, mosquitoes carrying Wolbachia bacteria, which stops them from spreading viruses, were released across the city. Schoolchildren's risk of these diseases fell 68%, even though the trial overlapped with Brazil's largest recorded dengue outbreak.",
+      "source": "Good News Network",
+      "url": "https://www.goodnewsnetwork.org/major-success-sees-viral-infections-fall-68-in-brazil-after-releasing-wolbachia-infected-mosquitoes/",
+      "date": "2026-11-24"
+    },
+    {
       "region": "tr",
-      "headline": "A tropical garden with 20,000 butterflies opens at COP31 in Antalya",
-      "summary": "The butterflies were brought from the Konya Tropical Butterfly Garden and live in a greenhouse at the summit site, kept at 28°C and 80% humidity. Giant owl butterflies and pupae are on view for visitors.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/at-cop31-a-butterfly-oasis-thrives-amid-climate-wrangling-229618",
+      "headline": "A one-pupil village school in Muş: a student gave his teacher a hen for Teachers' Day",
+      "summary": "Seyit Zekeriya, the only student at the village school in Kıryaka, gave his teacher Gizem Uyanık one of the hens his mother looks after. Uyanık lights the stove every morning to warm the classroom and plays with him at break.",
+      "source": "Habertürk",
+      "url": "https://www.haberturk.com/gundem/mustaki-koy-okulunda-duygulandiran-24-kasim-bir-ogretmen-bir-ogrenci-ve-bir-tavuk-haberler-3929621",
+      "date": "2026-11-24"
+    },
+    {
+      "region": "world",
+      "headline": "In Brazil, a golden retriever named Tereza leapt into the pool to help a little girl",
+      "summary": "A security camera in Chapada dos Guimarães caught a 2-year-old girl falling into the deep end. Tereza the dog jumped straight in, and the girl held on to her and stayed afloat until her mother and older sister arrived.",
+      "source": "RepórterMT",
+      "url": "https://www.reportermt.com/cidades/cachorra-pula-em-piscina-e-salva-menina-de-afogamento-em-chapada-dos-guimaraes-veja-video/246974",
+      "date": "2026-11-21"
+    },
+    {
+      "region": "world",
+      "headline": "A lizard wiped out in the wild in 2013 is back: 500+ released on an Australian island",
+      "summary": "More than 500 Christmas Island blue-tailed skinks, a species that vanished from the wild in 2013, were released on Horsburgh Island after 13 years. Years of breeding and rescue work have put the species back in its natural habitat.",
+      "source": "Yeni Birlik",
+      "url": "https://www.gazetebirlik.com/yasam/2013te-dogada-tamamen-silinmisti-13-yil-sonra-tarihi-donus/1123483",
       "date": "2026-11-20"
     },
     {
-      "region": "tr",
-      "headline": "An ancient port spanning four civilizations is being uncovered in Trabzon",
-      "summary": "Found during construction of the Kadınlar Hali market, the Roman, Byzantine, Komnenos and Ottoman port remains already have about 150 metres of double-sided fortification wall restored. A tower is being reinforced and a viewing terrace is planned.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/ancient-port-spanning-four-civilizations-unearthed-in-trabzon-229516",
-      "date": "2026-11-18"
-    },
-    {
       "region": "world",
-      "headline": "US approves first therapy shown to extend survival in a rare childhood disease",
-      "summary": "The FDA approved adrabetadex for infantile-onset Niemann-Pick disease type C. Against matched controls it cut the risk of death by 55%, with median survival of 8.5 vs 4.9 years. It carries a boxed warning for hearing loss.",
-      "source": "NeurologyLive (FDA)",
-      "url": "https://www.neurologylive.com/view/fda-approves-adrabetadex-first-therapy-improve-survival-infantile-onset-niemann-pick-disease-type-c",
-      "date": "2026-11-17"
+      "headline": "The ozone layer keeps healing: the 2025 ozone hole was among the smallest in decades",
+      "summary": "The WMO says the 2025 Antarctic ozone hole was the fourth or fifth smallest since 1992. Both its depth and its extent were well below the 1990-2010 average for the second year running, which WMO credits to international action to protect the ozone layer.",
+      "source": "WMO",
+      "url": "https://wmo.int/media/news/wmo-bulletin-shows-successes-and-challenges-ozone-layer-recovery",
+      "date": "2026-09-16"
     },
     {
       "region": "tr",
-      "headline": "Italian cyclists find a warm welcome in Şanlıurfa after a 20,000 km ride",
-      "summary": "Simone Gislimberti and Chiara Cattani, who left Tasmania and have cycled nearly 20,000 km in two years, were hosted free of charge by the Göbeklitepe Cycling Club. They plan to finish their trip in Muğla.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/italian-cyclists-find-warm-welcome-after-20-000-km-ride-229468",
-      "date": "2026-11-17"
+      "headline": "Flamingo record at Lake Tuz: 12,800 chicks survive",
+      "summary": "Environment Minister Murat Kurum announced the highest number of flamingo chicks at Lake Tuz in five years. Conservation work and this year's heavy rain have brought the lake back to life after drought worries.",
+      "source": "Güneş TV",
+      "url": "https://www.gunestv.com/tuz-golunde-muhtesem-geri-donus-tam-12-bin-800-yavru-hayata-tutundu",
+      "date": "2026-07-19"
     },
     {
       "region": "world",
-      "headline": "Earthshot Prize 2026 winners crowned in Mumbai, with Bhutan the first country to win",
-      "summary": "Five winners each received £1 million: Ørsted, the PFAS-Free France campaign, Bhutan (nature), Mahindra Last Mile Mobility and the Niue Ocean Wide Trust. Impact figures are the winners' own claims.",
-      "source": "Euronews",
-      "url": "https://www.euronews.com/2026/11/17/change-is-possible-danish-offshore-wind-giant-wins-earthshot-prize-after-quitting-oil-and-",
-      "date": "2026-11-17"
-    },
-    {
-      "region": "tr",
-      "headline": "An irrigation pond in Diyarbakır has become a natural lab for students",
-      "summary": "On the Dicle University campus, the 25-hectare Kabaklı Pond has 114 recorded bird species. Students and academics use it for fieldwork and theses.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/bird-sanctuary-becomes-natural-lab-in-southeastern-turkiye-229470",
-      "date": "2026-11-17"
+      "headline": "Five Przewalski's horses from Europe run free again on the Kazakh steppe",
+      "summary": "In late May, one stallion and four mares from European breeding facilities were released onto the vast Altyn Dala steppe in Kazakhstan after a year of acclimatising. Satellite collars on two mares will show how they settle into their new home.",
+      "source": "Leibniz-IZW",
+      "url": "https://www.izw-berlin.de/en/press-release/rewilding-an-ecosystem-new-generation-of-przewalski-s-horses-released-into-the-kazakh-steppe.html",
+      "date": "2026-06-08"
     },
     {
       "region": "world",
-      "headline": "Eritrea eliminates trachoma, the 11th African country to do so",
-      "summary": "The World Health Organization validated that Eritrea has eliminated trachoma as a public health problem, the 34th country worldwide and 11th in Africa. Community-led sanitation and the WHO SAFE strategy drove the result.",
-      "source": "WHO (allAfrica)",
-      "url": "https://allafrica.com/stories/202611160817.html",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "tr",
-      "headline": "The 1,900-year-old Temple of Zeus Lepsynos in Muğla has been restored",
-      "summary": "At Euromos Ancient City, about 70% of nearly 900 architectural blocks were put back in place, with newly quarried local marble replacing weathered pieces. Work began in 2015.",
-      "source": "Hürriyet Daily News",
-      "url": "https://www.hurriyetdailynews.com/zeus-lepsynos-temple-restored-to-former-glory-229423",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "world",
-      "headline": "Native oysters are born in Scotland's Dornoch Firth for the first time in over a century",
-      "summary": "Scientists found baby native oysters in the firth, showing that the 140,000+ hand-bred juveniles released since 2017 are now reproducing. The goal is around four million by 2031, which needs extra funding.",
-      "source": "Heriot-Watt University",
-      "url": "https://www.hw.ac.uk/news/2026/first-oysters-born-in-dornoch-firth-for-over-100-years",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "tr",
-      "headline": "Antalya high schoolers perform at COP31 on instruments made from trash",
-      "summary": "Fifteen students from Antalya ATSO Fine Arts High School built percussion instruments from discarded bins, oil cans and water containers and played at the opening of Türkiye's Climate School.",
-      "source": "Daily Sabah",
-      "url": "https://www.dailysabah.com/turkiye/turkish-students-turn-waste-into-music-at-cop31/news",
-      "date": "2026-11-16"
-    },
-    {
-      "region": "world",
-      "headline": "'Forever chemical' PFOS has fallen by about 30% in England's rivers",
-      "summary": "The Environment Agency reports PFOS down about 30% and PFOA down 29% in English rivers from 2016 to 2025, with PFOS in freshwater fish down about 49%. It adds that PFAS remains widespread and more needs doing.",
-      "source": "UK Environment Agency (GOV.UK)",
-      "url": "https://www.gov.uk/government/news/new-report-shows-progress-in-cutting-levels-of-forever-chemicals-in-englands-rivers",
-      "date": "2026-11-12"
-    },
-    {
-      "region": "world",
-      "headline": "China's CO2 emissions fell 3% in Q3, the largest quarterly drop since 2022",
-      "summary": "A Carbon Brief analysis finds China's CO2 fell 3.1% year on year in Q3 2026. Solar, wind and nuclear output grew by more than twice the rise in electricity demand, and EVs hit a record 67% of car sales in September. Mild weather also played a part.",
-      "source": "Carbon Brief",
-      "url": "https://www.carbonbrief.org/analysis-chinas-quarterly-co2-falls-3-in-largest-drop-since-covid",
-      "date": "2026-11-06"
+      "headline": "The North Aral Sea is coming back to life, bringing hope to local fishermen",
+      "summary": "The water volume of Kazakhstan's North Aral Sea has risen to 23 billion cubic metres. Fishermen and villagers see the recovery as a turning point for their future, and authorities plan to reinforce the protective dam and start a new phase of the project.",
+      "source": "The Astana Times",
+      "url": "https://astanatimes.com/2026/02/aral-sea-shows-signs-of-recovery-as-water-levels-rise/",
+      "date": "2026-02-14"
     }
   ]
 }

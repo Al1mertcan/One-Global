@@ -23,6 +23,7 @@ const { getStore, connectLambda } = require('@netlify/blobs');
 const { LANG_NAMES, getCached, generateAndCache } = require('./_good-news-core');
 const QUOTES = require('./_quotes');
 
+const fcm = require('./_fcm');
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:hemcan.global@gmail.com';
@@ -261,6 +262,10 @@ function latestOccurrence(rem, nowDateStr, nowMin) {
 function remKey(r) { return String(r.createdAt || '') + '|' + String(r.text || '').slice(0, 40); }
 
 async function sendPush(subscription, payload) {
+  // Android uygulaması: Firebase (FCM) üzerinden gönder (telefon kapalı/kısıtlı olsa da ulaşır).
+  if (subscription && subscription.fcmToken) {
+    return fcm.sendFcm(subscription.fcmToken, payload);
+  }
   try {
     await webpush.sendNotification(subscription, JSON.stringify(payload));
     return true;
@@ -316,10 +321,11 @@ exports.handler = async (event) => {
     // beklenmedik bir şey olursa push akışını etkilemesin.
   }
 
-  if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
-    return { statusCode: 200, body: 'VAPID keys not configured — skipping (set VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY in Netlify env vars).' };
+  const vapidOk = !!(VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY);
+  if (!vapidOk && !fcm.enabled()) {
+    return { statusCode: 200, body: 'VAPID keys / FIREBASE_SERVICE_ACCOUNT not configured — skipping (set them in Netlify env vars).' };
   }
-  webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+  if (vapidOk) webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
   const store = getStore('one-subscribers');
   const { blobs } = await store.list();
@@ -463,7 +469,7 @@ exports.handler = async (event) => {
     // — zamanı zaten geçtiği için isDue() true dönmeye devam edecektir.
     if (!expired) {
       for (const due of dueReminders) {
-        const result = await sendPush(record.subscription, { title: c.reminder.title, body: due.rem.text });
+        const result = await sendPush(record.subscription, { title: c.reminder.title, body: due.rem.text, url: 'otomasyonlar.html' });
         if (result === 'expired') { expired = true; break; }
         if (result === true) { sent++; remSent[due.key] = due.occ; remStateTouched = true; }
         // geçici hata: işaretlenmez, bir sonraki çalıştırmada yeniden denenir
