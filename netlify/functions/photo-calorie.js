@@ -151,13 +151,18 @@ exports.handler = async (event) => {
     return json(503, { error: 'unavailable_' + stage });
   }
 
+  // Netlify senkron işlevleri varsayılan 10 sn'de kesilir (ve boş bir 502 döner). Bu yüzden isteği 8,5 sn'de kendimiz
+  // keser, hakkı geri verir ve okunur bir "timeout" döneriz.
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const timer = ctl ? setTimeout(() => ctl.abort(), 8500) : null;
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
+      signal: ctl ? ctl.signal : undefined,
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: model(),
-        max_tokens: 700,
+        max_tokens: 450,
         messages: [{
           role: 'user',
           content: [
@@ -178,6 +183,9 @@ exports.handler = async (event) => {
     return json(200, { ...parsed, remaining });
   } catch (e) {
     await refund(store, ukey);
+    if (e && e.name === 'AbortError') return json(504, { error: 'timeout' });
     return json(502, { error: 'upstream' });
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 };
