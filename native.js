@@ -23,7 +23,10 @@
 
   var C = window.Capacitor;
   var isNative = !!(C && typeof C.isNativePlatform === 'function' && C.isNativePlatform());
-  var API_BASE = 'https://cheery-rolypoly-540555.netlify.app';
+  // Ana adres kendi alan adımız (Cloudflare üzerinden). Bazı ağlarda netlify.app adresine
+  // ulaşılamadığı için asıl adres bu; ulaşılamazsa eski netlify.app adresi yedek olarak denenir.
+  var API_BASE = 'https://httphemcan.app';
+  var API_FALLBACK = 'https://cheery-rolypoly-540555.netlify.app';
   var platform = 'web';
   try { if (isNative && C.getPlatform) platform = C.getPlatform(); } catch (e) {}
   var N = { isNative: isNative, platform: platform, API_BASE: API_BASE };
@@ -107,11 +110,22 @@
       try {
         var url = typeof input === 'string' ? input : (input && input.url);
         if (typeof url === 'string') {
-          if (url.indexOf('/api/') === 0) return origFetch(API_BASE + url, init);
+          if (url.indexOf('/api/') === 0) {
+            // Ağ hatasında (ulaşılamıyor/zaman aşımı) yedek adrese bir kez daha dener; sunucu yanıtı (4xx/5xx) aynen döner.
+            return origFetch(API_BASE + url, init).catch(function (err) {
+              if (init && init.signal && init.signal.aborted) throw err;
+              return origFetch(API_FALLBACK + url, init);
+            });
+          }
           if (/^(\.\/)?iyi-haberler\.json(\?.*)?$/.test(url)) {
             return origFetch(API_BASE + '/iyi-haberler.json', init).then(function (res) {
               if (!res || !res.ok) throw new Error('remote news unavailable');
               return res;
+            }).catch(function () {
+              return origFetch(API_FALLBACK + '/iyi-haberler.json', init).then(function (res) {
+                if (!res || !res.ok) throw new Error('remote news unavailable');
+                return res;
+              });
             }).catch(function () { return origFetch(input, init); });
           }
         }
@@ -128,7 +142,7 @@
     if (!a) return;
     var href = a.getAttribute('href') || '';
     if (!/^https?:\/\//i.test(href)) return;
-    if (href.indexOf(API_BASE) === 0) return;
+    if (href.indexOf(API_BASE) === 0 || href.indexOf(API_FALLBACK) === 0) return;
     var Browser = plug('Browser');
     if (!Browser) return;
     e.preventDefault();
