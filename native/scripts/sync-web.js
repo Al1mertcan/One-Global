@@ -28,6 +28,11 @@ if (fs.existsSync(iconsSrc)) {
   fs.mkdirSync(path.join(dst, 'icons'), { recursive: true });
   for (const f of fs.readdirSync(iconsSrc)) { fs.copyFileSync(path.join(iconsSrc, f), path.join(dst, 'icons', f)); n++; }
 }
+const soundsSrc = path.join(src, 'sounds');
+if (fs.existsSync(soundsSrc)) {
+  fs.mkdirSync(path.join(dst, 'sounds'), { recursive: true });
+  for (const f of fs.readdirSync(soundsSrc)) { fs.copyFileSync(path.join(soundsSrc, f), path.join(dst, 'sounds', f)); n++; }
+}
 console.log('www/ klasörüne ' + n + ' dosya kopyalandı.');
 if (!fs.existsSync(path.join(dst, 'hosgeldin.html'))) { console.error('HATA: hosgeldin.html bulunamadı.'); process.exit(1); }
 

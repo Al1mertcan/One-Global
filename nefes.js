@@ -188,6 +188,49 @@
     pink: function (out) { var a = noiseSrc('pink'); chain(a, filt('lowpass', 8000, 0.5), gainNode(0.6), out); return function () { stopAll([a]); }; },
     brown: function (out) { var a = noiseSrc('brown'); chain(a, filt('highpass', 28, 0.5), filt('lowpass', 1600, 0.5), gainNode(0.6), out); return function () { stopAll([a]); }; }
   };
+  // ---- Gerçek doğa kayıtları (CC0 / telifsiz). Dosyalar uygulamayla birlikte gelir, internet gerekmez.
+  // Kayıt yüklenemezse (nadiren) yukarıdaki sentez ses yedek olarak çalar.
+  var SYNTH = {}; Object.keys(BUILD).forEach(function (k) { SYNTH[k] = BUILD[k]; });
+  var SAMPLES = { rain: 'sounds/rain.mp3', ocean: 'sounds/ocean.mp3', wind: 'sounds/wind.mp3', fire: 'sounds/fire.mp3', night: 'sounds/night.mp3' };
+  var sampleCache = {};
+  function loadSample(id) {
+    if (sampleCache[id]) return sampleCache[id];
+    var ac = ctx(), p = fetch(SAMPLES[id]).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.arrayBuffer(); }).then(function (ab) {
+      return new Promise(function (res, rej) { ac.decodeAudioData(ab, res, rej); });
+    });
+    sampleCache[id] = p; p.catch(function () { delete sampleCache[id]; }); return p;
+  }
+  // Kaydı dikişsiz döngüye alır: bir sonraki kopya, öncekinin bitişiyle eşit güçle karışarak başlar.
+  function xfadeLoop(buf, out) {
+    var ac = ctx(), D = buf.duration, X = Math.min(5, D * 0.12), alive = true, tm, live = [], nextAt = 0, i;
+    var inC = new Float32Array(64), outC = new Float32Array(64);
+    for (i = 0; i < 64; i++) { var a = i / 63 * Math.PI / 2; inC[i] = Math.sin(a); outC[i] = Math.cos(a); }
+    function play(when, off) {
+      var s = ac.createBufferSource(), g = ac.createGain(), len = D - off;
+      s.buffer = buf; s.connect(g); g.connect(out);
+      if (off > 0) { g.gain.setValueAtTime(0, when); g.gain.linearRampToValueAtTime(1, when + 0.08); }
+      else g.gain.setValueCurveAtTime(inC, when, X);
+      g.gain.setValueCurveAtTime(outC, when + len - X, X);
+      s.start(when, off); s.stop(when + len + 0.1);
+      live.push(s); s.onended = function () { var k = live.indexOf(s); if (k >= 0) live.splice(k, 1); try { g.disconnect(); } catch (e) {} };
+      nextAt = when + len - X;
+    }
+    function tick() {
+      if (!alive) return;
+      var now = ac.currentTime; if (nextAt < now) nextAt = now + 0.05;
+      while (nextAt < now + 8) play(nextAt, 0);
+      tm = setTimeout(tick, 1000);
+    }
+    play(ac.currentTime + 0.05, Math.random() * Math.max(0, D - 2 * X)); tick();
+    return function () { alive = false; clearTimeout(tm); live.slice().forEach(function (s) { try { s.stop(); } catch (e) {} }); };
+  }
+  Object.keys(SAMPLES).forEach(function (id) {
+    BUILD[id] = function (out) {
+      var alive = true, stopper = null, fb = null;
+      loadSample(id).then(function (buf) { if (alive) stopper = xfadeLoop(buf, out); }).catch(function () { if (alive) fb = SYNTH[id](out); });
+      return function () { alive = false; if (stopper) stopper(); if (fb) fb(); };
+    };
+  });
   var SOUND_ICONS = { rain: '🌧️', ocean: '🌊', wind: '🍃', fire: '🔥', night: '🦗', white: '☁️', pink: '🌫️', brown: '🌑' };
   var SOUND_IDS = ['rain', 'ocean', 'wind', 'fire', 'night', 'white', 'pink', 'brown'];
   var MIXES = [

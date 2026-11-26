@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v25';
+const CACHE_NAME = 'one-shell-v26';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -25,6 +25,11 @@ const APP_SHELL = [
   './gunluk.js',
   './nefes.html',
   './nefes.js',
+  './sounds/rain.mp3',
+  './sounds/ocean.mp3',
+  './sounds/wind.mp3',
+  './sounds/fire.mp3',
+  './sounds/night.mp3',
   './aliskanlik.html',
   './aliskanlik.js',
   './mola.html',
