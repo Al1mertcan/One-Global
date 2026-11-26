@@ -164,7 +164,10 @@ exports.handler = async (event) => {
       }),
     });
     const data = await res.json().catch(() => null);
-    if (!res.ok || !data) { await refund(store, ukey); return json(502, { error: 'upstream' }); }
+    if (!res.ok || !data) {
+      await refund(store, ukey);
+      return json(502, { error: 'upstream', up: res.status });
+    }
     const block = Array.isArray(data.content) ? data.content.find((b) => b && b.type === 'text') : null;
     const parsed = parseResult(block && block.text);
     if (!parsed) { await refund(store, ukey); return json(502, { error: 'parse' }); }

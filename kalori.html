@@ -370,8 +370,8 @@
           });
         }
         function errMsg(code, status) {
-          if (status === 503) return t('photoErrDisabled'); if (status === 429) return t(code === 'monthly_cap' ? 'photoErrMonthly' : code === 'daily_cap' ? 'photoErrDaily' : 'photoErrRate');
-          if (status === 413) return t('photoErrLarge'); if (code === 'monthly_cap') return t('photoErrMonthly'); return t('photoErrGeneric');
+          if (status === 503 && code === 'disabled') return t('photoErrDisabled'); if (status === 429) return t(code === 'monthly_cap' ? 'photoErrMonthly' : code === 'daily_cap' ? 'photoErrDaily' : 'photoErrRate');
+          if (status === 413) return t('photoErrLarge'); if (code === 'monthly_cap') return t('photoErrMonthly'); return t('photoErrGeneric') + ' (' + status + (code ? ' ' + code : '') + (window.__photoUp ? ' ' + window.__photoUp : '') + ')';
         }
         function handle(file) {
           if (!file || busy) return; busy = true; say(t('photoAnalyzing'), 'info'); pending = []; renderPreview();
@@ -389,7 +389,7 @@
             });
           }).then(function (res) {
             busy = false;
-            if (!res.ok) { if (res.j && res.j.error === 'monthly_cap') showLeft(0); say(errMsg(res.j && res.j.error, res.status), 'err'); return; }
+            if (!res.ok) { if (res.j && res.j.error === 'monthly_cap') showLeft(0); window.__photoUp = res.j && typeof res.j.up === 'number' ? res.j.up : ''; say(errMsg(res.j && res.j.error, res.status), 'err'); return; }
             showLeft(res.j.remaining);
             var items = Array.isArray(res.j.items) ? res.j.items : [];
             if (!items.length) { say(res.j.note || t('photoNoFood'), 'err'); return; }
