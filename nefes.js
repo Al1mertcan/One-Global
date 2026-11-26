@@ -191,15 +191,25 @@
   // ---- Gerçek doğa kayıtları (CC0 / telifsiz). Dosyalar uygulamayla birlikte gelir, internet gerekmez.
   // Kayıt yüklenemezse (nadiren) yukarıdaki sentez ses yedek olarak çalar.
   var SYNTH = {}; Object.keys(BUILD).forEach(function (k) { SYNTH[k] = BUILD[k]; });
-  var SAMPLES = { rain: 'sounds/rain.mp3', ocean: 'sounds/ocean.mp3', wind: 'sounds/wind.mp3', fire: 'sounds/fire.mp3', night: 'sounds/night.mp3' };
-  var sampleCache = {};
-  function loadSample(id) {
-    if (sampleCache[id]) return sampleCache[id];
-    var ac = ctx(), p = fetch(SAMPLES[id]).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.arrayBuffer(); }).then(function (ab) {
+  // Her ses 1–2 katmandan oluşur (farklı uzunlukta kayıtlar üst üste döner, bu yüzden aynı döngü kulağa tekrar gibi gelmez).
+  // Katman seviyeleri yavaşça kendiliğinden dalgalanır; yağmura çok uzaktan, hafif gök gürültüsü eklenir.
+  var SAMPLES = {
+    rain: { layers: [{ f: 'sounds/rain-a.mp3', g: 1 }, { f: 'sounds/rain-b.mp3', g: 0.6 }], thunder: true },
+    ocean: { layers: [{ f: 'sounds/ocean-a.mp3', g: 1 }, { f: 'sounds/ocean-b.mp3', g: 0.5 }] },
+    wind: { layers: [{ f: 'sounds/wind-a.mp3', g: 1 }, { f: 'sounds/wind-b.mp3', g: 0.55 }] },
+    fire: { layers: [{ f: 'sounds/fire-a.mp3', g: 1 }, { f: 'sounds/fire-b.mp3', g: 0.6 }] },
+    night: { layers: [{ f: 'sounds/night-a.mp3', g: 1 }] }
+  };
+  var THUNDER = { f: 'sounds/thunder.mp3', clips: [[0, 20], [21.5, 20], [43, 10], [54.5, 7.7]] };
+  var fileCache = {};
+  function loadFile(f) {
+    if (fileCache[f]) return fileCache[f];
+    var ac = ctx(), p = fetch(f).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.arrayBuffer(); }).then(function (ab) {
       return new Promise(function (res, rej) { ac.decodeAudioData(ab, res, rej); });
     });
-    sampleCache[id] = p; p.catch(function () { delete sampleCache[id]; }); return p;
+    fileCache[f] = p; p.catch(function () { delete fileCache[f]; }); return p;
   }
+  function filesOf(id) { var d = SAMPLES[id], l = d.layers.map(function (x) { return x.f; }); if (d.thunder) l.push(THUNDER.f); return l; }
   // Kaydı dikişsiz döngüye alır: bir sonraki kopya, öncekinin bitişiyle eşit güçle karışarak başlar.
   function xfadeLoop(buf, out) {
     var ac = ctx(), D = buf.duration, X = Math.min(5, D * 0.12), alive = true, tm, live = [], nextAt = 0, i;
@@ -224,11 +234,42 @@
     play(ac.currentTime + 0.05, Math.random() * Math.max(0, D - 2 * X)); tick();
     return function () { alive = false; clearTimeout(tm); live.slice().forEach(function (s) { try { s.stop(); } catch (e) {} }); };
   }
+  function rnd(a, b) { return a + Math.random() * (b - a); }
   Object.keys(SAMPLES).forEach(function (id) {
     BUILD[id] = function (out) {
-      var alive = true, stopper = null, fb = null;
-      loadSample(id).then(function (buf) { if (alive) stopper = xfadeLoop(buf, out); }).catch(function () { if (alive) fb = SYNTH[id](out); });
-      return function () { alive = false; if (stopper) stopper(); if (fb) fb(); };
+      var alive = true, stoppers = [], timers = [], fb = null, def = SAMPLES[id];
+      function later(fn, ms) { var h = setTimeout(function () { if (alive) fn(); }, ms); timers.push(h); }
+      Promise.all(def.layers.map(function (L) { return loadFile(L.f).then(function (b) { return { L: L, b: b }; }, function () { return null; }); })).then(function (got) {
+        if (!alive) return;
+        got = got.filter(Boolean);
+        if (!got.length) { fb = SYNTH[id](out); return; }
+        got.forEach(function (x, idx) {
+          var ac = ctx(), lg = ac.createGain(); lg.gain.value = x.L.g; lg.connect(out);
+          stoppers.push(xfadeLoop(x.b, lg));
+          stoppers.push(function () { try { lg.disconnect(); } catch (e) {} });
+          (function swell() { // yavaş, doğal seviye değişimi
+            var lo = idx ? 0.55 : 0.88;
+            try { lg.gain.setTargetAtTime(x.L.g * rnd(lo, 1), ac.currentTime, rnd(4, 9)); } catch (e) {}
+            later(swell, rnd(9, 24) * 1000);
+          })();
+        });
+        if (def.thunder) loadFile(THUNDER.f).then(function (tb) {
+          function boom() {
+            if (!alive) return; var ac = ctx(), c = THUNDER.clips[Math.floor(Math.random() * THUNDER.clips.length)];
+            var s = ac.createBufferSource(), g = ac.createGain(), lpf = ac.createBiquadFilter(), pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
+            s.buffer = tb; lpf.type = 'lowpass'; lpf.frequency.value = rnd(450, 1100); g.gain.value = rnd(0.12, 0.3);
+            s.connect(lpf); lpf.connect(g); if (pan) { pan.pan.value = rnd(-0.6, 0.6); g.connect(pan); pan.connect(out); } else g.connect(out);
+            s.onended = function () { try { g.disconnect(); } catch (e) {} };
+            s.start(ac.currentTime + 0.05, c[0], c[1]);
+            later(boom, rnd(50, 140) * 1000);
+          }
+          later(boom, rnd(18, 45) * 1000);
+        }, function () {});
+      });
+      return function () {
+        alive = false; timers.forEach(clearTimeout); stoppers.forEach(function (f) { try { f(); } catch (e) {} }); if (fb) fb();
+        setTimeout(function () { filesOf(id).forEach(function (f) { delete fileCache[f]; }); }, 700); // bellek: kullanılmayan kayıtları bırak
+      };
     };
   });
   var SOUND_ICONS = { rain: '🌧️', ocean: '🌊', wind: '🍃', fire: '🔥', night: '🦗', white: '☁️', pink: '🌫️', brown: '🌑' };
