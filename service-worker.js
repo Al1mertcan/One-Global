@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v24';
+const CACHE_NAME = 'one-shell-v25';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -50,7 +50,7 @@ const APP_SHELL = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()),
+    caches.open(CACHE_NAME).then((cache) => Promise.all(APP_SHELL.map((path) => fetch(new Request(path, { cache: 'reload' })).then((res) => (res && res.ok ? cache.put(path, res) : null)).catch(() => null)))).then(() => self.skipWaiting()),
   );
 });
 
@@ -78,7 +78,7 @@ self.addEventListener('fetch', (event) => {
     // Ağ başarısız olursa (çevrimdışı) önbellekteki son bilinen sürüme düş —
     // PWA'nın çevrimdışı çalışma özelliği böylece korunuyor.
     event.respondWith(
-      fetch(req)
+      fetch(req, { cache: 'no-cache' })
         .then((res) => {
           if (res && res.ok) { const resClone = res.clone(); caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone)); }
           return res;
@@ -89,7 +89,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    fetch(req)
+    fetch(req, { cache: 'no-cache' })
       .then((res) => {
         if (res && res.ok) { const resClone = res.clone(); caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone)); }
         return res;
