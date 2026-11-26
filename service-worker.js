@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v26';
+const CACHE_NAME = 'one-shell-v27';
 const APP_SHELL = [
   './',
   './hosgeldin.html',
@@ -41,6 +41,10 @@ const APP_SHELL = [
   './sudoku.js',
   './genelkultur.html',
   './genelkultur.js',
+  './kelime.html',
+  './kelime.js',
+  './fark.html',
+  './fark.js',
   './daily-core.js',
   './daily-net.js',
   './yuruyus.html',
