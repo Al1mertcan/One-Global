@@ -7,6 +7,19 @@
 (function (global) {
   'use strict';
 
+  // Geniş ekran (tablet, katlanabilir, yatay): uygulama telefon genişliğinde ortalanır; içerik ve alt menü
+  // ekran boyunca gerilmez. Telefonlarda (<700px) hiçbir etkisi yoktur.
+  try {
+    var wideCss = '@media (min-width:700px){' +
+      'body>div.min-h-screen{max-width:600px;margin-left:auto;margin-right:auto}' +
+      'nav[data-fv-tabbar]{left:50%!important;right:auto!important;width:576px;max-width:calc(100% - 24px);transform:translateX(-50%)}' +
+      '}';
+    var wideEl = document.createElement('style');
+    wideEl.setAttribute('data-hemcan-wide', '1');
+    wideEl.appendChild(document.createTextNode(wideCss));
+    (document.head || document.documentElement).appendChild(wideEl);
+  } catch (e) {}
+
   var LANGUAGES = [
     { code: 'tr', name: 'Türkçe', dir: 'ltr' },
     { code: 'en', name: 'English', dir: 'ltr' },

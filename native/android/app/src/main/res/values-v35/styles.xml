@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Android 15+ (API 35): uçtan uca ekran zorunlu; durum/gezinme çubuğu rengi ayarları
+         (android:statusBarColor / android:navigationBarColor) kullanımdan kalktı ve yok sayılıyor.
+         Bu yüzden yalnızca yeni sürümlerde temadan çıkarıldı. Eski sürümlerde values/styles.xml geçerli. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/hemcan_bg</item>
+        <item name="colorPrimary">@color/hemcan_bg</item>
+        <item name="colorPrimaryDark">@color/hemcan_bg</item>
+        <item name="colorAccent">@color/hemcan_accent</item>
+    </style>
+</resources>
