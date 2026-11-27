@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="native.js"></script>
+  <script src="profile.js"></script>
+  <title>İlaç & randevu — Hemcan</title>
+
+  <!-- Tailwind CSS (pinned — matches the renderer/screenshot surfaces) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          background: 'rgb(7 17 31 / <alpha-value>)',
+          foreground: 'rgb(239 247 255 / <alpha-value>)',
+          primary: { DEFAULT: 'rgb(57 215 255 / <alpha-value>)', foreground: 'rgb(3 18 28 / <alpha-value>)' },
+          secondary: { DEFAULT: 'rgb(22 42 70 / <alpha-value>)', foreground: 'rgb(225 238 255 / <alpha-value>)' },
+          accent: { DEFAULT: 'rgb(167 139 250 / <alpha-value>)', foreground: 'rgb(19 13 40 / <alpha-value>)' },
+          muted: { DEFAULT: 'rgb(16 33 58 / <alpha-value>)', foreground: 'rgb(168 188 211 / <alpha-value>)' },
+          card: { DEFAULT: 'rgb(12 27 48 / <alpha-value>)', foreground: 'rgb(239 247 255 / <alpha-value>)' },
+          border: 'rgb(40 65 95 / <alpha-value>)',
+          input: 'rgb(16 37 64 / <alpha-value>)',
+          destructive: { DEFAULT: 'rgb(255 101 122 / <alpha-value>)', foreground: 'rgb(38 4 10 / <alpha-value>)' },
+          success: { DEFAULT: 'rgb(61 219 165 / <alpha-value>)', foreground: 'rgb(3 27 20 / <alpha-value>)' },
+          chart1: 'rgb(57 215 255 / <alpha-value>)',
+          chart2: 'rgb(167 139 250 / <alpha-value>)',
+          chart3: 'rgb(61 219 165 / <alpha-value>)',
+          chart4: 'rgb(112 167 255 / <alpha-value>)',
+          chart5: 'rgb(242 182 109 / <alpha-value>)',
+          ring: 'rgb(57 215 255 / <alpha-value>)',
+        },
+        fontFamily: {
+          heading: ['var(--font-heading, Inter)', 'system-ui'],
+          body: ['var(--font-body, Inter)', 'system-ui'],
+        },
+        borderRadius: { DEFAULT: 'var(--radius, 12px)', theme: 'var(--radius, 12px)' },
+      }}
+    };
+</script>
+
+  <!-- Iconify Web Component -->
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+  <!-- Design Tokens + Custom Classes -->
+  <style>
+  :root {
+    --color-background: #07111F;
+    --color-foreground: #EFF7FF;
+    --color-primary: #39D7FF;
+    --color-primary-foreground: #03121C;
+    --color-secondary: #162A46;
+    --color-secondary-foreground: #E1EEFF;
+    --color-accent: #A78BFA;
+    --color-accent-foreground: #130D28;
+    --color-muted: #10213A;
+    --color-muted-foreground: #A8BCD3;
+    --color-card: #0C1B30;
+    --color-card-foreground: #EFF7FF;
+    --color-border: #28415F;
+    --color-input: #102540;
+    --color-destructive: #FF657A;
+    --color-destructive-foreground: #26040A;
+    --color-success: #3DDBA5;
+    --color-success-foreground: #031B14;
+    --color-chart1: #39D7FF;
+    --color-chart2: #A78BFA;
+    --color-chart3: #3DDBA5;
+    --color-chart4: #70A7FF;
+    --color-chart5: #F2B66D;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07111F">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hemcan">
+</head>
+<body class="bg-background text-foreground m-0 p-0">
+  <div class="min-h-screen w-full bg-background text-foreground font-body relative overflow-hidden pb-24">
+    <div class="pointer-events-none absolute -top-28 -right-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute top-[430px] -left-32 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
+
+    <header class="relative px-5 pt-12">
+      <div class="flex items-center justify-between">
+        <a href="asistan.html" data-i18n-aria="wbBack" aria-label="Geri" class="flex h-11 w-11 items-center justify-center rounded-theme border border-border bg-card/80 text-foreground shadow-lg backdrop-blur-xl">
+          <iconify-icon icon="lucide:arrow-left" class="text-xl"></iconify-icon>
+        </a>
+        <span class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground" data-i18n="rxHeader">İlaç & randevu</span>
+        <select id="lang-select" aria-label="Dili değiştir / Change language" class="h-11 max-w-[92px] rounded-theme border border-border bg-card px-2 text-xs font-bold text-card-foreground"></select>
+      </div>
+    </header>
+
+    <main class="relative px-5 pt-6">
+      <div id="notif-warn" class="mb-4 hidden rounded-[20px] border border-chart5/30 bg-chart5/5 p-3.5">
+        <p class="text-xs leading-5 text-card-foreground" data-i18n="rxNotifOff">Hatırlatmaların gelmesi için bildirimleri açmalısın.</p>
+        <a href="ayarlar.html" class="mt-2 inline-flex h-10 items-center rounded-theme bg-chart5 px-4 text-xs font-bold text-background" data-i18n="rxNotifBtn">Bildirim ayarlarına git</a>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 rounded-[18px] border border-border bg-card/60 p-1" role="tablist">
+        <button id="tab-meds" type="button" role="tab" class="h-11 rounded-[14px] text-sm font-bold" data-i18n="rxTabMeds">İlaçlar</button>
+        <button id="tab-appts" type="button" role="tab" class="h-11 rounded-[14px] text-sm font-bold" data-i18n="rxTabAppts">Randevular</button>
+      </div>
+
+      <div id="view-meds" class="mt-4">
+        <section class="rounded-[24px] border border-primary/25 bg-primary/5 p-4">
+          <h1 class="font-heading text-sm font-semibold text-primary" data-i18n="rxTodayTitle">Bugünkü dozlar</h1>
+          <p id="dose-sum" class="mt-1 text-xs font-semibold text-muted-foreground"></p>
+          <ul id="dose-list" class="mt-3 grid gap-2"></ul>
+          <p id="dose-empty" class="mt-2 hidden text-xs text-muted-foreground"></p>
+        </section>
+
+        <section class="mt-4 rounded-[24px] border border-border bg-card p-4">
+          <h2 class="font-heading text-sm font-semibold" data-i18n="rxAddMed">İlaç ekle</h2>
+          <input id="med-name" type="text" maxlength="60" placeholder="İlaç adı" data-i18n-placeholder="rxMedName" class="mt-1 h-12 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none">
+          <input id="med-note" type="text" maxlength="80" placeholder="Not" data-i18n-placeholder="rxMedNote" class="mt-1 h-12 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none">
+          <p class="mt-3 text-[11px] font-semibold text-muted-foreground" data-i18n="rxMedTimes">Her gün şu saatlerde</p>
+          <div id="med-times" class="mt-1 flex flex-wrap gap-2"></div>
+          <button id="med-add-time" type="button" class="mt-2 h-10 rounded-theme border border-border bg-input px-3 text-xs font-bold text-card-foreground" data-i18n="rxAddTime">Saat ekle</button>
+          <p id="med-err" class="mt-2 hidden text-xs font-semibold text-destructive" role="alert"></p>
+          <button id="med-save" type="button" class="mt-3 h-12 w-full rounded-theme bg-primary text-sm font-bold text-primary-foreground" data-i18n="rxMedSave">İlacı kaydet</button>
+        </section>
+
+        <section class="mt-4">
+          <h2 class="font-heading text-sm font-semibold" data-i18n="rxMedList">İlaçlarım</h2>
+          <p id="med-empty" class="mt-2 text-xs text-muted-foreground" data-i18n="rxNoMeds">Henüz ilaç eklemedin.</p>
+          <ul id="med-list" class="mt-2 grid gap-2"></ul>
+        </section>
+      </div>
+
+      <div id="view-appts" class="mt-4 hidden">
+        <section class="rounded-[24px] border border-border bg-card p-4">
+          <h1 class="font-heading text-sm font-semibold" data-i18n="rxAddAppt">Randevu ekle</h1>
+          <input id="ap-title" type="text" maxlength="80" placeholder="Randevu" data-i18n-placeholder="rxApptTitle" class="mt-1 h-12 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none">
+          <input id="ap-note" type="text" maxlength="80" placeholder="Not" data-i18n-placeholder="rxApptNote" class="mt-1 h-12 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none">
+          <div class="mt-2 grid grid-cols-2 gap-3">
+            <label class="text-[11px] font-semibold text-muted-foreground"><span data-i18n="rxApptDate">Tarih</span><input id="ap-date" type="date" class="mt-1 h-12 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none"></label>
+            <label class="text-[11px] font-semibold text-muted-foreground"><span data-i18n="rxApptTime">Saat</span><input id="ap-time" type="time" value="10:00" class="mt-1 h-12 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none"></label>
+          </div>
+          <p class="mt-3 text-[11px] font-semibold text-muted-foreground" data-i18n="rxRemindMe">Hatırlat</p>
+          <div class="mt-1 flex flex-wrap gap-2">
+            <label class="flex items-center gap-1.5 rounded-full border border-border bg-input px-3 py-1.5 text-xs font-semibold"><input type="checkbox" id="lead-1d" checked class="accent-[#39d7ff]"><span data-i18n="rxLead1d">1 gün önce</span></label>
+            <label class="flex items-center gap-1.5 rounded-full border border-border bg-input px-3 py-1.5 text-xs font-semibold"><input type="checkbox" id="lead-2h" checked class="accent-[#39d7ff]"><span data-i18n="rxLead2h">2 saat önce</span></label>
+            <label class="flex items-center gap-1.5 rounded-full border border-border bg-input px-3 py-1.5 text-xs font-semibold"><input type="checkbox" id="lead-0" class="accent-[#39d7ff]"><span data-i18n="rxLead0">Tam zamanında</span></label>
+          </div>
+          <p id="ap-err" class="mt-2 hidden text-xs font-semibold text-destructive" role="alert"></p>
+          <button id="ap-save" type="button" class="mt-3 h-12 w-full rounded-theme bg-primary text-sm font-bold text-primary-foreground" data-i18n="rxApptSave">Randevuyu kaydet</button>
+        </section>
+
+        <section class="mt-4">
+          <h2 class="font-heading text-sm font-semibold" data-i18n="rxUpcoming">Yaklaşan randevular</h2>
+          <p id="ap-empty" class="mt-2 text-xs text-muted-foreground" data-i18n="rxNoAppts">Yaklaşan randevu yok.</p>
+          <ul id="ap-list" class="mt-2 grid gap-2"></ul>
+        </section>
+        <section id="ap-past-sec" class="mt-5 hidden">
+          <h2 class="font-heading text-sm font-semibold text-muted-foreground" data-i18n="rxPast">Geçmiş randevular</h2>
+          <ul id="ap-past" class="mt-2 grid gap-2 opacity-70"></ul>
+        </section>
+      </div>
+
+      <p class="mt-5 text-[11px] leading-5 text-muted-foreground" data-i18n="rxNote">Bu sayfa bir hatırlatıcıdır; tıbbi tavsiye vermez. Veriler yalnızca bu telefonda saklanır.</p>
+
+    </main>
+  </div>
+
+  <script src="wb-strings.js"></script>
+  <script src="i18n.js"></script>
+  <script src="wellbeing.js"></script>
+  <script src="ilac.js"></script>
+</body>
+</html>
