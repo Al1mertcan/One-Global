@@ -1,4 +1,4 @@
-const CACHE_NAME = 'one-shell-v35';
+const CACHE_NAME = 'one-shell-v36';
 // Not: büyük ses kayıtları (sounds/*.mp3) kurulumda indirilmez; ilk dinlenişte önbelleğe alınır (aşağıdaki genel kural).
 const APP_SHELL = [
   './',

@@ -355,51 +355,14 @@
 
 
 
-        <section class="mt-6">
-          <div class="mb-3 flex items-center justify-between">
-            <div>
-              <h2 class="font-heading text-lg font-semibold" data-i18n="quickStartTitle">Hızlı başlangıç</h2>
-              <p class="mt-1 text-xs text-muted-foreground" data-i18n="quickStartSub">Şu an gerçekten yapabildiklerin</p>
-            </div>
-          </div>
-          <div class="flex gap-3 overflow-x-auto pb-1">
-            <article id="quick-start-command" hidden class="min-w-[218px] cursor-pointer rounded-[20px] border border-border bg-card p-4">
-              <div class="flex items-center justify-between">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <iconify-icon icon="lucide:message-circle" class="text-lg"></iconify-icon>
-                </div>
-              </div>
-              <h3 class="mt-3 text-sm font-semibold" data-i18n="quickStartChatTitle">Hemcan'a bir şey sor</h3>
-              <p class="mt-1.5 text-xs leading-5 text-muted-foreground" data-i18n="quickStartChatDesc">Aşağıdaki kutuya yaz, gerçek bir yapay zeka sohbeti başlasın.</p>
-              <span class="mt-3 inline-flex items-center text-xs font-bold text-primary" data-i18n="quickStartGo">Başlat <iconify-icon icon="lucide:arrow-right" class="ml-1 align-middle text-sm"></iconify-icon></span>
-            </article>
-            <article id="quick-start-routine" class="min-w-[218px] cursor-pointer rounded-[20px] border border-border bg-card p-4">
-              <div class="flex items-center justify-between">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/12 text-accent">
-                  <iconify-icon icon="lucide:bell-ring" class="text-lg"></iconify-icon>
-                </div>
-              </div>
-              <h3 class="mt-3 text-sm font-semibold" data-i18n="quickStartRoutineTitle">Günlük rutinini ayarla</h3>
-              <p class="mt-1.5 text-xs leading-5 text-muted-foreground" data-i18n="quickStartRoutineDesc">Uyanma, ev, uyku saatlerine göre gerçek bildirimler al.</p>
-              <span class="mt-3 inline-flex items-center text-xs font-bold text-primary" data-i18n="quickStartGo">Başlat <iconify-icon icon="lucide:arrow-right" class="ml-1 align-middle text-sm"></iconify-icon></span>
-            </article>
-          </div>
-        </section>
-
         <!-- Yapay zeka sohbeti şimdilik kapalı (maliyet kararı). Yeniden açmak için:
              aşağıdaki #chat-section'dan "hidden" özniteliğini kaldır, bu "Yakında" kartını sil,
              #quick-start-command'dan "hidden"ı kaldır, script içinde CHAT_ENABLED=true yap
              ve Netlify'da CHAT_ENABLED=1 ortam değişkenini ekle. -->
-        <section id="chat-soon" class="mt-6">
-          <div class="rounded-[24px] border border-primary/25 bg-primary/5 p-4">
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <iconify-icon icon="lucide:sparkles" class="text-lg text-primary"></iconify-icon>
-                <h2 class="font-heading text-sm font-semibold text-primary" data-i18n="chatSoonTitle">Hemcan Yapay Zekâ</h2>
-              </div>
-              <span class="rounded-full border border-primary/30 px-2.5 py-0.5 text-[10px] font-bold text-primary" data-i18n="chatSoonBadge">Yakında</span>
-            </div>
-            <p class="mt-2 text-xs leading-5 text-muted-foreground" data-i18n="chatSoonDesc">Kendi yapay zekâ asistanımız ileride Pro üyelere özel olarak burada olacak. Şimdilik bu bölüm kapalı.</p>
+        <section id="chat-soon" class="mb-28 mt-8">
+          <div class="flex items-center justify-center gap-2 text-center">
+            <iconify-icon icon="lucide:sparkles" class="text-sm text-primary"></iconify-icon>
+            <p class="text-[11px] leading-5 text-muted-foreground"><span class="font-semibold text-primary" data-i18n="chatSoonTitle">Hemcan Yapay Zekâ</span> · <span data-i18n="chatSoonBadge">Yakında</span></p>
           </div>
         </section>
 
@@ -435,24 +398,12 @@
           </form>
         </section>
 
-        <section id="no-ads-promise" class="mb-28 mt-8">
-          <div class="flex items-start gap-3 rounded-[22px] border border-success/25 bg-success/5 p-4">
-            <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-success/30 bg-success/10 text-success">
-              <iconify-icon icon="lucide:shield-check" class="text-lg"></iconify-icon>
-            </span>
-            <div class="min-w-0">
-              <h2 class="font-heading text-sm font-semibold text-success" data-i18n="noAdsTitle">Reklam sözümüz</h2>
-              <p class="mt-1 text-xs leading-5 text-muted-foreground" data-i18n="noAdsBody">Hemcan'da kendi markamız dışında asla reklam olmayacak.</p>
-            </div>
-          </div>
-        </section>
-
       </main>
 
       <nav data-fv-tabbar class="fixed bottom-5 left-3 right-3 z-30 flex h-[68px] items-center justify-around rounded-[23px] border border-border bg-card/90 px-1 shadow-2xl backdrop-blur-2xl">
         <a data-fv-tab="Asistan" data-fv-tab-active="true" href="asistan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[17px] bg-primary/12 px-0.5 text-primary ring-1 ring-primary/35">
-          <iconify-icon icon="lucide:bot" class="text-xl"></iconify-icon>
-          <span class="max-w-full truncate text-[9px] font-bold" data-i18n="tabAssistant">Asistan</span>
+          <iconify-icon icon="lucide:house" class="text-xl"></iconify-icon>
+          <span class="max-w-full truncate text-[9px] font-bold" data-i18n="tabAssistant">Ana sayfa</span>
         </a>
         <a data-fv-tab="Hemcan" href="hemcan.html" class="flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5 text-muted-foreground">
           <iconify-icon icon="lucide:heart-handshake" class="text-xl"></iconify-icon>
