@@ -35,6 +35,7 @@ android {
             // Sorun çıkarsa kodu değiştirmeden kapatmak için Codemagic ortam değişkeni: HEMCAN_NO_MINIFY=1
             minifyEnabled System.getenv("HEMCAN_NO_MINIFY") ? false : true
             shrinkResources false
+            ndk { debugSymbolLevel 'SYMBOL_TABLE' }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
