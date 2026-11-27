@@ -1,21 +1,25 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Hemcan — R8 / ProGuard kuralları (release derlemesinde minifyEnabled açık).
+# Mantık: yansıma (reflection) ile bulunan her şeyi koru; geri kalanı R8 karartsın.
+# Capacitor eklentilerinin ve Firebase / AndroidX'in kendi "consumer" kuralları derlemeye otomatik eklenir.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Hata raporlarında anlamlı satır numaraları + gerekli öznitelikler
+-keepattributes SourceFile,LineNumberTable,*Annotation*,Signature,InnerClasses,EnclosingMethod,Exceptions
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Uygulamanın kendi kodu (adım sayar eklentisi, widget, depo): küçük ve yansımayla çağrılıyor, olduğu gibi kalsın
+-keep class app.hemcan.mobile.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Capacitor çekirdeği ve tüm eklentileri (eklentiler yansımayla yüklenir, JS köprüsü yöntem adlarıyla çağırır)
+-keep class com.getcapacitor.** { *; }
+-keep class com.capacitorjs.** { *; }
+-keep class * extends com.getcapacitor.Plugin { *; }
+-keep @com.getcapacitor.annotation.CapacitorPlugin public class * { *; }
+-keepclassmembers class * { @com.getcapacitor.PluginMethod <methods>; }
+-keep class org.apache.cordova.** { *; }
+
+# WebView'dan çağrılan Java yöntemleri
+-keepclassmembers class * { @android.webkit.JavascriptInterface <methods>; }
+
+# Yalnızca uyarı: kullanılmayan isteğe bağlı sınıflar derlemeyi durdurmasın
+-dontwarn org.apache.cordova.**
+-dontwarn com.google.android.gms.**

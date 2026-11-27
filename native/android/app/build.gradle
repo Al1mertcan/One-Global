@@ -30,7 +30,11 @@ android {
     buildTypes {
         release {
             if (System.getenv("CM_KEYSTORE_PATH")) { signingConfig signingConfigs.release }
-            minifyEnabled false
+            // Kod karartma / küçültme (R8): Google Play "DEX kodu optimizasyonu" önerisi için açık.
+            // Sadece kod küçültülür; kaynak (resim/ses) küçültme KAPALI (isimle aranan kaynaklar silinmesin).
+            // Sorun çıkarsa kodu değiştirmeden kapatmak için Codemagic ortam değişkeni: HEMCAN_NO_MINIFY=1
+            minifyEnabled System.getenv("HEMCAN_NO_MINIFY") ? false : true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
