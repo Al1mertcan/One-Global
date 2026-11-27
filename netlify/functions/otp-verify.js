@@ -50,7 +50,14 @@ exports.handler = async (event) => {
     if (!ok) return bad();
 
     let user = await S.findUserByEmail(users, key);
-    if (!user) user = await S.createUser(users, key, email, now);
+    if (!user) {
+      user = await S.createUser(users, key, email, now);
+      // Üye sayacı (hesap modu): doğrulanmış e-postayla açılan her yeni hesap bir kez sayılır.
+      // Mağaza inceleme hesabı sayılmaz. Sayaç hatası girişi engellemez.
+      if (!(reviewEmail && email === reviewEmail)) {
+        try { await require('./_member-counter').bump(getStore('one-member-counter'), 'acct', user.id || key); } catch (e) { /* sayım başarısız olsa da giriş sürer */ }
+      }
+    }
     const sub = await subs.get(user.id, { type: 'json' });
     return S.reply(200, {
       token: S.signSession(user.id, sec, now),

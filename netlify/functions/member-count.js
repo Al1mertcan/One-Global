@@ -65,7 +65,8 @@ function getClientIp(event) {
   );
 }
 
-const { consume, increment } = require('./_rate-limit');
+const { consume } = require('./_rate-limit');
+const M = require('./_member-counter');
 
 exports.handler = async (event) => {
   const corsHeaders = {
@@ -97,32 +98,43 @@ exports.handler = async (event) => {
     };
   }
 
-  async function readCount() {
-    const rec = await counterStore.get('total', { type: 'json' });
-    return rec && typeof rec.count === 'number' ? rec.count : 0;
+  const ACCOUNTS_MODE = process.env.MEMBER_COUNT_MODE === 'accounts';
+  const PREFIX = ACCOUNTS_MODE ? 'acct' : 'dev';
+  const LEGACY = ACCOUNTS_MODE ? null : 'total'; // eski tek kayıtlı sayaç yalnızca cihaz sayacına ait
+
+  async function readCount(force) {
+    return M.readTotal(counterStore, PREFIX, LEGACY, force);
   }
 
   // Gerçek kaynak: kayıtlı üyelerin kendisi (one-members deposundaki 'm_<id>' kayıtları).
-  // Sayaç kaydı herhangi bir sebeple geride kalırsa (ör. artırma çakışması/hatası) burada düzeltilir.
-  // Listeleme pahalı olabileceği için en fazla 5 dakikada bir yapılır.
-  async function reconcile(current) {
+  // Sayaç geride kalırsa (ör. artırma hatası) düzeltilir. Listeleme üye sayısıyla orantılı pahalıdır;
+  // bu yüzden en fazla 6 saatte bir ve yalnızca üye sayısı makul büyüklükteyken (RECONCILE_MAX) yapılır.
+  // Artırma hata verirse (force) hemen çalışır. Hesap modunda uygulanmaz (kaynak hesaplardır).
+  const RECONCILE_EVERY_MS = 6 * 60 * 60 * 1000;
+  const RECONCILE_MAX = 20000;
+  async function reconcile(current, force) {
+    if (ACCOUNTS_MODE) return current;
     try {
       const meta = await counterStore.get('reconcile', { type: 'json' });
-      if (meta && typeof meta.at === 'number' && Date.now() - meta.at < 5 * 60 * 1000) return current;
+      if (!force && meta && typeof meta.at === 'number' && Date.now() - meta.at < RECONCILE_EVERY_MS) return current;
+      if (!force && current > RECONCILE_MAX) return current;
       const listed = await membersStore.list({ prefix: 'm_' });
       const n = listed && Array.isArray(listed.blobs) ? listed.blobs.length : 0;
       await counterStore.setJSON('reconcile', { at: Date.now(), listed: n });
-      if (n > current) {
-        await counterStore.setJSON('total', { count: n });
-        return n;
+      // Önbellekli değer eski olabilir; farkı mutlaka güncel toplamla hesapla (aksi hâlde çift sayılır).
+      const fresh = await readCount(true);
+      if (n > fresh) {
+        await M.addToLegacy(counterStore, 'total', n - fresh);
+        return await readCount(true);
       }
+      return fresh;
     } catch (e) { /* düzeltme başarısız olsa da sayı gösterilmeye devam eder */ }
     return current;
   }
 
   if (event.httpMethod === 'GET') {
     try {
-      const count = await reconcile(await readCount());
+      const count = await reconcile(await readCount(false), false);
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(shape(count)) };
     } catch (err) {
       return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Sayı okunamadı.' }) };
@@ -145,7 +157,7 @@ exports.handler = async (event) => {
     try {
       const memberKey = 'm_' + id;
       const already = await membersStore.get(memberKey);
-      let count = await readCount();
+      let count = await readCount(false);
 
       if (!already) {
         // Sadece GERÇEKTEN yeni bir üye eklerken hız sınırı uygula — aynı
@@ -180,22 +192,23 @@ exports.handler = async (event) => {
         }
         const isNew = !(reg && typeof reg === 'object' && 'modified' in reg) || reg.modified;
         if (isNew) {
-          try {
-            count = await increment(counterStore, 'total');
-          } catch (e) {
-            // Sayaç çok yoğun bir çakışma yüzünden güncellenemedi. Üye kaydı yapıldı;
-            // kullanıcıya hata göstermeyelim. Sayaç bu üye için bir adım eksik
-            // kalabilir (nadir ve zararsız); mevcut değeri okuyup dönüyoruz.
-            count = await readCount();
+          if (ACCOUNTS_MODE) {
+            // Hesap modunda sayı hesaplardan gelir (bkz. otp-verify.js); cihaz kaydı sayıyı değiştirmez.
+          } else {
+            try {
+              await M.bump(counterStore, PREFIX, id);
+              count += 1; // önbellekli toplam en fazla 20 sn eski olabilir; yeni üyeyi hemen göster
+            } catch (e) {
+              // Sayaç çok yoğun bir çakışma yüzünden güncellenemedi. Üye kaydı yapıldı; kullanıcıya hata
+              // göstermeyelim ve sayıyı üye kayıtlarıyla eşitleyelim.
+              count = await reconcile(await readCount(true), true);
+            }
           }
-          // Artırma sessizce başarısız olsa bile kayıtlı üye sayısıyla eşitle.
-          try { await counterStore.setJSON('reconcile', { at: 0, listed: 0 }); } catch (e) {}
-          count = await reconcile(count);
         } else {
-          count = await reconcile(await readCount());
+          count = await reconcile(count, false);
         }
       } else {
-        count = await reconcile(count);
+        count = await reconcile(count, false);
       }
 
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(shape(count)) };

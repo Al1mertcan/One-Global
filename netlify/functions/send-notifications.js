@@ -29,6 +29,8 @@ const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:hemcan.global@gmail.com';
 
 const WINDOW_MIN = 15;
+const CONCURRENCY = 25; // aynı anda işlenen abone sayısı
+const RUN_BUDGET_MS = 22000; // zamanlanmış fonksiyon sınırı ~30 sn; güvenli pay bırak
 
 const CONTENT = {
   tr: {
@@ -309,6 +311,7 @@ async function refreshOneGoodNewsLanguage(budgetMs) {
 }
 
 exports.handler = async (event) => {
+  const T0 = Date.now();
   connectLambda(event || {});
 
   // Push bildirimlerinden bağımsız, kendi başına güvenli bir arka plan
@@ -328,14 +331,18 @@ exports.handler = async (event) => {
   if (vapidOk) webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
   const store = getStore('one-subscribers');
+  const meta = getStore('one-notif-meta');
   const { blobs } = await store.list();
 
   let sent = 0;
   let dropped = 0;
 
-  for (const { key } of blobs) {
+  // Ölçek: aboneler tek tek değil, sınırlı eşzamanlılıkla işlenir; süre bütçesi dolarsa kalanlar bir
+  // sonraki çalıştırmaya (imleçten itibaren) bırakılır. Bildirim pencereleri 15 dk, çalıştırma 5 dk'da bir,
+  // bu yüzden kısa bir gecikme bildirimi kaçırmaz.
+  const processKey = async (key) => {
     const record = await store.get(key, { type: 'json' });
-    if (!record || !record.subscription) continue;
+    if (!record || !record.subscription) return;
 
     const tz = record.timezone || 'UTC';
     const lang = record.lang || 'en';
@@ -479,7 +486,7 @@ exports.handler = async (event) => {
     if (expired) {
       await store.delete(key);
       dropped++;
-      continue;
+      return;
     }
 
     if (toSend.length > 0 || remStateTouched || stateTouched) {
@@ -487,7 +494,31 @@ exports.handler = async (event) => {
       record.remSent = remSent;
       await store.setJSON(key, record);
     }
-  }
+  };
 
-  return { statusCode: 200, body: `OK. sent=${sent} dropped=${dropped} checked=${blobs.length}` };
+  const keys = blobs.map((x) => x.key).sort();
+  let startAt = 0;
+  try {
+    const cur = await meta.get('cursor', { type: 'json' });
+    if (cur && typeof cur.after === 'string') {
+      const i = keys.findIndex((k) => k > cur.after);
+      startAt = i === -1 ? 0 : i;
+    }
+  } catch (e) { startAt = 0; }
+  const order = keys.slice(startAt).concat(keys.slice(0, startAt));
+
+  const deadline = T0 + RUN_BUDGET_MS;
+  let next = 0, processed = 0;
+  const worker = async () => {
+    while (next < order.length && Date.now() < deadline) {
+      const key = order[next++];
+      try { await processKey(key); } catch (e) { /* tek aboneyi atla, diğerleri devam etsin */ }
+      processed++;
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, order.length) }, worker));
+  const finishedAll = processed >= order.length;
+  try { await meta.setJSON('cursor', { after: finishedAll ? '' : order[next - 1], at: Date.now() }); } catch (e) {}
+
+  return { statusCode: 200, body: `OK. sent=${sent} dropped=${dropped} checked=${processed}/${blobs.length}` };
 };
