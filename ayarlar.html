@@ -84,8 +84,8 @@
         </button>
         <p id="notif-error" class="mt-2 hidden rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-[11px] text-destructive"></p>
         <p class="mt-3 text-[11px] leading-5 text-muted-foreground" data-i18n="settingsNotifExplain">
-          Bildirimler, uyanma / eve geliş / yatma saatlerine göre gönderilir: uyanmandan 15 dk sonra
-          spor, 1 saat sonra bir minnettarlık mesajı, gün içinde su hatırlatmaları; eve geldiğinde bir
+          Bildirimler, uyanma / akşam rutini başlangıcı / yatma saatlerine göre gönderilir: uyanmandan 15 dk sonra
+          spor, 1 saat sonra bir minnettarlık mesajı, gün içinde su hatırlatmaları; akşam rutinin başladığında bir
           "günü kapatma" kontrolü, 1 saat sonra tekrar minnettarlık mesajı, 2 saat sonra okuma
           hatırlatması; yatmadan 1 saat önce küçük bir akşam sporu, yatmadan yarım saat önce diş
           fırçalama hatırlatması, yatma saatinde de günü bırakma nudge'ı.
@@ -126,10 +126,13 @@
             <span class="text-sm text-card-foreground" data-i18n="settingsWakeLabel">🌅 Uyanma saatin</span>
             <input id="wake-time" type="time" value="07:30" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
           </label>
-          <label class="flex items-center justify-between gap-3">
-            <span class="text-sm text-card-foreground" data-i18n="settingsHomeLabel">🏠 Eve ortalama geliş saatin</span>
-            <input id="home-time" type="time" value="18:30" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
-          </label>
+          <div>
+            <label class="flex items-center justify-between gap-3">
+              <span class="text-sm text-card-foreground" data-i18n="settingsHomeLabel">🌆 Akşam rutinin ne zaman başlasın?</span>
+              <input id="home-time" type="time" value="18:30" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
+            </label>
+            <p class="mt-1 text-[11px] leading-4 text-muted-foreground" data-i18n="settingsHomeHint">İş ya da okul bittiğinde, eve döndüğünde veya günün yavaşladığı an. Akşam bildirimleri bu saatten itibaren gelir.</p>
+          </div>
           <label class="flex items-center justify-between gap-3">
             <span class="text-sm text-card-foreground" data-i18n="settingsBedLabel">🌙 Yatma saatin</span>
             <input id="bed-time" type="time" value="23:00" class="rounded-lg border border-border bg-input px-3 py-2 text-sm text-card-foreground" />
