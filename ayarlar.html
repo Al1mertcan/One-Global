@@ -738,7 +738,7 @@
           return fetch('/api/subscribe', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: currentSettings(), reminders: reminders }),
+            body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: currentSettings(), reminders: (window.ONE_NTF_SAFE ? window.ONE_NTF_SAFE(reminders, lang) : reminders) }),
           });
         }).catch(function () {});
       }
@@ -863,7 +863,7 @@
             return fetch('/api/subscribe', {
               method: 'POST',
               headers: { 'content-type': 'application/json' },
-              body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: settings, reminders: reminders }),
+              body: JSON.stringify({ id: getSubId(), subscription: sub.toJSON(), timezone: timezone, lang: lang, settings: settings, reminders: (window.ONE_NTF_SAFE ? window.ONE_NTF_SAFE(reminders, lang) : reminders) }),
             });
           }).then(function (res) {
             if (!res || !res.ok) throw new Error('subscribe failed');

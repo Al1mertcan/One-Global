@@ -21,6 +21,19 @@
 (function () {
   'use strict';
 
+  // Gizlilik: ilaç / randevu hatırlatmalarının adı ve notu SUNUCUYA gitmez. Sunucuya yalnızca genel bir metin
+  // ("İlaç saati" / "Randevu hatırlatması") ve zaman gönderilir; tam metin yalnızca telefonda kalır.
+  window.ONE_NTF_SAFE = function (list, lang) {
+    if (!Array.isArray(list)) return list;
+    var tr = String(lang || '').toLowerCase().indexOf('tr') === 0;
+    return list.map(function (r) {
+      if (!r || (r.src !== 'med' && r.src !== 'appt')) return r;
+      var c = {}; for (var k in r) if (Object.prototype.hasOwnProperty.call(r, k)) c[k] = r[k];
+      c.text = r.src === 'med' ? (tr ? '💊 İlaç saati' : '💊 Medicine time') : (tr ? '📅 Randevu hatırlatması' : '📅 Appointment reminder');
+      return c;
+    });
+  };
+
   var C = window.Capacitor;
   var isNative = !!(C && typeof C.isNativePlatform === 'function' && C.isNativePlatform());
   // Ana adres kendi alan adımız (Cloudflare üzerinden). Bazı ağlarda netlify.app adresine
@@ -775,7 +788,7 @@
             timezone: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) { return 'UTC'; } })(),
             lang: getLang(),
             settings: readJSON(KEY_SETTINGS, {}),
-            reminders: reminders,
+            reminders: window.ONE_NTF_SAFE(reminders, getLang()),
           };
           // Her sayfa açılışında sunucuya gitmemek için: içerik değişmediyse ve son gönderim 12 saatten yeniyse atla.
           var sig = JSON.stringify([t, body.timezone, body.lang, body.settings, body.reminders]);

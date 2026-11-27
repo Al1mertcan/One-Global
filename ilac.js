@@ -35,7 +35,7 @@
     navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
       if (!sub) return;
       return fetch('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ id: id, subscription: sub.toJSON(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', lang: WB.lang(), settings: settings, reminders: list }) });
+        body: JSON.stringify({ id: id, subscription: sub.toJSON(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', lang: WB.lang(), settings: settings, reminders: (window.ONE_NTF_SAFE ? window.ONE_NTF_SAFE(list, WB.lang()) : list) }) });
     }).catch(function () {});
   }
   function nextDaily(tm) {
