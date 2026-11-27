@@ -933,6 +933,19 @@
                 routineSettings: currentSettings(),
                 reminders: reminders,
                 chatHistory: (chatData && Array.isArray(chatData.messages)) ? chatData.messages : [],
+                // Bu cihazda tutulan tüm Hemcan verisi (ilaç, antrenman, tesbih, cüzdan, kalori, günlük…).
+                // Oturum belirteci ve bildirim adresi gibi gizli/teknik anahtarlar dışarıda bırakılır.
+                deviceData: (function () {
+                  var out = {}, skip = /^(one-session|one-session-user|one-fcm-token|one-fcm-sig|one-fcm-at|one-reminders-bak)$/;
+                  try {
+                    Object.keys(localStorage).forEach(function (k) {
+                      if (k.indexOf('one-') !== 0 || skip.test(k)) return;
+                      var raw = localStorage.getItem(k);
+                      try { out[k] = JSON.parse(raw); } catch (e) { out[k] = raw; }
+                    });
+                  } catch (e) {}
+                  return out;
+                })(),
                 note: t('settingsExportNote'),
               };
               var blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });

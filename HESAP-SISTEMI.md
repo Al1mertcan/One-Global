@@ -27,3 +27,9 @@ Depolama: `one-users` (e-posta HMAC özetiyle anahtarlanır, düz e-posta anahta
 2. Ayarlar'a "Çıkış yap" + "Hesabımı sil" düğmesi (uç nokta ve `ONE_NATIVE.deleteAccount()` hazır), gizlilik/KVKK ve mağaza metinleri.
 3. Ödeme ekranı + abonelik kilidi (RevenueCat, Play Billing / App Store IAP, Restore Purchases).
 4. Testler, sonra Google + Apple ile giriş birlikte.
+
+
+## Üye sayacı ve hesap sayısı
+- `member-count` iki sayaç tutar (parçalı, çakışmasız): **cihaz** sayacı (onboarding'de "Ücretsiz Başla") ve **hesap** sayacı (`otp-verify` her yeni doğrulanmış e-posta hesabında bir kez artırır; mağaza inceleme hesabı sayılmaz).
+- Hangisinin gösterileceği Netlify ortam değişkeniyle seçilir: `MEMBER_COUNT_MODE=accounts` → hesap sayısı (aynı kişi birden çok cihazda/yeniden kurulumda tek sayılır; sahte sayı için gerçek bir e-posta kutusu gerekir). Değişken yoksa cihaz sayacı kullanılır.
+- Geçiş: önce e-posta girişini aç (`AUTH_REQUIRED = true`, Resend alan adı doğrulaması, inceleme hesabı), sonra `MEMBER_COUNT_MODE=accounts` ekle. Sayı hesaplardan sıfırdan başlar; istenirse eski cihaz toplamı elle bir taban değer olarak eklenebilir.
