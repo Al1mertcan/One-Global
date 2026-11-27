@@ -15,7 +15,7 @@
 // ÜCRETLİ PLAN HAZIRLIĞI (varsayılan KAPALI): PHOTO_KCAL_PAYWALL=1 olduğunda kimlik, "id" yerine oturum belirteci
 // (Authorization: Bearer <one-session>) ile doğrulanır ve hak türü hesaptan okunur:
 //   - deneme süresi içinde (14 gün)  -> günde PHOTO_KCAL_TRIAL_DAILY (varsayılan 3) fotoğraf
-//   - Kalori Pro abonesi             -> ayda PHOTO_KCAL_PRO_MONTHLY (varsayılan 300) fotoğraf
+//   - Kalori Pro abonesi             -> ayda PHOTO_KCAL_PRO_MONTHLY (varsayılan 100) fotoğraf
 //   - diğerleri                      -> kapalı (upgrade_required)
 // Bayrak KAPALIYKEN yukarıdaki mevcut davranış aynen çalışır.
 //

@@ -52,9 +52,11 @@ const PRICE_OVERRIDES = {
   MWK: 10, HTG: 10, BOB: 10, MMK: 10, NGN: 10,
 };
 
-// Kalori Pro = temel plan x 1,5 (fotoğraflı kalori dahil). Sıfır ondalıklı para birimlerinde yukarı yuvarlanır.
+// Kalori Pro = temel plan x 1,5, TRY için 40 TL (fotoğraflı kalori dahil). Sıfır ondalıklı para birimlerinde yukarı yuvarlanır.
 // currencies.js'teki getProPrice ile birebir aynı tutulmalıdır.
+const PRO_OVERRIDES = { TRY: 40 }; // Türkiye: Kalori Pro 40 TL (currencies.js ile aynı)
 function proUnits(base, cur) {
+  if (PRO_OVERRIDES.hasOwnProperty(cur)) return PRO_OVERRIDES[cur];
   const v = base * 1.5;
   return ZERO_DECIMAL_CURRENCIES.has(cur) ? Math.ceil(v) : v;
 }

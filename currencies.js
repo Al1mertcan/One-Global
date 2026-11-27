@@ -206,10 +206,13 @@
     return PRICE_OVERRIDES.hasOwnProperty(code) ? PRICE_OVERRIDES[code] : 1;
   }
 
-  // Kalori Pro (fotoğraflı kalori dahil) = temel fiyat x 1,5. Sıfır ondalıklı para birimlerinde
+  // Kalori Pro (fotoğraflı kalori dahil) = temel fiyat x 1,5 (TRY hariç: 40 TL). Sıfır ondalıklı para birimlerinde
   // yukarı yuvarlanır. Sunucudaki create-checkout-session.js proUnits() ile birebir aynı olmalı.
   var ZERO_DECIMAL = { BIF: 1, CLP: 1, DJF: 1, GNF: 1, JPY: 1, KMF: 1, KRW: 1, MGA: 1, PYG: 1, RWF: 1, UGX: 1, VND: 1, VUV: 1, XAF: 1, XOF: 1, XPF: 1 };
+  // Ülke istisnası: Türkiye'de Kalori Pro 40 TL (fotoğraf maliyeti kur/fiyat artışına duyarlı). Sunucudaki PRO_OVERRIDES ile aynı olmalı.
+  var PRO_OVERRIDES = { TRY: 40 };
   function getProPrice(code) {
+    if (PRO_OVERRIDES.hasOwnProperty(code)) return PRO_OVERRIDES[code];
     var v = getPrice(code) * 1.5;
     return ZERO_DECIMAL.hasOwnProperty(code) ? Math.ceil(v) : v;
   }

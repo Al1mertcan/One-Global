@@ -100,7 +100,7 @@ function photoAccess(user, sub, now = Date.now()) {
   const intEnv = (n, d) => { const v = parseInt(process.env[n], 10); return v > 0 ? v : d; };
   const trialEndsAt = user.trialStartedAt + TRIAL_MS;
   if (sub && sub.status === 'active' && (!sub.expiresAt || now < sub.expiresAt) && sub.plan === 'pro') {
-    return { tier: 'pro', monthly: intEnv('PHOTO_KCAL_PRO_MONTHLY', 300), trialEndsAt };
+    return { tier: 'pro', monthly: intEnv('PHOTO_KCAL_PRO_MONTHLY', 100), trialEndsAt };
   }
   if (now < trialEndsAt) return { tier: 'trial', daily: intEnv('PHOTO_KCAL_TRIAL_DAILY', 3), trialEndsAt };
   return { tier: 'none', trialEndsAt };
