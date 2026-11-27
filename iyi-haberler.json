@@ -2,6 +2,30 @@
   "tr": [
     {
       "region": "world",
+      "headline": "Eritre trahomu yendi: DSÖ, ülkenin körlüğe yol açan hastalığı ortadan kaldırdığını doğruladı",
+      "summary": "Dünya Sağlık Örgütü, Eritre'nin trahomu halk sağlığı sorunu olmaktan çıkardığını onayladı; ülke Afrika'da bu başarıya ulaşan 11., dünyada ise 34. ülke oldu. Trahomdan etkilenme riski altındaki insan sayısı 2002'de yaklaşık 1,5 milyardan 2025 Kasım'ında 100 milyonun altına indi.",
+      "source": "Dünya Sağlık Örgütü (WHO)",
+      "url": "https://www.who.int/news/item/16-11-2026-eritrea-eliminates-trachoma-a-major-public-health-milestone",
+      "date": "2026-11-16"
+    },
+    {
+      "region": "world",
+      "headline": "Teksas'ta yaklaşık 1000 kişi karşılıksız çiftçilik yapıyor, hasat gençlerin üniversite bursu oluyor",
+      "summary": "Gruver kasabasında halk, okul bölgesine miras kalan 640 dönümlük araziyi 15 yıldır ücretsiz ekiyor; her hasat yaklaşık 400 bin dolar getiriyor. Bugüne dek 3 milyon dolarlık burs dağıtıldı, ilk on yılda 48 genç ailesinden üniversiteye giden ilk kişi oldu.",
+      "source": "Good News Network",
+      "url": "https://www.goodnewsnetwork.org/texans-work-for-free-on-farms-that-arent-theirs-to-send-others-kids-to-college/",
+      "date": "2026-11-26"
+    },
+    {
+      "region": "tr",
+      "headline": "Antalya'da yarım asır sonra öğretmen-öğrenci buluşması: \"Dünyanın en mutlu öğretmeniyim\"",
+      "summary": "Serik'te Gedikköy İlkokulu'nun eski öğrencileri, Öğretmenler Günü'nde 74 yaşındaki öğretmenleriyle yıllar sonra bir araya geldi. Ona eski defterini ve sınıf fotoğraflarını hediye eden öğrencilerine öğretmeni gözyaşlarıyla sarıldı.",
+      "source": "Antalya Hürses (DHA)",
+      "url": "https://www.antalyahurses.com/emekli-ogretmen-ile-ogrencilerinin-yarim-asir-sonra-duygulandiran-bulusmasi/561953",
+      "date": "2026-11-24"
+    },
+    {
+      "region": "world",
       "headline": "Brezilya'da sivrisinek denemesi: çocuklarda dang, Zika ve chikungunya riski %68 düştü",
       "summary": "Belo Horizonte'de 4 yıl süren denemede Wolbachia bakterisi taşıyan sivrisinekler doğaya salındı; bu bakteri sivrisineğin virüs bulaştırmasını engelliyor. Okul çocuklarında bu hastalıkların riski %68 azaldı, üstelik deneme Brezilya'nın kayıtlı en büyük dang salgınıyla aynı döneme denk geldi.",
       "source": "Good News Network",
@@ -15,14 +39,6 @@
       "source": "Habertürk",
       "url": "https://www.haberturk.com/gundem/mustaki-koy-okulunda-duygulandiran-24-kasim-bir-ogretmen-bir-ogrenci-ve-bir-tavuk-haberler-3929621",
       "date": "2026-11-24"
-    },
-    {
-      "region": "world",
-      "headline": "Brezilya'da golden retriever Tereza, havuza düşen küçük kızın yanına atladı",
-      "summary": "Chapada dos Guimarães'te güvenlik kamerası, 2 yaşındaki bir kızın havuzun derin yerine düşüp batmaya başladığı anı kaydetti. Köpek Tereza hemen suya atladı; kız, anne ve ablası gelene kadar köpeğe tutunarak su üstünde kaldı.",
-      "source": "RepórterMT",
-      "url": "https://www.reportermt.com/cidades/cachorra-pula-em-piscina-e-salva-menina-de-afogamento-em-chapada-dos-guimaraes-veja-video/246974",
-      "date": "2026-11-21"
     },
     {
       "region": "world",
@@ -68,6 +84,30 @@
   "en": [
     {
       "region": "world",
+      "headline": "Eritrea beats trachoma: WHO confirms the blinding disease is eliminated as a public health problem",
+      "summary": "The World Health Organization validated Eritrea as the 11th country in Africa and the 34th worldwide to eliminate trachoma as a public health problem. Globally, the number of people needing trachoma interventions fell from about 1.5 billion in 2002 to under 100 million by November 2025.",
+      "source": "World Health Organization (WHO)",
+      "url": "https://www.who.int/news/item/16-11-2026-eritrea-eliminates-trachoma-a-major-public-health-milestone",
+      "date": "2026-11-16"
+    },
+    {
+      "region": "world",
+      "headline": "Nearly 1,000 Texans farm for free so local teens can go to college",
+      "summary": "In Gruver, residents have worked a 640-acre plot left to the school district for 15 years without pay, and each harvest brings in about $400,000. It has funded $3 million in scholarships, and in the first decade 48 students became the first in their families to attend university.",
+      "source": "Good News Network",
+      "url": "https://www.goodnewsnetwork.org/texans-work-for-free-on-farms-that-arent-theirs-to-send-others-kids-to-college/",
+      "date": "2026-11-26"
+    },
+    {
+      "region": "tr",
+      "headline": "Half a century later, Antalya pupils reunite with their teacher: \"I'm the happiest teacher in the world\"",
+      "summary": "On Teachers' Day in Serik, former pupils of Gedikköy Primary School met their 74-year-old teacher again after many years. They gave her her old notebook and class photos, and she hugged them in tears.",
+      "source": "Antalya Hürses (DHA)",
+      "url": "https://www.antalyahurses.com/emekli-ogretmen-ile-ogrencilerinin-yarim-asir-sonra-duygulandiran-bulusmasi/561953",
+      "date": "2026-11-24"
+    },
+    {
+      "region": "world",
       "headline": "Brazil mosquito trial: schoolchildren's risk of dengue, Zika and chikungunya fell 68%",
       "summary": "In a 4-year trial in Belo Horizonte, mosquitoes carrying Wolbachia bacteria, which stops them from spreading viruses, were released across the city. Schoolchildren's risk of these diseases fell 68%, even though the trial overlapped with Brazil's largest recorded dengue outbreak.",
       "source": "Good News Network",
@@ -81,14 +121,6 @@
       "source": "Habertürk",
       "url": "https://www.haberturk.com/gundem/mustaki-koy-okulunda-duygulandiran-24-kasim-bir-ogretmen-bir-ogrenci-ve-bir-tavuk-haberler-3929621",
       "date": "2026-11-24"
-    },
-    {
-      "region": "world",
-      "headline": "In Brazil, a golden retriever named Tereza leapt into the pool to help a little girl",
-      "summary": "A security camera in Chapada dos Guimarães caught a 2-year-old girl falling into the deep end. Tereza the dog jumped straight in, and the girl held on to her and stayed afloat until her mother and older sister arrived.",
-      "source": "RepórterMT",
-      "url": "https://www.reportermt.com/cidades/cachorra-pula-em-piscina-e-salva-menina-de-afogamento-em-chapada-dos-guimaraes-veja-video/246974",
-      "date": "2026-11-21"
     },
     {
       "region": "world",
