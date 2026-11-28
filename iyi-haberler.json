@@ -2,6 +2,30 @@
   "tr": [
     {
       "region": "world",
+      "headline": "Otomatik makineyle dünyanın her yerinden gönüllü olun: Tulsa'daki evsizlere uzaktan yardım eli",
+      "summary": "ABD'nin Oklahoma eyaletindeki BeHeard Movement, dünyanın neresinde olursa olsun herkesin görüntülü görüşmeyle gönüllü olup makineden battaniye, yemek ve mama dağıtmasını sağlayan bir kiosk kurdu. İlk makine Tulsa'da şimdiden 133 kez kullanıldı.",
+      "source": "Good News Network",
+      "url": "https://www.goodnewsnetwork.org/vending-machine-lets-anyone-in-the-country-volunteer-to-distribute-aid-to-homeless/",
+      "date": "2026-11-27"
+    },
+    {
+      "region": "world",
+      "headline": "Dünyanın en nadir balıklarından Devils Hole pupfish'in sayısı bir yılda ikiye katlandı",
+      "summary": "ABD Ulusal Park Servisi, Death Valley'deki tek bir mağarada yaşayan türden 10 Ekim sayımında 137 birey gördü; 2025 sonbaharında bu sayı 69'du. Yetkililer artışı, doğaya bırakılan 72 yavru balığa ve destek beslemeye bağlıyor, tehlikenin sürdüğünü de belirtiyor.",
+      "source": "ABD Ulusal Park Servisi",
+      "url": "https://www.nps.gov/deva/learn/news/rare-devils-hole-pupfish-count-more-than-doubles-since-fall-2025.htm",
+      "date": "2026-11-03"
+    },
+    {
+      "region": "tr",
+      "headline": "Birecik'te koruma altındaki kelaynak ailesine bu yıl 66 yavru katıldı",
+      "summary": "Dünyada geriye yalnızca iki popülasyonu kalan nesli tükenme tehlikesindeki kelaynaklardan 2026'da Şanlıurfa'nın Birecik ilçesinde 66 yavru dünyaya geldi. İstasyondaki toplam kelaynak sayısı 334'e ulaştı.",
+      "source": "Anadolu Ajansı / CNN Türk",
+      "url": "https://www.cnnturk.com/yerel-haberler/sanliurfa/sanliurfada-koruma-altindaki-kelaynak-ailesine-66-yeni-uye-katildi-3436647",
+      "date": "2026-06-29"
+    },
+    {
+      "region": "world",
       "headline": "Eritre trahomu yendi: DSÖ, ülkenin körlüğe yol açan hastalığı ortadan kaldırdığını doğruladı",
       "summary": "Dünya Sağlık Örgütü, Eritre'nin trahomu halk sağlığı sorunu olmaktan çıkardığını onayladı; ülke Afrika'da bu başarıya ulaşan 11., dünyada ise 34. ülke oldu. Trahomdan etkilenme riski altındaki insan sayısı 2002'de yaklaşık 1,5 milyardan 2025 Kasım'ında 100 milyonun altına indi.",
       "source": "Dünya Sağlık Örgütü (WHO)",
@@ -55,33 +79,33 @@
       "source": "WMO",
       "url": "https://wmo.int/media/news/wmo-bulletin-shows-successes-and-challenges-ozone-layer-recovery",
       "date": "2026-09-16"
-    },
-    {
-      "region": "tr",
-      "headline": "Tuz Gölü'nde flamingo rekoru: 12 bin 800 yavru hayata tutundu",
-      "summary": "Bakan Murat Kurum, Tuz Gölü'nde son 5 yılın en yüksek yavru flamingo sayısına ulaşıldığını duyurdu. Koruma çalışmaları ve bu yıl bol yağış, kuraklık endişesinin ardından gölü yeniden şenlendirdi.",
-      "source": "Güneş TV",
-      "url": "https://www.gunestv.com/tuz-golunde-muhtesem-geri-donus-tam-12-bin-800-yavru-hayata-tutundu",
-      "date": "2026-07-19"
-    },
-    {
-      "region": "world",
-      "headline": "Avrupa'dan gelen 5 Przewalski atı, Kazakistan bozkırında yeniden özgür",
-      "summary": "Mayıs sonunda bir aygır ve dört kısrak, Avrupa'daki üretim merkezlerinden Kazakistan'ın Altyn Dala bölgesindeki geniş bozkıra salındı. Atlar bir yıl boyunca uyum merkezinde bekledi; iki kısrağa takılan uydu tasmalarıyla yeni yuvalarına nasıl alıştıkları izleniyor.",
-      "source": "Leibniz-IZW",
-      "url": "https://www.izw-berlin.de/en/press-release/rewilding-an-ecosystem-new-generation-of-przewalski-s-horses-released-into-the-kazakh-steppe.html",
-      "date": "2026-06-08"
-    },
-    {
-      "region": "world",
-      "headline": "Kuzey Aral Denizi yeniden hayata dönüyor: balıkçılara umut oldu",
-      "summary": "Kazakistan'daki Kuzey Aral Denizi'nin su hacmi 23 milyar metreküpe çıktı. Bölgede balıkçılar ve köylüler, denizin toparlanmasını geleceklerinin dönüm noktası olarak görüyor; yetkililer koruyucu barajı güçlendirip projenin yeni aşamasına geçmeyi planlıyor.",
-      "source": "The Astana Times",
-      "url": "https://astanatimes.com/2026/02/aral-sea-shows-signs-of-recovery-as-water-levels-rise/",
-      "date": "2026-02-14"
     }
   ],
   "en": [
+    {
+      "region": "world",
+      "headline": "A vending machine lets anyone, anywhere volunteer to hand out aid to homeless neighbors in Tulsa",
+      "summary": "The BeHeard Movement in Oklahoma built a kiosk where volunteers anywhere in the world can join a video call and give out blankets, meals and pet food. The first machine in Tulsa has already been used 133 times.",
+      "source": "Good News Network",
+      "url": "https://www.goodnewsnetwork.org/vending-machine-lets-anyone-in-the-country-volunteer-to-distribute-aid-to-homeless/",
+      "date": "2026-11-27"
+    },
+    {
+      "region": "world",
+      "headline": "One of the world's rarest fish, the Devils Hole pupfish, has more than doubled in a year",
+      "summary": "The US National Park Service counted 137 fish in an Oct. 10 survey of the single cavern in Death Valley where the species lives, up from 69 in fall 2025. Officials credit 72 captive-raised fish released and supplemental feeding, and note the species remains vulnerable.",
+      "source": "US National Park Service",
+      "url": "https://www.nps.gov/deva/learn/news/rare-devils-hole-pupfish-count-more-than-doubles-since-fall-2025.htm",
+      "date": "2026-11-03"
+    },
+    {
+      "region": "tr",
+      "headline": "66 northern bald ibis chicks join the protected flock in Birecik this year",
+      "summary": "Of the world's only two remaining populations of the endangered northern bald ibis, the one in Türkiye added 66 chicks in 2026 at the Birecik station in Şanlıurfa. The number of birds in the station's care has reached 334.",
+      "source": "Anadolu Agency / CNN Türk",
+      "url": "https://www.cnnturk.com/yerel-haberler/sanliurfa/sanliurfada-koruma-altindaki-kelaynak-ailesine-66-yeni-uye-katildi-3436647",
+      "date": "2026-06-29"
+    },
     {
       "region": "world",
       "headline": "Eritrea beats trachoma: WHO confirms the blinding disease is eliminated as a public health problem",
@@ -137,30 +161,6 @@
       "source": "WMO",
       "url": "https://wmo.int/media/news/wmo-bulletin-shows-successes-and-challenges-ozone-layer-recovery",
       "date": "2026-09-16"
-    },
-    {
-      "region": "tr",
-      "headline": "Flamingo record at Lake Tuz: 12,800 chicks survive",
-      "summary": "Environment Minister Murat Kurum announced the highest number of flamingo chicks at Lake Tuz in five years. Conservation work and this year's heavy rain have brought the lake back to life after drought worries.",
-      "source": "Güneş TV",
-      "url": "https://www.gunestv.com/tuz-golunde-muhtesem-geri-donus-tam-12-bin-800-yavru-hayata-tutundu",
-      "date": "2026-07-19"
-    },
-    {
-      "region": "world",
-      "headline": "Five Przewalski's horses from Europe run free again on the Kazakh steppe",
-      "summary": "In late May, one stallion and four mares from European breeding facilities were released onto the vast Altyn Dala steppe in Kazakhstan after a year of acclimatising. Satellite collars on two mares will show how they settle into their new home.",
-      "source": "Leibniz-IZW",
-      "url": "https://www.izw-berlin.de/en/press-release/rewilding-an-ecosystem-new-generation-of-przewalski-s-horses-released-into-the-kazakh-steppe.html",
-      "date": "2026-06-08"
-    },
-    {
-      "region": "world",
-      "headline": "The North Aral Sea is coming back to life, bringing hope to local fishermen",
-      "summary": "The water volume of Kazakhstan's North Aral Sea has risen to 23 billion cubic metres. Fishermen and villagers see the recovery as a turning point for their future, and authorities plan to reinforce the protective dam and start a new phase of the project.",
-      "source": "The Astana Times",
-      "url": "https://astanatimes.com/2026/02/aral-sea-shows-signs-of-recovery-as-water-levels-rise/",
-      "date": "2026-02-14"
     }
   ]
 }
